@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>关闭Linux下screen的闪屏功能</title>  
+  <para>
+    从windows访问Linux命令行，最佳工具组合是putty + screen。这两个工具都是非常出色的开源软件。
+  </para>
+  <para>
+    在IBM网站上的<link xlink:href='http://www.ibm.com/developerworks/cn/linux/l-cn-screen/' xlink:show='new'>linux 技巧：使用 screen 管理你的远程会话</link>是一篇很好的介绍screen的文章。本文不再重复介绍screen这个工具，而主要介绍如何关闭screen的闪屏功能。
+  </para>
+  <para>
+    在最初使用screen时，感觉最不舒服的就是它的闪屏。当移动到行首或者行尾时，再尝试移动屏幕就会闪烁一下，让人很不适合。关闭screen屏幕闪动的方法其实很简单，你只需要使用<command>CTRL-a CTRL-g</command>，也就是先输入CTRL + a，再输入CTRL + g。
+  </para>
+  <para>
+    如果想永远关闭screen的闪屏功能，需要修改配置文件。在CentOS中可以修改<emphasis>/etc/screenrc</emphasis>，修改这个文件将对所有用户生效。Easwy一般只修改自己的配置文件。在<emphasis>$HOME/.screenrc</emphasis>中加入下面的话：
+  </para>
+  <programlisting>
+vbell off </programlisting>
+  <para>
+    其实这与vi中的visualbell功能很是类似。在vi中关闭闪屏，是使用<command>:set novisualbell</command>命令。
+  </para>
+  <!--
+  <para><emphasis role='bold'>[ 常用screen命令 ]</emphasis></para>
+  <para>
+    下面介绍几个Easwy比较有用的screen命令，对于常用命令，如启动screen、创建和关闭screen窗口这些命令就不再介绍了：
+  </para>
+  <itemizedlist>
+    <listitem>
+      <emphasis role='bold'>screen -ls</emphasis>
+      <para>这个命令</para>
+    </listitem>
+
+  </itemizedlist>
+  -->
+  <para>
+    关于putty和screen的其它使用技巧，参见<link xlink:href='http://easwy.com/blog/'>Easwy</link>的其它文章。
+  </para>
+
+</article>

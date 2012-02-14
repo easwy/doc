@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>Grub中进入单用户模式的方法</title>
+  <para>
+    在恢复root密码，或者解决系统中严重故障时，往往需要进行单用户模式。本文介绍一下进行单用户模式的方法。Easwy在<link xlink:href='&fixme;'>恢复误删除文件</link> 时，就使用此方法进入了单用户模式。
+  </para>
+  <para>
+    进入单用户模式的方式：
+  </para>
+  <orderedlist>
+    <listitem>
+      重启计算机，在grub的启动菜单显示时，用上下光标键中断自动启动。
+    </listitem>
+    <listitem>
+      用上下键移动到所需要的启动菜单上，输入命令<command>e</command>来编辑该菜单项。
+    </listitem>
+    <listitem>
+      找到<emphasis role='bold'>kernel</emphasis>所在的行，再输入命令<command>e</command>来编辑。
+    </listitem>
+    <listitem>
+      在这一行的最后加上一个单词：<emphasis role='bold'>single</emphasis>，按回车结束编辑。
+    </listitem>
+    <listitem>
+      现在按<command>b</command>命令，开始启动计算机。
+    </listitem>
+  </orderedlist>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>Easwy的博客</link>上的其它文章。
+  </para>
+</article>
+

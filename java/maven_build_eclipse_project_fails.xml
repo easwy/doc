@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>使用mvn eclipse:eclipse生成eclipse工程文件失败</title>
+  <para>
+    刚刚使用下面的命令生成eclipse的工程文件： 
+  </para>
+  <programlisting>
+mvn eclipse:eclipse </programlisting>
+  <para>
+    但maven提示：
+  </para>
+  <programlisting>
+$ mvn eclipse:eclipse
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Building AppFuse Struts 2 Application
+[INFO]    task-segment: [eclipse:eclipse]
+[INFO] ------------------------------------------------------------------------
+[INFO] Preparing eclipse:eclipse
+[INFO] [aspectj:compile {execution: default}]
+[INFO] [native2ascii:native2ascii {execution: native2ascii-utf8}]
+[INFO] [native2ascii:native2ascii {execution: native2ascii-8859_1}]
+[INFO] [eclipse:eclipse {execution: default-cli}]
+[INFO] Adding support for WTP version 1.5.
+[INFO] Using Eclipse Workspace: null
+[INFO] Adding default classpath container: org.eclipse.jdt.launching.JRE_CONTAINER
+[INFO] Resource directory's path matches an existing source directory. Resources will be merged with the source directory src/main/resources
+[INFO] ------------------------------------------------------------------------
+[ERROR] BUILD ERROR
+[INFO] ------------------------------------------------------------------------
+[INFO] Request to merge when 'filtering' is not identical. Original=resource src/main/resources: output=target/classes, include=[], exclude=[ApplicationResources_de.properties|ApplicationResources_fr.properties|ApplicationResources_ko.properties|ApplicationResources_nl.properties|ApplicationResources_no.properties|ApplicationResources_pt*.properties|ApplicationResources_tr.properties|ApplicationResources_zh*.properties|applicationContext-resources.xml|struts.xml|**/*.java], test=false, filtering=true, merging with=resource src/main/resources: output=target/classes, include=[applicationContext-resources.xml|struts.xml], exclude=[**/*.java], test=false, filtering=false
+[INFO] ------------------------------------------------------------------------
+[INFO] For more information, run Maven with the -e switch
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 10 seconds
+[INFO] Finished at: Tue Jan 19 13:10:19 CST 2010
+[INFO] Final Memory: 28M/50M
+[INFO] ------------------------------------------------------------------------ </programlisting>
+  <para>
+    在网上搜了一下，似乎是maven的2.7版本eclipse插件的问题，使用下面的命令可以解决此问题：
+  </para>
+  <programlisting>
+mvn org.apache.maven.plugins:maven-eclipse-plugin:2.6:eclipse </programlisting>
+  <para>
+    上面的命令会调用maven eclipse插件的2.6版本来生成eclipse项目文件，可以build正常。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>Easwy的博客</link>上的其它文章。
+  </para>
+  <para><emphasis role='bold'>[ 参考文档 ]</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://forums.atlassian.com/thread.jspa?threadID=34952' xlink:show='new'>eclipse:eclipse failing </link>
+    </listitem>
+  </itemizedlist>
+</article>
+

@@ -1,0 +1,10 @@
+D:\50Home\00MyDoc\docbook\docbook\example>xsltproc -o docbook.fo ../../docbook_fo.xsl docbook.xml
+Note: namesp. cut : stripped namespace before processing           鎴戠殑绗竴
+绡嘍ocbook 5.0鏂囨。
+WARNING: cannot add @xml:base to node set root element.  Relative paths may not
+work.
+Note: namesp. cut : processing stripped document                   鎴戠殑绗竴
+绡嘍ocbook 5.0鏂囨。
+D:\50Home\00MyDoc\docbook\docbook\example>fop -c ../../fop.xconf docbook.fo -pdf docbook.pdf
+
+

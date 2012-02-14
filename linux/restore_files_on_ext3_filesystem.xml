@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>使用ext3grep恢复ext3文件系统中被误删除的目录/文件</title>
+  <para>
+    一个同事不小心使用<command>rm -rf</command>命令误删了自己的代码，这意味着一个月的工作丢失了(一个月没有备份过代码，看来他以前一定没经历计算机崩溃的灾难)。我们知道<command>rm</command>命令无法撤销，那么有没有办法恢复这个被删除的目录以及其中的全部文件呢？
+  </para>
+  <para>
+    在网上搜索了一下，找到一个名为ext3grep的工具，以及它的作者的一篇文章(见<emphasis role='bold'>参考文档</emphasis>）。在这个工具出现以前，恢复ext3文件系统中被删除的文件是不可能的。因为ext3文件系统不同于ext2文件系统，它在删除一个文件后，会把文件inode结点中扇区指针清为0，而这让文件恢复看起来不太可能。不过，正如ext3grep工具作者所说的，因为ext3是一个日志型的文件系统，通过分析日志信息，有很大的可能重新解析出块指针，从而恢复出目录和文件。
+  </para>
+  <para>
+    以下是Easwy恢复文件所采用的步骤，希望对大家有帮助。
+  </para>
+  <para><emphasis role='bold'>[ 卸载被误删除文件所在的分区，或以只读方式mount ]</emphasis></para>
+  <para>
+    当你发现你误删除了文件后，要做的第一件事是马上卸载被误删除文件所在的分区，或者以只读的方式来挂载该分区。原因大家都很清楚，文件被删除后，文件中的数据还存在磁盘上，除非存放这些数据的数据块又被操作系统分配出去了。我们这一步就是尽量降低数据块中数据被覆盖的风险，以提高恢复成功的比率。
+  </para>
+  <para>
+    如果被误删的文件在根分区，那么你最好重启计算机，进入单用户模式，以只读的方式挂载根分区，然后再进行恢复。要进行单用户模式，请看<link xlink:href='&fixme;'>Grub中进入单用户模式的方法</link>。
+  </para>
+  <para>
+    进入单用户模式后，根分区还是以读写方式mount的，用下面的命令，把挂载方式由读写(rw)改为只读(ro)：
+  </para>
+  <programlisting>
+mount -o ro,remount / </programlisting>
+  <para>
+    如果被删除的文件不是根分区，也可以用unmount的方式将该分区卸载。假设文件在分区/dev/sda3中，该分区挂载到/home，那么我们用下面的命令来卸载：
+  </para>
+  <programlisting>
+    umount /dev/sda3 </programlisting>
+  <para>
+    或者命令：
+  </para>
+  <programlisting>
+    umount /home </programlisting>
+  <para>
+    当然，在卸载前要保证没有程序在访问该分区，否则卸载会失败。所以，Easwy一般推荐进入单用户模式来恢复文件。
+  </para>
+  <para><emphasis role='bold'>[ 安装ext3grep工具 ]</emphasis></para>
+  <para>
+    恢复的第一步当然是安装ext3grep工具。对于Debian/Ubuntu用户来说，安装ext3grep工具非常简单，只需要执行下面的命令：
+  </para>
+  <programlisting>
+aptitude install ext3grep </programlisting>
+  <para>
+    不过Easwy公司所使用的Linux版本是Centos，所以需要自己手工编译ext3grep工具，其实这也很简单，首先到<link xlink:href='http://code.google.com/p/ext3grep/downloads/list' xlink:show='new'>ext3grep主页</link>上下载它的源代码，然后用下面的命令解压/编译/安装这个工具。
+  </para>
+  <programlisting>
+tar zxf ext3grep-0.10.1.tar.gz
+cd /home/easwy/ext3grep-0.10.1
+./configure
+make
+make install </programlisting>
+  <para>
+    <emphasis role='bold'>注：</emphasis>在网上搜了一下，ext3grep也有rpm包可以下载，比如，RHEL/CentOS的RPM包可以在<link xlink:href="ftp://194.199.20.114/linux/dag/redhat/el5/en/i386/dag/RPMS/ext3grep-0.10.0-1.el5.rf.i386.rpm" xlink:show='new'>这里</link>下载。其它Linux发行版的RPM也可以在<link xlink:href="http://www.rpmfind.net/" xlink:show='new'>rpmfind.net</link>上找到。
+  </para>
+  <para>
+    <link xlink:href='&myblog;'>Easwy</link>前面说过，发现误删除后，要卸载掉该分区，或者进入单用户模式。所以最好在另外一台计算机上来编译或安装这个工具，然后把ext3grep这个可执行文件拷贝到U盘中再进行恢复。这也正是Easwy所用的方法，因为同事的文件恰好在根分区中。如果你也是这种情况，那么在用RPM包安装时，则需要把RPM包安装到你<link xlink:href='http://easwy.com/blog/archives/change-rpm-package-installation-directories/'>指定的目录</link>中，然后再把它拷贝到U盘中。
+  </para>
+  <para>
+    U盘里只需要拷贝ext3grep一个文件即可，它不需要动态加载库就可以执行。接下来把U盘插到待恢复的电脑上，用下面的命令加载：
+  </para>
+  <programlisting>
+mount -t vfat /dev/sdb1 /mnt </programlisting>
+  <para>
+    把上面的设备号和安装点换成你自己的。如果你的设备文件还不存在的话(这也刚好是Easwy的情况)，用<command>mknod</command>命令创建一下吧。
+  </para>
+  <para>
+    现在，我们可以开始文件恢复了。
+  </para>
+  <para><emphasis role='bold'>[ 恢复文件 ]</emphasis></para>
+  <para>
+    在开始恢复前，选择一个目录来存放被恢复的文件。ext3grep程序会在当前目录下创建一个名为<emphasis>RESTORED_FILES</emphasis>的目录来存放被恢复的文件。因此在运行ext3grep命令前，先要切换到一个你可读写的目录中。
+  </para>
+  <para>
+    对Easwy来讲，因为进入了单用户模式，并且将根分区设成了只读，那么只能把恢复出来的文件放在U盘中了。因此，先<command>cd /mnt</command>进入U盘目录。
+  </para>
+  <para>
+    如果你有幸记得你误删除的文件名及其路径的话，就可以直接用下面的命令进行恢复了：
+  </para>
+  <programlisting>
+    ext3grep /dev/your-device --restore-file path/to/your/file/filename </programlisting>
+  <para>
+    需要注意的是，上面的文件路径，是在该分区上文件路径。假设我们要恢复<emphasis>/dev/sda3</emphasis>分区上文件，这个分区原来的安装点是<emphasis>/home</emphasis>，现在想恢复文件<emphasis>/home/easwy/vi/tips.xml</emphasis>，那么输入的命令应该是：
+  </para>
+  <programlisting>
+    ext3grep /dev/sda3 --restore-file easwy/vi/tips.xml </programlisting>
+  <para>
+    如果你忘记了文件名，或者你误删除的是一个目录而你无法记全该目录中的文件，你可以先用下面的命令查询一下文件名：
+  </para>
+  <programlisting>
+ext3grep /dev/sda3 --dump-names | tee filename.txt</programlisting>
+  <para>
+    上面的命令把ext3grep命令的输出记录到文件<emphasis>filename.txt</emphasis>中，你可以慢慢查看，或者使用<command>grep</command>命令过滤出你需要的信息。
+  </para>
+  <para>
+    当你知道了目录/文件的信息后，就可以用上面说的命令进行恢复了。
+  </para>
+  <para>
+    在ext3grep命令中有一个<emphasis>--depth</emphasis>参数，应该是用来恢复目录以及其中的所有子目录和文件的，不过<link xlink:href='&myblog;'>Easwy</link>用这个参数无法恢复出任何文件，只好采用笨办法，写了个脚本，一个个文件的恢复。
+  </para>
+  <para>
+    经过几个小时的折磨(中间走了一些弯路)，同事的文件终于恢复成功了！
+  </para>
+  <para>
+    请阅读<link xlink:href='&myblog;'>Easwy的博客</link>上的其它文章获取更多信息。
+  </para>
+  <para><emphasis role='bold'>[ 参考文档 ]</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://www.xs4all.nl/~carlo17/howto/undelete_ext3.html' xlink:show='new'>HOWTO recover deleted files on an ext3 file system</link>
+    </listitem>
+  </itemizedlist>
+</article>
+

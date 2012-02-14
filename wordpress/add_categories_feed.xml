@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>Easwy的博客支持分类订阅了！</title>
+  <para>
+    其实博客是一个比较个性化的地方，而作为<link xlink:href='http://easwy.com/blog/'>Easwy的博客</link>的作者，我又是个兴趣比较广泛的人，所以写的内容也都比较杂。
+  </para>
+  <para>
+    现今的社会，人们的时间这么宝贵，信息又是如此的泛滥，实在是不应该用不相干的东西来干扰别人的视听。
+  </para>
+  <para>
+    一方面是自己兴趣，一方面是读者兴趣，二者不能也不可能完全契合，这就会导致博客中的大部分内容，也许都不是订阅者感兴趣的，订阅者想订阅的，其实只是一小部分内容。
+  </para>
+  <para>
+    所以为了避免大家看到太多自己不感兴趣的内容，我提供了博客分类的feed，你可以只订阅自己感兴趣的分类。刚刚查看了一下我的订阅读者数，是171人(看来<link xlink:href='http://easwy.com/blog/archives/page_rank_of_easwy_com_becomes_2/' xlink:show='new'>4月2日订阅数36</link>的确是个愚人节玩笑了)，相信这中间的大部人都只对<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-catalog/' xlink:show='new'>vim使用进阶系列文章</link>感兴趣，那么你们可以重新订阅相关的分类。
+  </para>
+  <para>
+    简单介绍一下我划分分类和tag的原则：在Easwy的博客上，所有文章都被划分为几大分类(目前的分类见下)，在每个分类里的不同内容，则使用tag区分。例如，在<link xlink:href='http://easwy.com/blog/archives/category/text/' xlink:show='new'>文本处理</link>分类里，目前主要包括vim、docbook、awk方面的内容，这些内容则分别打上了<link xlink:href='http://easwy.com/blog/archives/tag/vim/' xlink:show='new'>vim标签</link>、<link xlink:href='http://easwy.com/blog/archives/tag/docbook/' xlink:show='new'>docbook标签</link>和<link xlink:href='http://easwy.com/blog/archives/tag/awk/' xlink:show='new'>awk标签</link>；而<link xlink:href='http://easwy.com/blog/archives/category/open-source/' xlink:show='new'>开源软件</link>分类里，又包括了Linux相关的内容(<link xlink:href='http://easwy.com/blog/archives/tag/linux/' xlink:show='new'>Linux标签</link>)，以及其它的开源软件(也有相应的tag)。
+  </para>
+  <para>
+    所以，在访问我的博客时，使用tag可以准确找到你所感兴趣的内容。原本我也想加上tag的feed输出，不过在网上没找到相应的插件(好像<link xlink:href='http://wordpress.org/extend/plugins/simple-tagging-plugin/' xlink:show='new'>Simple Tagging</link>插件可以，不过我没配置成功)，所以以后再按tag输出feed吧。
+  </para>
+  <para>
+    下面简要介绍一下我博客上的分类：
+  </para>
+  <itemizedlist>
+    <listitem><link xlink:href='http://easwy.com/blog/archives/category/embedded/' xlink:show='new'>嵌入系统</link>
+      <para>这个分类主要讨论嵌入式系统，主要是嵌入式Linux和Android方面的话题</para>
+    </listitem>
+    <listitem><link xlink:href='http://easwy.com/blog/archives/category/website/' xlink:show='new'>网站建设</link>
+      <para>这个分类包括我的建站笔记，wordpress的配置，以及Web开发编程方面的内容，例如PHP、MySQL数据库、CSS等</para>
+    </listitem>
+    <listitem><link xlink:href='http://easwy.com/blog/archives/category/development/' xlink:show='new'>开发编程</link>
+      <para>这个分类讨论开发编程的话题，会包括各种编程语言(以C, C++, Python为主)、UML、设计模式、开发经验等</para>
+    </listitem>
+    <listitem><link xlink:href='http://easwy.com/blog/archives/category/open-source/' xlink:show='new'>开源软件</link>
+      <para>本分类主要讨论开源软件，包括Linux操作系统，及各种开源工具。</para>
+    </listitem>
+    <listitem><link xlink:href='http://easwy.com/blog/archives/category/text/' xlink:show='new'>文本处理</link>
+      <para>本分类讨论文本处理工具，会涉及vim, sed, awk等工具，也包括docbook等</para>
+    </listitem>
+    <listitem><link xlink:href='http://easwy.com/blog/archives/category/life/' xlink:show='new'>生活点滴</link>
+      <para>本分类记录我的生活点滴。</para>
+    </listitem>
+    <listitem><link xlink:href='http://easwy.com/blog/archives/category/daughter/' xlink:show='new'>吾家有女</link>
+      <para>我的宝贝，我的天使，我的小情人……无数个词，都无法形容我对她的爱！</para>
+      <para> 她就是我的女儿，这一个分类，主要记录她成长的点点滴滴。</para>
+    </listitem>
+    <listitem><link xlink:href='http://easwy.com/blog/archives/category/misc/' xlink:show='new'>百宝箱</link>
+      <para>凡上面分类装不下的内容，都放在此分类中。目前主要是有关easwy.com的新闻。</para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    欢迎根据自己的兴趣，选择上面的分类进行订阅。当然，你也可以继续订阅全站feed，地址是<link xlink:href='http://feed.easwy.com/'/>。
+  </para>
+  <para>
+    允许分类订阅后，我写文章时也可以少一些顾虑了，不必再担心给大家带来困扰。当然，以后还可能会对分类进行调整，到时再行通知。
+  </para>
+  <para>
+    分类feed输出由WordPress的<link xlink:href='http://enhanced-categories.vincentprat.info/' xlink:show='new'>Enhanced Categories</link>插件提供支持，感谢其作者。
+  </para>
+</article>

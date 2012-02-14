@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>如何把RPM包安装到指定目录</title>
+  <para>
+    大多数人安装RPM包，都是使用下面的命令来安装： 
+  </para>
+  <programlisting>
+rpm -i xxxx.rpm </programlisting>
+  <para>
+    这是最简单的安装方式，RPM包中的文件将被安装到打包时所指定的默认目录中。
+  </para>
+  <para>
+    但在有的时候，我们没有系统的root权限不能写入根目录，或者因为某种原因(比如<link xlink:href='http://easwy.com/blog/archives/undelete-directories-files-on-ext3-filesystem-via-ext3grep/'>在进行文件恢复</link>时)想改变一下RPM的默认安装路径。这时可以用下面的小技巧。
+  </para>
+  <para>
+    首先用下面的命令查看一下该RPM包的默认安装目录，例如：
+  </para>
+  <programlisting>
+easwy:~$ rpm -qpl ext3grep-0.10.0-1.el5.rf.i386.rpm 
+/usr/bin/ext3grep
+/usr/share/doc/ext3grep-0.10.0
+/usr/share/doc/ext3grep-0.10.0/INSTALL
+/usr/share/doc/ext3grep-0.10.0/LICENSE.GPL2
+/usr/share/doc/ext3grep-0.10.0/NEWS
+/usr/share/doc/ext3grep-0.10.0/README </programlisting>
+  <para>
+    上面的命令列出了每一个文件即将被安装的位置，现在我们只需要重新用<emphasis>--relocate</emphasis>参数把安装目录定位一下就可以了：
+  </para>
+  <programlisting>
+rpm -i --relocate /usr/bin=/home/easwy/bin --relocate /usr/share/doc=/home/easwy/doc ext3grep-0.10.0-1.el5.rf.i386.rpm </programlisting>
+  <para>
+    现在，ext3grep就会被安装到<emphasis>/home/<link xlink:href='&myblog;'>easwy</link>/bin</emphasis>目录中了。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>Easwy的博客</link>上的其它文章。
+  </para>
+  <para><emphasis role='bold'>[ 参考文档 ]</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://www.unix.com/unix-dummies-questions-answers/66110-how-install-rpm-specific-directory.html' xlink:show='new'> how to install rpm to specific directory </link>
+    </listitem>
+  </itemizedlist>
+</article>
+

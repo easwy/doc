@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>升级Debian Etch(4.0)到Debian Lenny(5.0)</title>
+  <para>
+    <link xlink:href='http://easwy.com/blog/archives/debian-lenny-installation-on-thinkpad-t400/' xlink:show='new'>笔记本上安装了Debian Lenny</link>后，用起来感觉很舒服，于是决定把台式机上的Etch也升级到Lenny。
+  </para>
+  <para>
+    对其它操作系统来说，也许升级不是件容易的事，但在Debian中，一切都很简单。
+  </para>
+  <para>
+    升级之前要做的第一件事，是备份。虽然我升级没出一点问题，但谁能保证你也不出呢？所以先把你认为重要的资料备份一下。我主要是备份了/etc下的配置文件，至于/home，因为是单独分区，在升级时把它umount就可以了，用不着担心。
+  </para>
+  <para>
+    以下操作，都使用root用户进行操作，最好在终端下进行。
+  </para>
+  <para>
+    备份完后，打开你的<emphasis role='bold'>/etc/apt/sources.list</emphasis>文件，把文件中所有的etch和stable，都替换成lenny。
+  </para>
+  <para>
+    然后执行命令更新一下软件包列表：
+  </para>
+  <programlisting>
+aptitude update </programlisting>
+  <para>
+    在我这里出现了这样的提示：
+  </para>
+  <screen>W: There is no public key available for the following key IDs: 4D270D06F42584E6</screen>
+  <para>
+    用下面的命令下载并添加一下public key:
+  </para>
+  <programlisting>
+gpg --keyserver wwwkeys.eu.pgp.net --recv-keys 4D270D06F42584E6
+apt-key add ~/.gnupg/pubring.gpg </programlisting>
+  <para>
+    然后再运行一次<command>aptitude update</command>命令，一切顺利。
+  </para>
+  <para>
+    接下来，先升级/安装apt及aptitude工具，因为etch版本的aptitude和apt工具被报告存在一些bug及不稳定因素，为了保证升级顺利，我们先升级一下这两个工具。我在文章<link xlink:href='http://easwy.com/blog/archives/chinese_in_debian_lenny/'>在Debian Lenny中配置中文</link>里面已经提到过，Debian现在推荐使用aptitude来安装软件，因为它能更智能的解决软件包间的依赖关系。
+  </para>
+  <programlisting>
+aptitude install apt aptitude </programlisting>
+  <para>
+    这一步会安装libc6、locales以及libselinux等，会把诸如xdm、gdm、kdm这些服务重启，按提示做即可。
+  </para>
+  <para>
+    接下来一步就是正式升级了，输入下面的命令：
+  </para>
+  <programlisting>
+aptitude full-upgrade </programlisting>
+  <para>
+    也许会提示你有一些包推荐安装而未安装之类的，先不管它，一路yes。然后就是漫长的下载过程...
+  </para>
+  <para>
+    开始安装时，也许会需要你手动干预一下，按屏幕提示操作即可。在升级过程中一般会同时升级内核，可以用下面的命令看一下你的内核升级了没有：
+  </para>
+  <programlisting>
+dpkg -l "linux-image*" | grep ^ii </programlisting>
+  <para>
+    如果没有看到任何输出，说明你的内核未升级，用aptitude选择一个内核升级一下。
+  </para>
+  <para>
+    接下来，就可以重启了，启动完成后，你就进入了Lenny的世界。Cheers!
+  </para>
+  <para>
+    如果你英文还不错的话，建议读一下文尾的第一篇参考文档，这是Debian网站提供的升级指南。
+  </para>
+  <section>
+    <title>参考文档</title>
+    <itemizedlist>
+      <listitem>
+        <link xlink:href='http://www.debian.org/releases/lenny/i386/release-notes/ch-upgrading.en.html' xlink:show='new'>Upgrades from previous releases</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://www.hughr.org/archives/2009/000691.html' xlink:show='new'>自Debian Etch向Debian Lenny升級</link>
+      </listitem>
+    </itemizedlist>
+  </section>
+</article>

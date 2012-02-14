@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>改变core dump的文件名</title>  
+  <para>
+    在开发过程中，当一个Linux程序异常退出时，我们可以通过core文件来分析它异常的详细原因。缺省情况下，Linux在程序异常时不产生core文件，要想让程序异常退出时产生core dump文件，需要使用<command>ulimit</command>命令更改coredump的设置：
+  </para>
+  <programlisting>
+ulimit -c unlimited </programlisting>
+  <para>
+    上面的命令表示在程序异常时产生core dump文件，并且不对core dump文件的大小进行限制。
+  </para>
+  <para>
+    上述设置只是使能了core dump功能，缺省情况下，内核在coredump时所产生的core文件放在与该程序相同的目录中，并且文件名固定为<emphasis>core</emphasis>。很显然，如果有多个程序产生core文件，或者同一个程序多次崩溃，就会重复覆盖同一个core文件。
+  </para>
+  <para>
+    我们通过修改kernel的参数，可以指定内核所生成的coredump文件的文件名。例如，Easwy使用下面的命令使kernel生成名字为<emphasis>core.filename.pid</emphasis>格式的core dump文件：
+  </para>
+  <programlisting>
+echo 'core.%e.%p' > /proc/sys/kernel/core_pattern </programlisting>
+  <para>
+    这样配置后，产生的core文件中将带有崩溃的程序名、以及它的进程ID。上面的<emphasis role='bold'>%e</emphasis>和<emphasis role='bold'>%p</emphasis>会被替换成程序文件名以及进程ID。
+  </para>
+  <para>
+    可以在core_pattern模板中使用变量还很多，见下面的列表：
+  </para>
+  <itemizedlist>
+    <listitem>
+      %%  单个%字符
+    </listitem>
+    <listitem>
+      %p  所dump进程的进程ID
+    </listitem>
+    <listitem>
+      %u  所dump进程的实际用户ID
+    </listitem>
+    <listitem>
+      %g  所dump进程的实际组ID
+    </listitem>
+    <listitem>
+      %s  导致本次core dump的信号
+    </listitem>
+    <listitem>
+      %t  core dump的时间 (由1970年1月1日计起的秒数)
+    </listitem>
+    <listitem>
+      %h  主机名
+    </listitem>
+    <listitem>
+      %e  程序文件名
+    </listitem>
+  </itemizedlist>
+  <para>
+    需要说明的是，在内核中还有一个与coredump相关的设置，就是<emphasis>/proc/sys/kernel/core_uses_pid</emphasis>。如果这个文件的内容被配置成1，那么即使core_pattern中没有设置%p，最后生成的core dump文件名仍会加上进程ID。
+  </para>
+  <para>
+    对所生成的core dump进程分析，需要使用调试工具，例如GDB等。可以参见<link xlink:href='http://easwy.com/blog/'>Easwy</link>的其它文章。
+  </para>
+</article>

@@ -1,0 +1,69 @@
+<chapter xml:id='hibernate'
+    xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>解决T400在Debian Linux下不能休眠/待机的问题</title>
+  <para>
+    在<link xlink:href='http://easwy.com/blog/archives/debian-lenny-installation-on-thinkpad-t400/'>Thinkpad T400上安装了Debian Lenny</link>后，发现电源管理似乎有点问题，当笔记本长时间处于Idle状态时，并不能进入待机或休眠状态，Gnome电源管理程序出现下面的提示：
+  </para>
+  <programlisting>
+Sleep Problem
+Your computer failed to suspend/hibernate.
+Check the help file for common problems.  </programlisting>
+  <para>
+    在Google上搜索了一下，其它Thinkpad T400的用户可以在Linux下正常待机或者休眠(Suspend/Hibernate)，看来应该是自己笔记本配置问题。
+  </para>
+  <para>
+    Linux上的电源管理由<link xlink:href='http://pm-utils.freedesktop.org/wiki/'>pm-utils</link>实现，这个工具箱里包含了几个脚本:<command>pm-hibernate</command>、<command>pm-suspend</command>和<command>pm-suspend-hybrid</command>。这些脚本一般由窗口管理器Gnome或KDE，通过hald守护进程来调用。当然也可以直接调用这些脚本。<link xlink:href='&myblog;'>Easwy</link>首先使用root用户执行<command>pm-hibernate</command>：
+  </para>
+  <programlisting>
+sudo pm-hibernate </programlisting>
+  <para>
+    执行完这个命令后，笔记本就将内存镜像保存到磁盘上，然后进入休眠模式。既然root用户能切换到休眠模式，那应该是Gnome的登录用户easwy不具备相应的权限。根据参考文档一中的说明，把用户<link xlink:href='&myblog;'>easwy</link>加入<emphasis>powerdev</emphasis>组中，现在在Gnome Power Manager中选择<emphasis>hibernate</emphasis>就可以使计算机中进入休眠状态，不会出现上面的提示。
+  </para>
+  <para>
+    但新的问题又出现了，T400进入待机或休眠模式后无法正常恢复回来。现象是在恢复时，图形界面显示不完整，这时鼠标键盘都没有反应，过一段时间T400就重新加电重启了。
+  </para>
+  <para>
+    在网上搜了一下，好像这是由于xf86-video-intel驱动与芯片的兼容性问题(见参考文档二)造成的，使用下面的脚本可以解决这个问题：
+  </para>
+  <programlisting>
+    <![CDATA[
+#!/bin/sh
+# Workaround for concurrency bug in xserver-xorg-video-intel 2:2.4.1-1ubuntu10.
+# Save this as /etc/pm/sleep.d/00CPU 
+
+. "/usr/lib/pm-utils/functions"
+ 
+case "$1" in
+	hibernate|suspend)
+		for i in /sys/devices/system/cpu/cpu*/online ; do
+			echo 0 >$i
+		done
+		;;
+	thaw|resume) 
+		sleep 10	# run with one core for 10 secs
+		for i in /sys/devices/system/cpu/cpu*/online ; do
+			echo 1 >$i
+		done
+		;;
+	*)
+		;;
+esac ]]></programlisting>
+  <para>
+    <link xlink:href='&myblog;'>Easwy</link>把上述脚本保存到<emphasis>/etc/pm/sleep.d/00CPU</emphasis>，现在，Thinkpad T400可以正常待机/休眠/恢复了。
+  </para>
+  <para>
+    更多关于<link xlink:href='http://easwy.com/blog/archives/tag/thinkpad/'>Linux上Thinkpad T400</link>的内容，请阅读<link xlink:href='&myblog;'>Easwy的博客</link>上的其它文章。
+  </para>
+  <para><emphasis role='bold'>[ 参考文档 ]</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://old.nabble.com/Help-with-suspend-hibernate-in-Gnome-Power-Manager-td15181122.html' xlink:show='new'>Help with suspend/hibernate in Gnome Power Manager</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://wiki.archlinux.org/index.php/Lenovo_ThinkPad_T400#SUSPEND-RESUME' xlink:show='new'>SUSPEND-RESUME</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://pm-utils.freedesktop.org/wiki/' xlink:show='new'>pm-utils Wiki</link>
+    </listitem>
+  </itemizedlist>
+  </chapter>

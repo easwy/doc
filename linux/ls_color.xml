@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>更改ls命令显示的颜色</title>
+比如我们打算让扩展名是.JPG(注意大小写)的文件和.jpg文件显示相同的颜色（我使用的是RHEL4 WS）：
+【1】 生成模板配置文件：
+dircolors --print-database > ~/.dircolors
+（dircolors如果没有找到配置文件，会按内置的database里的配置来生成环境变量LS_COLORS，来供ls使用。）
+【2】 查看/etc/profile和/etc/bashrc，可以看到都调用了/etc/profile.d里的很多配置脚本。包括一个文件是colorls.sh，用来查找dircolors
+使用的配置文件。除了~/.dircolors外，还有几个文件会被按顺序查找。
+【3】 修改~/.dircolors，把.jpg所在行复制一下，然后把扩展名改成.JPG。
+【4】 重新登陆，或是source /etc/profile.d/colorls.sh
+</article>

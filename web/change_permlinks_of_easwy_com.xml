@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>如何最优设置博客的永久链接</title>
+  <para>
+    这两天正在调整<link xlink:href='http://easwy.com/blog/' xlink:show='new'>easwy.com</link>的永久链接(PermaLinks)，可能有些链接会出现HTTP 404 not found错误，请大家谅解。
+  </para>
+  <para>
+    刚刚开始建设自己的独立博客，对于如何设置wordpress永久链接的格式缺少经验。中间走了不少弯路。如何设置永久链接(PermaLinks)的格式，是仁者见仁，智者见智的。这篇文章根据我在网上看到的一些资料以及自己的经验，来讨论一下如何设置博客的永久链接最好。
+  </para>
+  <para>
+    刚开始我设置永久链接的格式为: <emphasis>/%year%%monthnum%%day%/%post_id%.html</emphasis>。当初这样设置的想法是，第一，可以直接从帖子的URL，知道此文是何时发表的；第二，帖子的ID是唯一的，不会因为文章修改或删除产生变化，用它可以产生唯一并且最短的链接URL；第三，最终产生的链接中包含.html后缀，看起来更像静态网页。
+  </para>
+  <para>
+    但使用这种链接结构的问题也是显而易见的。在wordpress 2.7中，文章的发表日期是可以改变的，一旦更改了文章的发表日期，就会导致永久链接发生变化，产生死链；而使用post ID虽然简单，不过产生的链接却不够友好。对读者来说，看到一个名为123.html的链接不会知道这篇文章是讲什么的，而采用文章名就友好多了。从搜索引擎优化(SEO)的角度来看，在URL中嵌入文章的关键字，有利于提高文章的权重(page rank)。
+  </para>
+  <para>
+    幸好博客刚刚开通，流量还不大，外链也基本没有，于是就下定决心改一下PermaLinks的格式，打算在PermaLinks中去掉日期部分，并加入文章名。不过，对于中文博客来说，直接使用文章名会使URL中出现中文字符。虽然现在浏览器基本都可以支持链接中出现中文，不过如果你的URL带着一长串"%E4%B8..."的字符，看起来很不友好。所以，最好是在发表文章时，设置一下文章的别名(slug)，在别名中只使用ASCII字符。这样，最终的永久链接(PermaLinks)里就不会出现中文了。
+  </para>
+  <para>
+    wordpress 2.7中支持编辑文章别名，如果你在后台编辑器中没有找到"文章别名"的编辑框，需要设置一下<emphasis>显示选项</emphasis>(<emphasis>screen options</emphasis>)，在屏幕上显示"文章别名"，以后就可以像写摘要一样，自行输入文章的别名了。多说一句，wordpress缺省把"文章别名"放在后台页面的最下方，填起来很不方便，你可以用鼠标把它拉到上面来。我是把它放在摘要编辑框的上面了。
+  </para>
+  <para>
+    如果你不愿意为每一篇文章输入别名，也可以采用插件。月光博客上提供了一个<link xlink:href='http://www.williamlong.info/archives/1027.html' xlink:show='new'>post slug插件</link>，这个插件可以自动把文章的中文名翻译成拼音，用它来做为你文章的别名。另外偶爱偶家也开发了一个名为<link xlink:href='http://blog.2i2j.com/being-humble-opinion/wp-slug-for-wordpress-plugins.html' xlink:show='new'>wp slug translate</link>的插件，它可以支持在直接标题里设置slug，或者使用google把中文标题翻译成英文，如果翻译失败，就把中文标题翻译成拼音，来做为别名。
+  </para>
+  <para>
+    我一般是自己手动输入别名，所以没使用上面说的插件。决定在链接中使用文章别名后，我就把永久链接(PermLinks)的结构改成：<emphasis>/archieves/%postname%.html</emphasis>，看到了吧，我还是很衷情于.html后缀的，因为我总觉得有这个后缀对读者最友好，不过这最终导致了我第三次修改永久链接结构。
+  </para>
+  <para>
+    上面的永久链接结构对我来说有点不爽的地方时，这样设置后，分类目录、标签、归档的链接就变成类似：<emphasis>http://easwy.com/blog/archives/tag/vim</emphasis>，这样的链接，看起来不像一个静态页面(因为它没有.html后缀)，也不像一个目录(没有/后缀)。虽然对搜索引擎和浏览器来讲都没有什么问题，不过看上去不太舒服。而且，如果自己在建内链时，如果不小心加上个尾部后缀"/"的话，就会让搜索引擎认为这是两个页面，不利于SEO。
+  </para>
+  <para>
+    反正要改永久链接的结构，索性改成自己最满意的吧，于是今天又对结构进行了一次调整。把PermaLinks的格式改成：<emphasis>/archieves/%postname%/</emphasis>，现在终于满意了。
+  </para>
+  <para>
+    再说一下这种永久链接格式的缺点，应该说，这种结构可能存在的缺陷。我不知道wordpress会不会对重复的文章别名进行限制，如果没做限制的话，这种链接结构，在文章别名相同时，有可能出现重复的URL。
+  </para>
+  <para>
+    刚才做了个测试，如果文章的别名和以前的文章重复的话，wordpress会自动在另外后加上一个数字的，这样就避免出现重复的URL，看来这个担心可以去除了。
+  </para>
+  <para>
+    好了，我最终选定我的永久链接结构了，你确定你的链接结构了吗？其实选择链接的结构，完全取决了个人的喜好，没有哪一种是最优的。不过在刚建设博客时就要设计好自己的永久链接，要知道，更改永久链接的代价是相当大的。
+  </para>
+  <para>
+    在下一篇文章，介绍两个和<link xlink:href='http://easwy.com/blog/archives/useful-wordpress-permalinks-plugin/' xlink:show='new'>永久链接结构相关的插件</link>，在你不得不改变你的永久链接结构时，这些插件是非常有用的。
+  </para>
+  <para>
+    对于已经有一定流量的博客，或者外链已经比较多的博客，还是建议不要随便更改永久链接的结构！
+  </para>
+  <para><emphasis role='bold'>原创文章，转载请注明：</emphasis>转载自<link xlink:href="http://easwy.com/blog/" xlink:show='new'>Easwy的博客</link> [  <link xlink:href="http://easwy.com/blog/" xlink:show="new">http://easwy.com/blog/</link> ]</para>
+  <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='http://easwy.com/blog/archives/select-permalinks-structure/'/></para>
+</article>

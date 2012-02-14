@@ -1,0 +1,60 @@
+<chapter xml:id="easwy_com" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>搭建easwy.com</title>
+  <para>
+    几经周折，<link xlink:href="http://easwy.com/blog/" xlink:show="new">我的博客</link>终于搭好雏形了，其中辛苦值得回味。建站的过程，也是学习的过程，经历过整个过程，再回头来看，发现自己收获颇多。由此撰写此文，记录下整个过程，一方面给自己下次建站做一个参考，另一方面，也希望对后来者能有所帮助，使之不必经历我所经历的诸多波折。
+  </para>
+  <section xml:id="why_build_own_site">
+    <title>easwy.com的由来</title>
+    <para>
+      其实从未想过要自己建一个独立博客，产生独立建站的想法，纯属偶然。
+    </para>
+    <para>
+      我对Google推出的<link xlink:href='http://easwy.com/blog/tag/android'>Android</link>平台一直比较感兴趣。2009年春节前夕，终于抽空看了一下Android的编程文档，自己也想编写一些基于Android的应用程序。
+    </para>
+    <para>
+      但是写Java程序，一般都使用自己的域名来定义package的命名空间(namespace)，以防止产生命名冲突。于是，在练习完Android提供的几个demo程序后，我就想先申请一个属于自己的域名，然后开始写几个应用程序练练手。申请域名的举动，就引发了后面的一系列故事。经历了这么多后，决定将自己建站的过程写出来，以供他人参考。
+    </para>
+    <para>这就是本文的由来。</para>
+  </section>
+  <section xml:id='reg_domain_name'>
+    <title>注册域名</title>
+    <para>注册域名是建站的第一步。</para>
+    <para>
+      对一个新站长来说，这第一步就够让人眼花缭乱的了，尤其在面对国内的域名市场时，更是让人不知所措。琳琅满目的广告、大大小小的域名代理商、千变万化的域名价格、论坛上相互矛盾的信息，都让人无所适从。
+    </para>
+    <para>下面总结一下我在购买域名时想问的一些问题，就称之为FAQ吧。</para>
+    <orderedlist>
+      <listitem>
+        <para>
+          要不要注册cn域名？
+        </para> 
+        <para>
+          cn域名是由<link xlink:href='www.cnnic.net.cn/'>中国互联网络信息中心(CNNIC)</link>管理的中国国家顶级域名，cn域名的解析也由CNNIC提供。使用cn域名，比传统的com.cn或net.cn这样的域名更短，更容易记忆。而且从价格看，cn域名要相对便宜一些，特别是2008年在推广cn域名时，一元钱就可以注册，着实让人心动。
+        </para>
+        <para>
+          不过，注册cn域名也有风险。因为cn域名是由CNNIC负责管理，域名出现争议也是由它仲裁，但它的仲裁机制目前看来不够透明，再加上中国特有的国情，也许某一天把你辛苦建设很久的域名收回了，那时就欲哭无泪了。
+        </para>
+        <para>
+          而且，一元的注册费用是够便宜，不过域名续费可没这么优惠了。要知道，注册的域名是有期限的，如果你不定期续费的话，域名会被收回的。如果你花一块钱注册了一个cn域名，后面却要用每年XXX元的费用续费，岂不是冤枉？
+        </para>
+        <para>
+          所以对于cn域名，可以基于域名保护的考虑进行保护性注册。对我个人来说，不打算将cn域名做为自己的主域名，还是使用国际顶级域名比较好。
+        </para>
+        <para>
+          另外还有中文域名，长远来说在国内是有市场的，不过鉴于现在各个浏览器厂家对中文域名的支持都不是很好，个人暂时不做考虑。不过对公司或企业来说，进行保护性注册倒是必要的。
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          在国内代理商注册？还是到国外代理商注册？
+        </para>
+        <para>
+          我在注册域名时，首先搜到的<link xlink:href='http://net.cn/'>万网</link>，在万网上注册了一个ID，准备购买<link xlink:href='http://easwy.com/blog/'>easwy.com</link>这个域名，在付款之前，又在网上搜索了一下，发现各个代理商的域名价格差异很大。比如说万网的价格是148，但另外一个网站给出的才是万网的一半不到，这让我很是犹豫。
+        </para>
+      </listitem>
+    </orderedlist>
+    <para>
+    </para>
+
+  </section>
+</chapter>

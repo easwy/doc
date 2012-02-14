@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>安装Apache Roller</title>
+  <para>
+    Roller介绍 TODO
+  </para>
+  <section>
+    <title>安装Apache Tomcat</title>
+    <para>
+      见 TODO 链接。
+    </para>
+  </section>
+  <section>
+    <title>下载JavaMail和Activation</title>
+    <para>
+      如果想使用Roller的邮件通知功能，需要到sun的网站上下载JavaMail和Activation。下载链接为<link xlink:href='http://java.sun.com/products/javamail' xlink:show='new'/>。将下载后的库文件拷贝到Tomcat的<emphasis>common/lib</emphasis>目录下。
+    </para>
+  </section>
+  <section>
+    <title>国际化</title>
+    <para>
+      Roller支持国际化，需要对Tomcat的配置进行一些修改。打开Tomcat的配置文件<emphasis>conf/server.xml</emphasis>，对所有的Connector配置都增加<emphasis>URIEncoding="UTF-8"</emphasis>属性。例如：
+    </para>
+    <programlisting>
+&lt;Connector
+    port="8180"
+    redirectPort="8443"
+    minSpareThreads="25"
+    connectionTimeout="20000"
+    maxSpareThreads="75"
+    maxThreads="150"
+    <emphasis role='bold'>URIEncoding="UTF-8"&gt;</emphasis>
+&lt;/Connector&gt;
+&lt;Connector
+    port="8009"
+    redirectPort="8443"
+    protocol="AJP/1.3"
+    <emphasis role='bold'>URIEncoding="UTF-8"&gt;</emphasis>
+&lt;/Connector&gt;
+    </programlisting>
+  </section>
+  <section>
+    <title>配置Roller的数据库</title>
+    <para>
+      接下来需要配置Roller的数据库，用下面的命令创建数据库rollerdb，赋予用户roller@localhost访问这个数据库的权利：
+    </para>
+    <programlisting>
+% mysql -u root -p
+password: *****
+mysql> create database rollerdb default character set utf8 collate utf8_general_ci;
+mysql> grant all on rollerdb.* to roller@localhost identified by 'roller';
+    </programlisting>
+    <para>
+      如果你还没安装JDBC驱动，到下面的链接下载JDBC：<link xlink:href='http://dev.mysql.com/downloads/connector/j/5.1.html' xlink:show='new'/>。
+    </para>
+  </section>
+  <section>
+    
+    <para>
+      到下面的链接下载Roller：<link xlink:href='http://roller.apache.org' xlink:show='new'/>，下载后将压缩包解压缩。
+    </para>
+  </section>
+</article>

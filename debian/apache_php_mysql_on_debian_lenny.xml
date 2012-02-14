@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>Debian真是省心又省力：在Lenny上安装Apache2，PHP5，MySQL5, WordPress...</title>
+  <para>
+    这几天<link xlink:href='http://easwy.com/blog/archives/please_tell_me_your_access_speed/' xlink:show='new'>访问Easwy的博客非常慢</link>，在上面调试程序变成了痛苦的折磨。于是干脆在自己的笔记本上安装一个Web服务器来调试吧。
+  </para>
+  <para>
+    我笔记本上<link xlink:href='http://easwy.com/blog/archives/debian-lenny-installation-on-thinkpad-t400/' xlink:show='new'>安装了Debian Lenny</link>，使用Debian确实是省心又省力，基本你只需要会用<command>aptitude install</command>就可以了，其它的事情，Debian全帮你做好了。在Debian上安装Apache Web服务器以及PHP5和MySQL非常简单，只需要按照下面的步骤：
+  </para>
+  <para>安装Apache2:</para>
+  <programlisting>
+aptitude install apache2 </programlisting>
+  <para>
+    这件命令安装apache服务器，安装完成后，Apache服务器的配置文件在<emphasis role='bold'>/etc/apache2/</emphasis>，缺省的web服务器根目录在<emphasis role='bold'>/var/www/</emphasis>，安装完后，你在浏览器的地址栏输入<emphasis>http://localhost/</emphasis>，如果可以看到<emphasis role='bold'>It works!</emphasis>这样的内容，那么你的web服务器已经运行起来了。
+  </para>
+  <para>
+    接下来安装PHP5和MySQL5、Curl(HTTP工具)、IMAP(邮件检查)、GD (编辑和创建图像)：
+  </para>
+  <programlisting>
+aptitude install libapache2-mod-php5 php5-curl php5-gd php5-imap php5-mcrypt php5-mysql php5-tidy </programlisting>
+  <para>
+    接下来安装MySQL5服务器和客户端：
+  </para>
+  <programlisting>
+aptitude install mysql-server mysql-client </programlisting>
+  <para>
+    MySQL的配置文件在<emphasis role='bold'>/etc/mysql/my.cnf</emphasis>，在安装MySQL服务器的时候，会要求你输入root密码。
+  </para>
+  <para>
+    最后，安装PHPMyAdmin工具：
+  </para>
+  <programlisting>
+aptitude install phpmyadmin </programlisting>
+  <para>
+    PHPMyAdmin会自动配置Apache服务器，安装完后，可以直接输入<emphasis role='bold'>http://localhost/phpmyadmin/</emphasis>来访问PHPMyAdMin。
+  </para>
+  <para>
+    我们可以查看一下PHP的信息，以确信PHP已经运行起来了：
+  </para>
+  <para>
+    使用编辑器输入以下内容，把它保存成<emphasis role='bold'>/var/www/phpinfo.php</emphasis>：
+  </para>
+  <programlisting>
+&lt;?php phpinfo(); ?&gt; </programlisting>
+  <para>
+    然后在浏览器地址栏输入<emphasis role='bold'>http://localhost/phpinfo.php</emphasis>，你就可以看到PHP有关的配置信息。
+  </para>
+  <para>
+    接下来安装WordPress程序，安装步骤网上很多，不再详述。
+  </para>
+  <para>
+    出于安全起见，不打算使用MySQL中的root用户来访问PHP的数据库，所以使用PHPMyAdmin(访问方法见上)专门添加了一个数据库用户wordpress，并创建一个名为wordpressdb的数据库，给予wordpress用户对wordpressdb数据库的完全控制权。
+  </para>
+  <para>
+    创建完数据库后，把WordPress拷贝到/var/www/wordpress/目录下，修改配置文件wp-config.php，主要是配置数据库信息，然后到下面的地址完成安装：
+  </para>
+  <programlisting>
+http://localhost/wordpress/wp-admin/install.php </programlisting>
+  <para>
+    现在，去访问你自己的WordPress吧。Everything is OK!
+  </para>
+  <para>
+    需要说明一下：
+  </para>
+  <para>
+    Debian Lenny中的缺省web server缺省使用www-data用户运行，所以，最好使用<command>chown -R www-data.www-data /var/www/wordpress</command>命令把WordPress目录的属主改为www-data。有些程序要求对目录有读写权限，其实就是希望www-data用户对目录有读写权限。
+  </para>
+  <section>
+    <title>参考文档</title>
+    <itemizedlist>
+      <listitem><link xlink:href='http://www.arkinex.com/guides/25/installing-apache2-mysql5-and-php5-on-debian-linux/' xlink:show='new'>Installing Apache2, Mysql5 and PHP5 on Debian Linux</link></listitem>
+    </itemizedlist>
+  </section>
+</article>

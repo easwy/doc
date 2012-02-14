@@ -1,0 +1,17 @@
+<chapter xml:id='backup' xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <sect1>
+    <title>文件备份</title>
+    <para>
+      对某个指定文件夹进行增量备份，可以采用下面的方式。在文件夹中创建一个时间戳文件，用来标记上一次备份的时间。那么此文件夹中所有修改时间比此文件更新的，都应该属于增量备份的内容。用下面的命令可以完成备份：
+    </para>
+    <programlisting>
+find mydir -newer last-backup-time -exec cp {} backup_dir \;
+    </programlisting>
+  </sect1>
+  <sect1>
+    <title>文件系统备份</title>
+    <para>
+      使用dump可以对整个文件系统进行备份。对应的恢复命令是restore。(TODO)
+    </para>
+  </sect1>
+</chapter>

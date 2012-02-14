@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE book [
+<!ENTITY bloghome 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+
+<!ENTITY uri_install 'http://easwy.com/blog/archives/debian-lenny-installation-on-thinkpad-t400/'>
+
+<!ENTITY file_install SYSTEM 'install_lenny_on_thinkpad_t400.xml'>
+<!ENTITY sound SYSTEM 'thinkpad_t400_sound_in_lenny.xml'>
+<!ENTITY wireless SYSTEM 'thinkpad_t400_wireless.xml'>
+<!ENTITY trackpoint SYSTEM 'thinkpad_trackpoint_on_linux.xml'>
+<!ENTITY hibernate_suspend SYSTEM 'thinkpad_t400_hibernate_suspend.xml'>
+]>
+
+<book xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  &file_install;
+  &sound;
+  &wireless;
+  &trackpoint;
+  &hibernate_suspend;
+</book>

@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>为WordPress编写插件</title>
+
+  对于属性值中的国际化字符串，要用xxx转换
+  语言包的文件名
+  Readme文件的标准化
+  打开debug开关来调试
+http://boren.nu/archives/2004/11/01/localizing-plugins-and-themes/
+
+正确使用gettext来翻译Wordpress主题
+http://blog.ipattern.org/archives/12
+
+怎样为WordPress做中文翻译和提供中文语言包
+http://lichao.net/weblog/blogging/38.html
+
+</article>

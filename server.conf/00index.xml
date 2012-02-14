@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf8'?>
+<!DOCTYPE book [
+<!ENTITY fixme "fixme">
+<!ENTITY webserver SYSTEM "webserver.xml">
+<!ENTITY devserver SYSTEM "devserver.xml">
+<!ENTITY security SYSTEM "security.xml">
+<!ENTITY backup SYSTEM "backup.xml">
+]>
+
+<book xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'>
+  <info>
+    <title>服务器安装指南</title>
+    <author>张玉波</author>
+    <author>杨源</author>
+  </info>
+  &webserver;
+  &devserver;
+  &security;
+  &backup;
+</book>

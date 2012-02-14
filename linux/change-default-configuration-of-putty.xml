@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>更改putty的缺省配置</title>  
+  <para>
+    从windows访问Linux的命令行，putty + screen是非常棒的组合。不过正如之前Easwy倍受<link xlink:href='http://easwy.com/blog/archives/disable-vbell-of-screendisable-vbell-of-screen/'>screen闪屏</link>的困扰一样，putty也有一个让Easwy很困扰的问题，那就是无法更改它的缺省配置。
+  </para>
+  <para>
+    每次使用putty命令ssh到一个远程Linux时，都要手动修改一些配置，例如将屏幕卷回的大小由200改成9999，将编码改成UTF-8以避免某些命令的输出乱码，或者缺省使能putty的log功能之类。每次都去修改设置很是麻烦。
+  </para>
+  <para>
+    虽然我们可以保存会话的设置，不过很多时间，我们无法为所有要访问的Linux设备都创建一个会话。很多时候还是希望能够修改缺省配置。
+  </para>
+  <para>
+    今天在网上搜索了一下，终于找到修改putty缺省配置的方法了。这个方法和创建会话其实是一样的。所以下面先介绍创建会话的方法。
+  </para>
+  <para>
+    我们在创建会话时，一般先选择"新建会话"菜单(new session...)，然后会弹出一个窗口，在此窗口中添入你要ssh的Linux主机、端口，然后修改其它类别的配置。完成全部配置修改后，再回到"会话"(session)类别，在"保存的会话"(saved sessions)一栏中添入一个会话的名字，然后点击保存，把这个会话保存下来。
+  </para>
+  <para>
+    这样创建好会话后，以后每次打开putty，直接选择"保存的会话"菜单中的会话，就可直接访问相应的主机。putty会使用你所保存的设置来访问这台主机。
+  </para>
+  <para>
+    现在该讲如何修改putty的缺省配置了。首先还是选择"新建会话"菜单(new session...)，在弹出的窗口中修改你的配置，Easwy是修改了屏幕卷回的行数、编码等内容。完成修改后，回到"会话"类别中，在"保存的会话"(saved sessions)一栏中，添入"Default Settings"，然后点击保存。Yes, That is it!
+  </para>
+  <para>
+    现在你再新打开一个putty窗口，选择"新建会话"，然后看一下putty的设置，应该就是你所保存的缺省配置了。
+  </para>
+  <para>
+    注：由于Easwy没有使用putty中文版，所以上述菜单的中文名可能与putty中文版中的不符，请自行对照操作。
+  </para>
+  <para>
+    更多关于putty和screen的技巧，请关注<link xlink:href='http://easwy.com/blog/'>Easwy</link>的其它文章。
+  </para>
+</article>

@@ -1,0 +1,444 @@
+<chapter xml:id='devserver'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>搭建开发服务器</title>
+  <sect1>
+    <title>安装Debian Lenny系统</title>
+    <para>
+      略。
+    </para>
+  </sect1>
+  <sect1>
+    <title>使用cvs进行版本管理</title>
+    <para>
+      首先安装cvs程序和viewvc脚本：
+    </para>
+    <programlisting>
+aptitude install cvs viewvc
+    </programlisting>
+    <para>
+      我们首先建立一个<emphasis>/var/lib/cvs-repos/</emphasis>目录，这个目录将做为我们版本库的父目录，另外建立一个<emphasis>/var/lock/cvs</emphasis>目录，此目录用于存放cvs的锁文件，这两个目录都允许users组的用户读写：
+    </para>
+    <programlisting>
+mkdir -p /var/lib/cvs-repos
+chgrp users /var/lib/cvs-repos
+chmod 2775 /var/lib/cvs-repos
+mkdir -p /var/lock/cvs
+chgrp users /var/lock/cvs
+chmod 2775 /var/lock/cvs
+    </programlisting>
+    <para>
+      接下来新建一个版本库sandbox，配置<emphasis>/var/lock/cvs</emphasis>目录存放此版本库的锁文件：
+    </para>
+    <programlisting>
+export CVSROOT=/var/lib/cvs-repos/sandbox
+cvs init
+cvs co CVSROOT
+sed -ie 's,#LockDir=.*$,LockDir=/var/lock/cvs,g' CVSROOT/config
+cvs ci -m "Use a lock dir." CVSROOT/config
+echo y | cvs release -d CVSROOT
+    </programlisting>
+    <para>
+      接下来，我们向sandbox版本库中导入一些文件做测试用：
+    </para>
+    <programlisting>
+mkdir -p prj1/test
+cd prj1
+echo foo > foo
+echo bar > test/bar
+cvs import -m "Imported sources." prj1 prj1-orig start
+cd ..
+rm -rf prj1
+    </programlisting>
+    <para>
+      接下来配置viewvc，viewvc是一个CGI程序，允许通过web访问cvs/subversion版本库，修改<emphasis>/etc/viewvc/viewvc.conf</emphasis>文件，在该文件中修改<emphasis>cvs_roots</emphasis>和<emphasis>svn_roots</emphasis>变量的值为空，然后设置<emphasis>root_parents</emphasis>值：
+    </para>
+    <programlisting>
+cvs_roots =
+svn_roots =
+root_parents = /var/lib/cvs-repos : cvs
+    </programlisting>
+    <para>
+      现在，在浏览器地址栏里输入<emphasis>http://localhost/cgi-bin/viewvc.cgi</emphasis>，应该可以看到我们上面所建的prj1版本库。
+    </para>
+    <para>
+      需要说明一点，users组的用户才具有版本库的写权限。
+    </para>
+      <para>
+        可以用下面的方式远程登录cvs服务器：
+      </para>
+      <programlisting>
+export CVS_RSH=ssh
+export CVSROOT=:ext:user1@192.168.1.130:/var/lib/cvs-repos/sandbox
+cvs co prj1
+      </programlisting>
+    <sect2>
+      <title>使用cvsd</title>
+      <para>
+        注：使用cvsd是另外一种可选方式。这种方式或上面的方式选择一种即可。
+      </para>
+      <para>
+        如果想使用pserver的方式登录cvs，可以安装cvsd：
+      </para>
+      <programlisting>
+aptitude install cvsd
+      </programlisting>
+      <para>
+        cvsd在安装时会提示你输入版本库的名字，我输入的是<emphasis>/sandbox</emphasis>。cvsd默认以chroot的方式运行，它被安装到/var/lib/cvsd目录。安装完后，执行下面的命令创建版本库，并添加访问版本库的用户：
+      </para>
+      <programlisting>
+cvs -d /var/lib/cvsd/sandbox init
+chown -R cvsd:cvsd /var/lib/cvsd/sandbox
+cvsd-passwd /var/lib/cvsd/sandbox +user1
+      </programlisting>
+      <para>
+        接下来，就可以访问cvs了：
+      </para>
+      <programlisting>
+export CVSROOT=:pserver:user1@mycvsservername:/sandbox
+cvs login
+      </programlisting>
+      <para>
+        cvsd的配置文件在<emphasis>/etc/cvsd/cvsd.conf</emphasis>，cvsd将以用户cvsd的身份运行。
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>安装Bugzilla</title>
+    <para>
+      使用下面的命令安装Apache、MySQL以及Bugzilla：
+    </para>
+    <programlisting>
+aptitude install apache2 mysql-server mysql-client phpmyadmin bugzilla3
+    </programlisting>
+    <para>
+      在安装过程中，会提示输入一些设置，按照提示输入即可，需要牢记你此处的设置。同时，由安装程序自动创建bugzilla所使用的MySQL数据库。
+    </para>
+    <para>
+      我们可以使用phpmyadmin来帮助我们管理MySQL数据库，在浏览器中输入<emphasis>http://localhost/phpmyadmin/</emphasis>，然后输入安装时设置的root密码即可登录管理。
+    </para>
+    <para>
+      安装完Bugzilla后，在浏览器中输入<emphasis>http://localhost/cgi-bin/bugzilla3/index.cgi</emphasis>，就可以访问Bugzilla，在此输入安装时设置的管理员邮件地址以及密码，就可以登录Bugzilla进行设置。
+    </para>
+    <para>
+      登录后，我们先建立一个sandbox产品，用于我们的测试。另外，增加一个名为root@localhost.localdomain的用户。
+    </para>
+  </sect1>
+  <sect1>
+    <title>整合CVS和Bugzilla</title>
+    <para>
+      整合CVS和Bugzilla的思路是，当修正一个bug准备提交时，在输入的备注中写上所修正的bug ID。当CVS在备注中检测到bug ID时，会将此次修改相关的信息发送邮件到Bugzilla，Bugzilla据此更改此bug的状态。
+    </para>
+    <para>
+      我们将使用scmbug工具来完成整合工作。首先到<link xlink:href='http://files.mkgnu.net/files/scmbug/SCMBUG_RELEASE_0-26-15/'>这里</link>下载scmbug，然后安装scmbug：
+    </para>
+    <programlisting>
+aptitude install liblog-log4perl-perl libnet-ldap-perl docbook-utils
+dpkg -i scmbug-common_0.26.15_all.deb scmbug-server_0.26.15_all.deb scmbug-tools_0.26.15_all.deb
+    </programlisting>
+    <para>
+      安装完后，先修改scmbug-server的配置文件<emphasis>/etc/scmbug/daemon.conf</emphasis>，使用附件中的daemon.conf替换原来的文件，然后把下列参数改成自己的设置：
+    </para>
+    <itemizedlist>
+      <listitem>
+        bugtracker中database_password要改成安装bugzilla时设置的密码。
+      </listitem>
+      <listitem>
+        user_list允许配置cvs中的用户名和bugzilla中用户名的映射关系。在此我选择了mapping_regexes的映射方式，它把cvs的用户名后面加上@localhost.localdomain做为bugzilla的用户名。也就是说，如果在cvs中checkin文件的用户是root，那么在bugzilla中看到的用户就是root@localhost.localdomain。确保在bugzilla此用户存在。
+      </listitem>
+    </itemizedlist>
+    <para>
+      然后启动scmbug-server：
+    </para>
+    <programlisting>
+/etc/init.d/scmbug-server start
+    </programlisting>
+    <para>
+      用下面的命令检查scmbug-server是否启动成功，如果有程序监听在3872端口，说明它已经启动成功了：
+    </para>
+    <programlisting>
+netstat -an |grep 3872
+    </programlisting>
+    <para>
+      先登录Bugzilla，创建一个bug，假设bug ID为1，把这个bug assign给root@localhost.localdomain。接下来，使用root用户执行下面的命令安装scmbug-glue：
+    </para>
+    <programlisting>
+scmbug_install_glue.pl --scm=CVS --product=sandbox \
+--repository=/var/lib/cvs-repos/sandbox --bug=1 --binary-paths=/bin,/usr/bin \
+  --daemon=127.0.0.1
+    </programlisting>
+    <para>
+      会有几次提示，直接输入回车即可。安装完成后，使用下面的命令checkout CVSROOT目录：
+    </para>
+    <programlisting>
+export CVSROOT=/var/lib/cvs-repos/sandbox
+cvs co CVSROOT
+    </programlisting>
+    <para>
+      对<emphasis>CVSROOT/etc/scmbug/glue.conf</emphasis>文件做一些修改：
+    </para>
+    <itemizedlist>
+      <listitem>
+        找到<emphasis>consolidate_cvs_messages</emphasis>，把它的值改为1；
+      </listitem>
+      <listitem>
+        找到<emphasis>presence_of_bug_ids</emphasis>，把它的值改为<emphasis>optional</emphasis>；
+      </listitem>
+      <listitem>
+        找到<emphasis>minimum_log_message_size</emphasis>，把log信息的最短长度改为10个字符，或者把这个选项关上(不建议，这样checkin时不会强制输入日志)；
+      </listitem>
+      <listitem>
+        其它选项根据自己需要调整，参阅scmbug的文档。
+      </listitem>
+    </itemizedlist>
+    <para>
+      修改完后，使用下面的命令checkin：
+    </para>
+    <programlisting>
+cvs ci -m "bug 1:this is a configuration change. it have to be 50 chars for correctly check in."
+    </programlisting>
+    <para>
+      og的长度要超过50字符，不然checkin会失败。checkin成功后，到Bugzilla中查找bug 1，应该可以看到，此时Bug 1下多了一条评论，就是我们上面所输入的日志，还有所修改的文件，类似这样：
+    </para>
+    <blockquote>
+      <para>this is a configuration change.</para>
+      <para>it have to be 50 chars for correctly check in.</para>
+      <para></para>
+      <para></para>
+      <para>Branch:        HEAD</para>
+      <para>Affected files:</para>
+      <para>---------------</para>
+      <para>1.1 --> 1.2 sandbox:CVSROOT/etc/scmbug/glue.conf</para>
+    </blockquote>
+    <para>
+      按上面改过glue.conf后，以后每条日志的长度不需要超过50个字符了。也不需要在checkin时必须输入BUG ID。
+    </para>
+    <sect2>
+      <title>整合实验</title>
+      <para>
+        接下来我们做一个整合的实验。
+      </para>
+      <para>
+        先在Bugzilla中增加一个新的用户，名为user1@localhost.localdomain。在cvs中同样增加一个用户，名为user1，把这个用户加入到users组。
+      </para>
+      <para>
+        在Bugzilla中增加一个Bug，假设bug ID为2，把这个bug assign给user1@localhost.localdomain。
+      </para>
+      <para>
+        以user1登录，输入以下命令，check out我们创建的prj1测试目录：
+      </para>
+      <programlisting>
+export CVSROOT=/var/lib/cvs-repos/sandbox
+cvs co prj1
+      </programlisting>
+      <para>
+        随意修改文件一个文件，然后将这个文件check in，输入下面的日志内容：
+      </para>
+      <blockquote>
+<para>bug 2: this is a cvs/bugzilla integeration test case.</para>
+<para>status 2: resolved fixed</para>
+<para>This will change the bug status from assigned to fixed.</para>
+      </blockquote>
+      <para>
+        check in后，到Bugzilla查看一下bug 2，下面会多这样一条评论：
+      </para>
+      <blockquote>
+<para>this is a cvs/bugzilla integeration test case.</para>
+<para>This will change the bug status from assigned to fixed.</para>
+<para></para>
+<para></para>
+<para>Branch:        HEAD</para>
+<para>Affected files:</para>
+<para>---------------</para>
+<para>1.4 --> 1.5 sandbox:prj1/foo</para>
+      </blockquote>
+      <para>
+        并且bug的状态由ASSIGNED变成了FIXED。
+      </para>
+    </sect2>
+    <sect2>
+      <title>TODO</title>
+      <itemizedlist>
+        <listitem>
+          在Affected files里显示viewvc的链接
+        </listitem>
+        <listitem>
+          配置pserver访问cvs
+        </listitem>
+        <listitem>
+          未测试中文Bug和中文日志
+        </listitem>
+      </itemizedlist>
+    </sect2>
+    <sect2>
+      <title>创建其它版本库</title>
+      <para>
+        上面我建立的是sandbox版本库，用同样的命令也可以创建其它版本库，只需要把sandbox改为你想创建的版本库的名字即可。
+      </para>
+      <para>
+        在bugzilla中也可以增加其它的产品，配合版本库使用。
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>使用Subversion进行版本管理</title>
+    <sect2>
+      <title>安装软件包</title>
+      <para>
+        首先用下面的命令，安装Subversion服务器所需要的软件包：
+      </para>
+      <programlisting>
+aptitude install apache2 apache2-common apache2-utils libapache2-svn openssl ssl-cert subversion subversion-tools
+      </programlisting>
+      <para>
+        如果不需要加密访问版本服务器，则不需要安装openssl和ssl-cert。
+      </para>
+    </sect2>
+    <sect2>
+      <title>配置Apache服务器</title>
+      <para>
+        安装完上述软件包后，缺省Apache服务器应该已经可以用了。在浏览器中输入URL<emphasis>http://127.0.0.1/</emphasis>，应该可以看到缺省主页，上面显示<emphasis>It Works!</emphasis>。
+      </para>
+    </sect2>
+    <sect2>
+      <title>配置Subversion</title>
+      <para>
+        首先新增一个名为svnadmin的用户，用来管理Subversion版本库，使用如下命令：
+      </para>
+      <programlisting>
+addgroup svn
+adduser svnadmin --ingroup svn
+adduser www-data svn 
+      </programlisting>
+      <para>
+        上面的命令首先创建一个svn用户组，然后创建用户svnadmin，并把这个用户放在svn组中。第三个命令则是把www-data用户也加入到svn 组，因为web server是以www-data用户在运行的，要从web server读写版本库，www-data用户必须有版本库的读写权限。 
+      </para>
+      <para>
+        我们以root身份执行下面的命令，创建/var/lib/svnroot目录，并把此目录的拥有者改为svnadmin，允许属于svn组的用户读写此目录：
+      </para>
+      <programlisting>
+mkdir -p /var/lib/svnroot
+chown svnadmin.svn /var/lib/svnroot
+chmod -R ug+rw svn_repos/
+      </programlisting>
+      <para>
+        现在用su – svnadmin命令切换到svnadmin用户，我们要保证svn用户组的所有用户都具备版本库的读写权限，所以修改svnadmin的umask，修改svnadmin用户的~/.bashrc，在文件中加入下面这行：
+      </para>
+      <programlisting>
+umask 002
+      </programlisting>
+      <para>
+        退出再重新登录。这样，由svnadmin创建的版本库，就可以被所有属于svn组的用户读写了。
+      </para>
+      <para>
+        现在创建版本库(由用户svnadmin执行下面的命令)：
+      </para>
+      <programlisting>
+svnadmin create /var/lib/svnroot/myrepos
+      </programlisting>
+      <para>
+        我们用上面的命令创建了一个名为myrepos的版本库。
+      </para>
+    </sect2>
+    <sect2>
+      <title>配置apache2/subversion</title>
+      <para>
+        首先，使能apache2的dav_svn模块：
+      </para>
+      <programlisting>
+a2enmod dav_svn
+      </programlisting>
+      <para>
+        我们使用基本的http认证对访问版本库的所有用户进行认证，只有认证用户才有版本库的访问权。首先为版本库的用户生成密码文件： 
+      </para>
+      <programlisting>
+htpasswd -cm /etc/svnusers easwy
+htpasswd -m /etc/svnusers foobar 
+      </programlisting>
+      <para>
+        上面的命令创建了密码文件/etc/svnusers，并增加两个用户easwy和foobar。
+      </para>
+      <para>
+        然后在<emphasis>/etc/apache2/sites-available/default</emphasis>文件中加入如下语句： 
+      </para>
+      <programlisting>
+&lt;Location /svn&gt;
+DAV svn
+SVNParentPath /var/lib/svnroot
+AuthType Basic
+AuthName "Subversion Auth"
+AuthUserFile /etc/svnusers
+require valid-user
+&lt;/Location&gt; 
+      </programlisting>
+      <para>
+        上面的配置中，对URL中指向/svn的访问请求，使用DAV进行访问。我们把<emphasis>/var/lib/svnroot/</emphasis>做为所有版本库的父目录，在该目录下可以增加多个版本库。另外，使用/etc/svnusers密码文件对用户进行认证。
+      </para>
+      <para>
+        现在，重启apache2服务：
+      </para>
+      <programlisting>
+/etc/init.d/apache2 restart 
+      </programlisting>
+      <para>
+        在浏览器中输入：
+      </para>
+      <programlisting>
+https://127.0.0.1/svn/myrepos
+      </programlisting>
+      <para>
+        然后输入你的用户名和密码，验证通过后，在浏览器中就可以看到版本库了。
+      </para>
+      <para>
+        测试通过后，你就可以使用其它的subversion客户端对版本库进行访问了。 
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <![CDATA[
+    /usr/share/scmbug/lib/Scmbug/Daemon/Process.pm
+    This was reported by Bruno De Nys <brunodenys@gmail.com>. It seems to be
+another request for this bug to be implemented, really.
+
+2) (feature request?) A slight modification in Scmbug should allow one to click
+on the above text to use a tool like ViewCvs to display the content of the
+artifact in CVS.
+
+In my case the solution was to modify Daemon.pm to contain three local
+variables:
+
+my $prefix = "<A HREF=\"http://devtest/ViewCvs/ViewCvs.cgi/";
+my $interfix = "?root=test\" >";
+my $postfix = "</A>";
+
+
+Next,  modify the prepare_log_message() method in the same file: remove the
+line 
+
+$request->{ log_message } .= $file;
+
+
+and replace it by 
+
+    my @filedetails = split(/,/,$file);
+    $request->{ log_message } .= $prefix;
+    $request->{ log_message } .= $filedetails[2];
+    $request->{ log_message } .= $interfix;
+    $request->{ log_message } .= $filedetails[2];
+    $request->{ log_message } .= $postfix;
+
+I am convinced that a more elegant solution should exist but (1) I am not a
+developer and (2) today I read the first few lines of Perl in my life.
+]]>
+  </sect1>
+  <sect1>
+    <title>参考文档</title>
+    <itemizedlist>
+      <listitem>
+        <link xlink:href='http://oss.segetech.com/integration.html' xlink:show='new'>Bugzilla/CVS/Wiki Intergeration</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://bugzilla.mkgnu.net/show_bug.cgi?id=266' xlink:show='new'>Support bz->viewcvs autolinking</link>
+      </listitem>
+    </itemizedlist>
+  </sect1>
+</chapter>

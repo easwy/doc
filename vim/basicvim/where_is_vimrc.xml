@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>vimrc在哪儿?</title>
+  <para>
+    看到有人用"vimrc在哪儿?"来搜索我的博客。觉得有必要讨论一下这个话题。
+  </para>
+  <para>
+    vimrc究竟在哪儿呢？这个问题对一个vim的已入门用户来说，可能实在不是个问题，你可能回答："不就是<emphasis role='bold'>$HOME/.vimrc</emphasis>吗？"。是的，这个答案是正确的，不过不是全部。
+  </para>
+  <para>
+    首先，让我们在Linux下的vim中输入"<command>:version</command>"命令(可能你用的是Linux下的vi命令，不过在大多数Linux中，vi命令打开的就是vim)，我们略过不相关的内容，关于vimrc的显示如下(可能你的显示不完全和这里相同)：
+  </para>
+  <blockquote>
+    <para>VIM - Vi IMproved 7.1 (2007 May 12, compiled Oct 12 2007 10:26:15)</para>
+    <para>Compiled by easwy@easwy</para>
+    <para>...</para>
+    <para>   system vimrc file: "$VIM/vimrc"</para>
+    <para>     user vimrc file: "$HOME/.vimrc"</para>
+    <para>      user exrc file: "$HOME/.exrc"</para>
+    <para>  system gvimrc file: "$VIM/gvimrc"</para>
+    <para>    user gvimrc file: "$HOME/.gvimrc"</para>
+    <para>...</para>
+  </blockquote>
+  <para>
+    在上面，我们看到列出了几个vimrc文件，有一个系统的vimrc文件，还有用户的vimrc文件，以及系统和用户gvimrc文件。出于和vi兼容的目的，vim也支持vi的exrc配置文件。
+  </para>
+  <para>
+    我们在windows系统中输入"<command>:version</command>"命令，可以看到如下输出(我使用的是Bram预编译vim 7.0)：
+  </para>
+  <blockquote>
+    <para>VIM - Vi IMproved 7.0 (2006 May 7, compiled May  7 2006 16:23:43)</para>
+    <para>MS-Windows 32 bit GUI version with OLE support</para>
+    <para>Compiled by Bram@KIBAALE</para>
+    <para>...</para>
+    <para>   system vimrc file: "$VIM\vimrc"</para>
+    <para>     user vimrc file: "$HOME\_vimrc"</para>
+    <para> 2nd user vimrc file: "$VIM\_vimrc"</para>
+    <para>      user exrc file: "$HOME\_exrc"</para>
+    <para>  2nd user exrc file: "$VIM\_exrc"</para>
+    <para>  system gvimrc file: "$VIM\gvimrc"</para>
+    <para>    user gvimrc file: "$HOME\_gvimrc"</para>
+    <para>2nd user gvimrc file: "$VIM\_gvimrc"</para>
+    <para>...</para>
+  </blockquote>
+  <para>
+    比较一下上面两个<command>:version</command>命令的输出，我们发现：
+  </para>
+  <itemizedlist>
+    <listitem>
+      在windows下，有两个可选的用户vimrc文件，一个是$HOME\_vimrc，另外一个是$VIM\_vimrc。vim启动时，会先尝试执行系统的vimrc文件(通常此文件不存在)，然后将按照上述顺序查找用户vimrc，并执行所找到的第一个用户vimrc中的命令，忽略其余的用户vimrc。
+    </listitem>
+    <listitem>
+      在Linux下使用的vimrc文件名为.vimrc，而在windows下因为不支持以点(.)开头的文件名，vimrc文件的名字使用_vimrc。不过，在Linux下，如果未找到名为.vimrc的文件，也会尝试查找名为_vimrc的文件；而在windows下也是这样，只不过查找顺序颠倒一下，如果未找到名为_vimrc的文件，会去查找.vimrc。
+    </listitem>
+    <listitem>
+      从这里可以看出，vimrc的执行先于gvimrc。所以我们可以把全部vim配置命令都放在vimrc中，不需要用gvimrc。
+    </listitem>
+  </itemizedlist>
+  <para>
+    对于vim初学者，如果不知道$HOME或者$VIM具体是哪个目录，可以在vim中用下面的命令查看：
+  </para>
+  <programlisting>
+:echo $VIM
+:echo $HOME </programlisting>
+  <para>
+    在windows版本的vim安装时，缺省会安装一个$VIM/_vimrc的，你可以直接修改这个_vimrc，加入你自己的配置(使用<command>:e $VIM/_vimrc</command>可以打开此文件。或者，你也可以在windows中增加一个名为HOME的环境变量(控制面板-&gt;系统--&gt;高级--&gt;环境变量)，然后把你的vimrc放在HOME环境变量所指定的目录中。从上面<command>:version</command>命令的输出看到，$HOME/_vimrc如果存在，就会执行这个文件中的配置，而跳过$VIM/_vimrc。
+  </para>
+  <para>
+    如果使用"<command>vim -u filename</command>"命令来启动vim，则会用你指定的<emphasis>filename</emphasis>作为vim的配置文件(在调试你的vimrc时有用)；如果用"<command>vim -u NORC</command>"命令启动vim，则不读取任何vimrc文件：当你怀疑你的vimrc配置有问题时，可以用这种方式跳过vimrc的执行。
+  </para>
+  <para>
+    更多关于vimrc的配置，参见我的<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-catalog/'>vim使用进阶</link>系列文章。
+  </para>
+</article>

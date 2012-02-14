@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>本月流量超限的原因分析</title>
+  <para>
+    本月<link xlink:href='http://easwy.com/'>易水源网站</link>的流量超过限制，导致网站在几天内不能访问，由此带来的不便，向大家表示歉意。
+  </para>
+  <para>
+    在流量超限后，易水源的空间提供商<link xlink:href='http://okzz.taobao.com/?asker=wangwang&amp;wwdialog=tbdasale' xlink:show='new'>jiangzhanyong</link>主动给本站增加了两次流量，并且在Easwy升级了套餐后，又临时给本站增加了900M的带宽，在此也对他表示感谢。
+  </para>
+  <para>
+    易水源目前的日访问IP数在500上下，8月份之前的月流量不到5G，为什么到了8月以后，流量一下子直逼10G?
+  </para>
+  <para>
+    最初，Easwy以为流量超限的原因是易水论坛受到攻击，因此将易水论坛暂时关闭。但随后发现，本站流量继续以很高的速率在消耗。因此花了一些时间对访问日志进行了分析，最终找到了罪魁祸首：原来是一个来自阿里巴巴的IP地址(121.0.29.x)每5秒取一次<link xlink:href='http://easwy.com/blog/feed/'>易水博客的feed</link>，这样计算下来，它每天差不多要消耗本站1G左右的流量，而易水博客整月的流量也不过是6G，哪里经受的起这样的访问。
+  </para>
+  <para>
+    Easwy将这个IP地址在服务器端屏蔽后，易水源的访问流量立刻直线下降，看来的确是它的原因。可没过多久，Easwy发现另外一个来自阿里巴巴的网址又开始了5秒一次的疯狂抓取，流量消耗的速度再一次攀升。这一次，<link xlink:href='http://easwy.com/' xlink:show='new'>Easwy</link>干脆把阿里巴巴所属的这个IP段都做了屏蔽，这才使网站恢复正常。
+  </para>
+  <para>
+    Easwy猜测，这应该不属于恶意的攻击，而是阿里巴巴的某个服务在获得易水博客的更新，但让Easwy不解的是，易水博客本身并不是一个更新很频繁的网站，为什么使用5秒的间隔来检查更新？对阿里巴巴的这种行为表示强烈的愤慨和谴责!如果它继续这种无赖的行为，本站将永久将其屏蔽。
+  </para>
+  <para>
+    另外，因<link xlink:href='http://easwy.com/forum/' xlink:show='new'>易水论坛</link>需要进行一些调整，重开时间待定。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>易水博客</link>上的其它文章。
+  </para>
+</article>

@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>为vim自动更新tag文件和cscope数据库</title>
+  <para>
+    xyf问：
+  </para>
+  <blockquote>
+    <para>
+      请教大哥一个ctags或cscope使用的问题，我的开发工程很大，有上百万行代码，
+    </para>
+    <para>
+      之前使用sourceinsight，每次编辑代码，会自动更新函数、变量等符号信息，使用vim替换sourceinsight后，每次修改源代码后，如果不手动更新一下tag和cscope.out，相关的跳转就会不正确了，但是更新的话又要很久，请问有没有增量更新tag或cscope.out，或者你是如何解决这个棘手的问题的？谢谢！
+    </para>
+  </blockquote>
+  <para>
+    这个问题我在写<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-use-ctags-tag-file/' xlink:show='new'>vim使用进阶: 使用标签(tag)文件</link>也想过，当时在网上查找了很多资料，不过并没有找到一个好的解决方法。后来在开发的过程中，实时更新tag文件和cscope数据库的需求并不强烈，也就放下了。
+  </para>
+  <para>
+    刚好xyf问这个问题，我把当时我的一些想法写出来，供大家参考。这些都只是初步的想法，没有经过实际的验证。有兴趣的朋友可以试一下，把试验结果反馈给我。
+  </para>
+  <para>
+    我以Linux系统为例，在windows上应该也能够实现(借助cygwin，以及windows的计划任务)。
+  </para>
+  <para>
+    其实source insight自动更新函数、变量等信息都是在后台自动进行的，那么我们也可以考虑在后台自动更新tag文件和cscope数据库。
+  </para>
+  <para>
+    在Linux下，我们可以利用cron守护进程来完成后台自动更新的操作。思路是，让cron进程每隔15分钟(或者更短)扫描一下tag文件和cscope数据创建后发生改变的项目文件，然后为这些项目文件单独生成一个tag文件和cscope数据库。我们知道，在vi里我们可以同时添加多个tag文件和cscope数据库，我们只要把发生改变文件的tags和cscope数据库加到vim里，应该就可以查找、跳转新增的函数了。不过这样做有一个缺点：就是那些修改过的文件，会在vim的tag文件和cscope数据库中出现两次(在原有tag文件中以及新生成的tag文件中)，也许会造成使用的不便。
+  </para>
+  <para>
+    另外，还可以在稍长的时间里(比如一小时)由cron自动为项目中全部文件生成一次tag文件和cscope数据库，并把修改文件的tags和cscope数据库清空。如果担心为全部项目生成tag文件太耗系统资源的话，可以使用Linux中的at守护进程来生成全部文件的tag和cscops数据库，at服务只在系统空闲时才会运行。
+  </para>
+  <para>
+    下面给一个demo脚本，来自动查找项目中最近改变的文件，并为其生成tag文件和cscope数据库(未经过测试):
+  </para>
+  <programlisting>
+#! /bin/sh
+
+# This demo script will find the modified files in your project,
+# and generate a ctags file and cscope database for these files.
+# This script is NOT tested yet!
+# by Easwy Yang, 2009/03/29
+
+# vars
+PRJ_DIR=/home/easwy/prjtest
+PRJ_TAG_FILE=${PRJ_DIR}/tags
+PRJ_MOD_TAG_FILE=${PRJ_DIR}/newtags
+PRJ_MOD_CSCOPE_FILE=${PRJ_DIR}/newcscope.out
+MOD_FILES=${PRJ_DIR}/mod_files
+
+FIND=/usr/bin/find
+CTAGS=/usr/bin/ctags
+CSCOPE=/usr/bin/cscope
+
+# find modified files
+# you can modify this command to exclude the object files, etc.
+${FIND} ${PRJ_DIR} -type f -newer ${PRJ_TAG_FILE} > ${MOD_FILES}
+
+# generate tag file
+${CTAGS} -f${PRJ_MOD_TAG_FILE} -L${MOD_FILES}
+${CSCOPE} -bq -f${PRJ_MOD_CSCOPE_FILE} -i${MOD_FILES} </programlisting>
+  <para>
+    在这个脚本里，/home/easwy/prjtest是项目所在的目录，tags文件则是参考文件，在项目目录中修改日期比tags文件更新的文件都会被find命令查找出来，并且为之生成tag文件和cscope数据库。
+  </para>
+  <para>
+    希望对大家有所帮助，更希望这一块砖头，能引出更好的玉。
+  </para>
+</article>

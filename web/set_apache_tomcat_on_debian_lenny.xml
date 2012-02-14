@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在Debian Lenny上安装Apache Tomcat</title>
+  <para>
+    以下主要参考了文章<link xlink:href='http://www.debianadmin.com/how-to-setup-apache-tomcat-55-on-debian-etch.html' xlink:show='new'>How to setup Apache Tomcat 5.5 on Debian Etch</link>。
+  </para>
+  <para>
+    首先，需要安装java JDK。可以直接到<link xlink:href='http://www.sun.com/' xlink:show='new'>sun的网站</link>上下载(现在应该叫Oracle了，最近这些天的事，Sigh!)，也可以在Debian仓库中下载。本文介绍由Debian仓库下载的方法。
+  </para>
+  <para>
+    打开<emphasis>/etc/apt/sources.list</emphasis>文件，在此文件中加入下面的源：
+  </para>
+  <programlisting>
+# for sun-java packages in unstable
+deb http://ftp.debian.org/debian/ unstable non-free
+deb-src http://ftp.debian.org/debian/ unstable non-free </programlisting>
+  <para>
+    保存并退出，然后用下面的命令更新一下源：
+  </para>
+  <programlisting>
+aptitude update </programlisting>
+  <para>
+    然后就可以下载java JDK6了：
+  </para>
+  <programlisting>
+aptitude install sun-java6-jdk </programlisting>
+  <para>
+    关于Apache web server的安装方法就不再描述了，可以参考文章<link xlink:href='http://easwy.com/blog/archives/install_apache_php_mysql_wordpress_on_debian_lenny/'>在Debian Lenny上安装Apache2，PHP5，MySQL5, WordPress…</link>。接下来我们安装tomcat：
+  </para>
+  <programlisting>
+aptitude install tomcat5.5 tomcat5.5-admin tomcat5.5-webapps </programlisting>
+  <para>
+    安装完后，在浏览器中输入<emphasis role='bold'>http://localhost:8180/</emphasis>，如果你能看到Apache Tomcat/5.5的页面，说明你的tomcat已经安装好了。我在输入上述地址时，有时会出现访问异常，不过刷新一下又可以访问了，还不清楚是什么原因。
+  </para>
+  <para>
+    接下来，我们需要一个用户，使之具有admin和manager权限，在本例中我们把admin和manager权限赋予用户tomcat。
+  </para>
+  <para>
+    首先停用tomcat服务：
+  </para>
+  <programlisting>
+/etc/init.d/tomcat5.5 stop </programlisting>
+  <para>
+    接下来编辑文件<emphasis> /var/lib/tomcat5.5/conf/tomcat-users.xml </emphasis>，修改文件内容如下：
+  </para>
+  <programlisting>
+    <![CDATA[
+<?xml version='1.0' encoding='utf-8'?>
+<tomcat-users>
+  <role rolename="admin"/>
+  <role rolename="manager"/>
+  <role rolename="tomcat"/>
+  <user username="tomcat" password=”tomcatpassword” roles="tomcat,admin,manager"/>
+</tomcat-users>
+      ]]> </programlisting>
+  <para>
+    保存退出后，重新启动tomcat服务：
+  </para>
+  <programlisting>
+/etc/init.d/tomcat5.5 start </programlisting>
+  <para>
+    现在，就可以访问<emphasis role='bold'>http://localhost:8180/manager/html</emphasis>来管理tomcat了，用户名为tomcat，密码为tomcatpassword。
+  </para>
+</article>

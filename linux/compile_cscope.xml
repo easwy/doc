@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>如何将cscope安装到指定目录</title>
+  <para>
+    登录博客，看到<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-cscope/#comment-313'>joecgs</link>问：
+  </para>
+  <blockquote>
+    easwy:您好，感谢您的这一系列的文章，帮助我很快地熟悉使用vim，谢谢。
+    我现在是用远程的shell来写程序，服务器没有安装cscope，而又不能获取root权限。所以，我想能不能通过和安装vim一样的方式来安装cscope？
+  </blockquote>
+  <para>
+    随着Linux的普及，使用Linux进行软件开发的人也越来越多。而大多数公司都采用这种方式：提供一台高性能的中央服务器做为开发编译服务器，每个人登录这台服务器进行开发编译。在这种情况下，用户通常没有root权限，怎么安装应用程序呢？
+  </para>
+  <para>
+    其实，Linux作为老牌多用户操作系统UNIX的一个分支，这当然不是一个问题。多用户操作系统中，允许用户根据自己的喜好安装软件，是再自然不过的事情了。
+  </para>
+  <para>
+    做法也很简单，UNIX的程序，一般都使用autoconf来自动检测安装环境完成配置，然后再进行编译、安装，这三步就是俗称的三板斧。
+  </para>
+  <para>
+    在使用autoconf进行配置时，可以使用参数来更改缺省的配置，比如，通过使用<command>--prefix</command>参数，就可以改变程序的安装目录，还有一些其它参数，允许用户打开或关闭某些特性。每个程序所支持的参数不一定相同，可以通过<command>./configure --help</command>命令查看程序支持哪些参数。
+  </para>
+  <para>
+    回到joecgs的问题上来，如果想把cscope安装到自己的HOME目录下，其实只需要在configure时，指定<command>--prefix=$HOME</command>就可以了，全部命令如下：
+  </para>
+  <programlisting>
+cd cscope-15.7
+./configure --prefix=$HOME
+make
+make install </programlisting>
+  <para>
+    如果你细心观察一下，我们在<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-vim-gdb-vimgdb/'>编译vim</link>时，也可以指定<command>--prefix</command>参数。其实，对绝大多数支持autoconf的程序来说，都可以用这一参数来指定你程序的安装位置，不信你试试!
+  </para>
+</article>

@@ -1,0 +1,65 @@
+<chapter xml:id='trackpoint'
+    xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在Linux中使用thinkpad的小红点+中键</title>
+  <para>
+    <link xlink:href='http://easwy.com/blog/archives/thinkpad_t400_wireless_driver_for_debian_lenny/' xlink:show='new'>安装完无线驱动</link>以后，就琢磨怎么在Debian Lenny中把Thinkpad的小红点用起来。
+  </para>
+  <para>
+    Thinkpad的小红点应该说是小黑的的特色之一了，用的熟了工作效率不比用鼠标差。用其它的本本我通常是用触摸板，感觉不是很方便，尤其是在上下滚屏时，要用两只手配合。而小黑的小红点+中键，只用一只手就能方便的上下左右滚屏，非常方便。
+  </para>
+  <para>
+    从设计来看，黑色键盘中间一个红色的小点，最是吸引人的目光。记得我的小黑刚搬回来的时候，我女儿就盯上了这个红色的小点，一直想用手指去摸去抠，被我制止了。我装完系统就关机出去了，第二天回家打开小黑一看，怎么小红点没了？一想，肯定是小家伙干的！最后，在垃圾桶里找回了心爱的小红点。看来是小家伙不小心把它抠了下来，又不会装回去，就扔到垃圾桶去了。后来我就教她怎么用这个小红点控制光标的方向，这以后，她就没再干过抠红点的事。这算是和小红点有关的一件趣事吧。
+  </para>
+  <para>
+    小红点的中键按下时，再控制红点的方向时，就能够实现八个方向的滚屏。下图是我在<link xlink:href='http://blog.10ninox.com/2007/12/10/whats-so-good-about-trackpoint/' xlink:show='new'>这个网站</link>看到的，很形象的表示了中键的用法(感谢这副图的作者)。
+  </para>
+  <informalfigure>
+    <mediaobject>
+      <alt>thinkpad小红点+中键的作用</alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/04/thinkpad_trackpoint.gif' align='center'/>
+      </imageobject>
+    </mediaobject>
+  </informalfigure>
+  <para>
+    在windows里，联想OEM的windows已经自动支持小红点的中键了。，但在Linux里还需要配置一下。
+  </para>
+  <para>
+    我们先执行命令<command>dmidecode -t 21</command>，这个命令会输出小黑内置的鼠标设备的信息，我们看到输出如下：
+  </para>
+  <screen>
+# dmidecode 2.9
+SMBIOS 2.4 present.
+
+Handle 0x0032, DMI type 21, 7 bytes
+Built-in Pointing Device
+	Type: Track Point
+	Interface: PS/2
+	Buttons: 3
+
+Handle 0x0033, DMI type 21, 7 bytes
+Built-in Pointing Device
+	Type: Touch Pad
+	Interface: PS/2
+	Buttons: 0
+  </screen>
+  <para>
+    Linux已经自动识别出两个内置鼠标设备：Track Point (小红点)和Touch Pad (触摸板)。实际上小红点和触摸板都已经可以使用，只是小红点的中键在Linux缺省未打开，需要改一下配置。
+  </para>
+  <para>
+    配置很简单，把文章<link xlink:href='http://wiki.debian.org/InstallingDebianOn/Thinkpad/Trackpoint' xlink:show='new'>Trackpoint on Lenny</link>里的这段话加到你的xorg.conf中就可以了。打开/etc/X11/xorg.conf，在此文件中找到"Configured Mouse"这一节，然后加下下面三行：
+  </para>
+  <programlisting>
+Section "InputDevice"
+        Identifier      "Configured Mouse"
+        Driver          "mouse"
+
+        # 加入下面三行
+        Option          "EmulateWheel"          "true"
+        Option          "EmulateWheelTimeOut"   "200"
+        Option          "EmulateWheelButton"    "2"
+EndSection </programlisting>
+  <para>
+    重新登录X window，再试试小红点+中键，是不是好用了？
+  </para>
+</chapter>

@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook' version='5.0'
+  xmlns:xlink='http://www.w3.org/1999/xlink' xml:lang='zh-CN'>
+  <para>
+    在<link xlink:href='http://easwy.com/blog/archives/vim-tips-advanced-substitute-1/' xlink:show='new'>上一篇文章</link>中，我们使用了两条VIM替换命令，下面详细剖析一下这两条命令。
+  </para>
+  <para>
+    以第一条命令为例，第二条命令和第一条命令类似：
+  </para>
+  <programlisting>
+:'&lt;,'&gt;s/BIT_MASK_\zs\d*\ze/\=line(".") - line("'&lt;") + 1 </programlisting>
+  <para>
+    这条命令在我们选中的区域内进行替换，查找以"BIT_MASK_"开头，后面跟任意多个数字的字符串，并把匹配位置放在数字上，然后使用后面表达式计算出来的数字替换这些匹配的数字。
+  </para>
+  <para>
+    下面是这条命令中每个元素的含义：
+  </para>
+  <programlisting>
+'&lt;,'&gt;        我们所选中的区域 (<command>:help '&lt;</command>，<command>:help '&gt;</command> )
+s            在选中的区域中进行替换 (<command>:help :s</command> )
+\zs          指明匹配由此开始 (<command>:help /\zs</command> )
+\d*          查找任意位数的数字 (<command>:help /\d</command> )
+\ze          指明匹配到此为止 (<command>:help /\ze</command> )
+\=           指明后面是一个表达式 (<command>:help :s\=</command> )
+line(".")    当前光标所在行的行号 (<command>:help line()</command> )
+line("'&lt;")   我们所选区域中第一行的行号 (<command>:help line()</command> ) </programlisting>
+  <para>
+    '&lt;和'&gt;是我们使用了"v"，"V"命令选中一个visual区域后，VIM设置的标记，分别用来标识visual区域的开始和结束。
+  </para>
+  <para>
+    "BIT_MASK_\zs\d*\ze"是一个正则表达式，用来查找以"BIT_MASK_"开头，后面跟任意多个数字的字符串。其中"\zs"、"\ze"用来指定匹配的开始和结束位置，因为我们只打算替换"BIT_MASK_0"中的数字，所以在查找时只把匹配区域置在数字上。
+  </para>
+  <para>
+    由于我们的替换操作要把不同行的数字替换成不同的值，所以在这里需要使用一个表达式来计算出替换后的值。当":s"命令的替换字符串是以"\="开头时，表明使用一个表达式计算的结果进行替换。我们这里的表达式就是"line(".") - line("'&lt;") + 1"，其中"line()"函数用来获得行号，它可以获得当前行的行号，以及指定的标记（mark）所在的行号。"line(".")"用来获得当前光标所在行的行号，"line("‘&lt;")"则用来获得"'&lt;"标记所在行的行号。这两个行号的差加上1就是我们想替换的值。
+  </para>
+  <para>
+    <link xlink:href='http://easwy.com/blog/archives/vim-tips-advanced-substitute-3/' xlink:show='new'>下一篇文章</link>将介绍另外一种方法来完成同样的功能。
+  </para>
+  <section>[参考文档]</section>
+  <itemizedlist>
+    <listitem>
+      VIM邮件列表，2007/01/29， 邮件标题："replace with a number sequence"
+    </listitem>
+  </itemizedlist>
+</article>

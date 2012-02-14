@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>使用Redirection插件要加小心</title>
+  <para>
+    刚刚登录google网站管理员工具时，发现在Sitemap中有一个警告，警告如下：
+  </para>
+  <table frame='none'>
+    <title>Sitemap 错误和警告</title>
+    <tgroup cols='3' align='left' colsep='1' rowsep='1'>
+      <colspec colname='c1'/>
+      <colspec colname='c2'/>
+      <colspec colname='c3'/>
+      <thead>
+        <row>
+          <entry>状态</entry>
+          <entry namest='c2' nameend='c3'>详细信息</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry><para><emphasis role='bold'>网址无法追踪</emphasis></para></entry>
+          <entry><para><emphasis role='bold'>HTTP 错误：</emphasis></para></entry>
+          <entry>301 （永久转移）</entry>
+        </row>
+        <row>
+          <entry morerows='1'>当我们从您的 Sitemap 中测试网址实例时，我们发现有些网址重定向至其它位置。我们建议让您的 Sitemap 包含指向最终目的地（重定向目标）的网址，而不是包含重定向的其它网址。</entry>
+          <entry><para><emphasis role='bold'>URL：</emphasis></para></entry>
+          <entry><para><link xlink:href='http://easwy.com/blog/archives/xlink-href-can-not-generate-html-hyperlink/' xlink:show='new'/></para></entry>
+        </row>
+        <row>
+          <entry><para><emphasis role='bold'>检测到问题的日期：</emphasis></para></entry>
+          <entry>2009-2-25</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </table>
+  <para>
+    尝试用firefox打开google给出的链接，出现了404 not found错误。再仔细看一下地址栏的URL链接，发现链接由
+  </para>
+  <para>
+    http://easwy.com/blog/archives/xlink-href-can-not-generate<emphasis role='bold'>-html</emphasis>-hyperlink/
+  </para>
+  <para>
+    变成
+  </para>
+  <para>
+    http://easwy.com/blog/archives/xlink-href-can-not-generate<emphasis role='bold'>/</emphasis>-hyperlink/
+  </para>
+  <para>
+    注意显示为粗体的部分。也就是说，在URL网址中的"<emphasis role='bold'>-html</emphasis>"被置换成"<emphasis role='bold'>/</emphasis>"，难怪Google提示无法打开网址。
+  </para>
+  <para>
+    既然google提示网址被301永久重定向了，会不会和我用的<link xlink:href='http://www.deanlee.cn/wordpress/permalinks-migration-plugin/' xlink:show='new'>Dean's Permalinks Migration插件</link>或<link xlink:href='http://urbangiraffe.com/plugins/redirection/' xlink:show='new'>Redirection插件</link>有关呢？只有这两个插件会301永久定向我的博客链接。
+  </para>
+  <para>
+    登录wordpress后台，对这两个插件进行了检查，应该不是Dean's Permalinks Migration插件，它的设置很简单，只是把我旧的永久链接结构，重定向新的永久链接结构(见<link xlink:href='http://easwy.com/blog/archives/useful-wordpress-permalinks-plugin/' xlink:show='new'>更改永久链接结构所需的插件</link>一文)，不会导致这个问题。那就只剩下Redirection插件了。仔细查看之下，果然发现了问题。
+  </para>
+  <para>
+    我创建了一条正则表达式(regex)重定向规则，把"<emphasis role='bold'>/blog/archives/([a-zA-Z0-9-]*).html</emphasis>"全部重定向为"<emphasis role='bold'>/blog/archives/$1/</emphasis>"。但是正则表达式的写法有问题，在正则表达式中，"<emphasis role='bold'>.</emphasis>"代表任意字符，上述表达式中的"<emphasis role='bold'>.html</emphasis>"会匹配到"<emphasis role='bold'>-html</emphasis>"，所以就导致301重定向了。而重定向后的网址是不存在的，所以才会出现404 not found错误。
+  </para>
+  <para>
+    问题的原因找到了，解决办法也就简单了，把regex表达的规则改为"<emphasis role='bold'>/blog/archives/([a-zA-Z0-9-]*)\.html</emphasis>"，对"<emphasis role='bold'>.</emphasis>"进行一下转义，OK，问题解决了！
+  </para>
+  <para>
+    现在觉得，Redirection插件功能确实强大，但正因为它太强大了，一旦设置不好，就会导致很奇怪的问题。看来用的时候要加小心。
+  </para>
+  <para><emphasis role='bold'>原创文章，转载请注明：</emphasis>转载自<link xlink:href="http://easwy.com/blog/" xlink:show='new'>Easwy的博客</link> [  <link xlink:href="http://easwy.com/blog/" xlink:show="new">http://easwy.com/blog/</link> ]</para>
+  <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='http://easwy.com/blog/archives/an-config-error-about-redirection-plugin/'/></para>
+</article>

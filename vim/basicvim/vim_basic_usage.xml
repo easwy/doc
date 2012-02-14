@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='utf8'?>
+<!DOCTYPE book [
+<!ENTITY uri_blog 'http://easwy.com/blog/'>
+<!ENTITY uri_vimad 'http://easwy.com/blog/archives/advanced-vim-skills-catalog/'>
+<!ENTITY uri_where_is_vimrc 'http://easwy.com/blog/archives/where-is-vimrc/'>
+
+<!ENTITY tocatalog SYSTEM 'tocatalog.xml'>
+<!ENTITY where_is_vimrc SYSTEM 'where_is_vimrc.xml'>
+]>
+
+<book xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <bookinfo>
+    <title>vi/vim使用入门</title>
+    <subtitle>使用vim提高你的文本编辑效率</subtitle>
+    <copyright>
+      <year>2007</year>
+      <year>2008</year>
+      <year>2009</year>
+      <year>2010</year>
+    </copyright>
+    <author>
+      <firstname>Easwy</firstname>
+      <surname>Yang</surname>
+      <affiliation>
+      <address> <otheraddr> <link xlink:href='&uri_blog;'/> </otheraddr> </address>
+      </affiliation>
+    </author>
+    <legalnotice>
+      <para>本文采用<link xlink:href='http://creativecommons.org/licenses/by-nc-sa/2.5/cn/' xlink:show='new'>署名-非商业性使用-相同方式共享</link>的创作共用许可协议发布，转载本文必须也遵循署名-非商业性使用-相同方式共享。 </para>
+      <para>转载请注明：<emphasis role='bold'>转载自<link xlink:href='&uri_blog;' xlink:show='new'>Easwy的博客</link> [  <link xlink:href='&uri_blog;' xlink:show="new"/> ] </emphasis></para>
+    </legalnotice>
+  </bookinfo> 
+  <title>vi/vim使用入门: 目录</title>
+  <chapter xml:id='catalog'>
+    <title>目录</title>
+    <para>
+      我从2006年开始写<link xlink:href='&uri_vimad;'>vi/vim使用进阶</link>系列文章(原名为使用vim开发软件项目)，到现在三年多的时间了，期间断断续续。<link xlink:href='&uri_vimad;'>vim使用进阶</link>写给有一定vim基础的人，在那一系列文章中，我把自己使用vim的经验介绍了一下，让读者可以依从文中指引，搭建一个属于自己的vim编辑器。虽然国内真正的vi/vim用户不多，不过那一系列文章还是得到了很多关注和反馈，在此谢谢大家。
+    </para>
+    <para>
+      现在，很多人开始使用Linux，不管是自愿也好，还是被迫也罢，总之，不得不在Linux环境下选择一种编辑器。vi/vim作为类Unix系统下的两大流行编辑器之一(另一个为EMACS)，因为被很多Linux发行版内置为缺省编辑器，所以成了新Linux用户的首选编辑器，当然这个首选很大程度上是因为很多新Linux用户还不知道怎么设置自己的缺省编辑器。
+    </para>
+    <para>
+      不过由于vi/vim是一种有模式编辑器，使得众多只有Windows背景的用户极为不适应，另外vi/vim的学习曲线太长，也使很多人视之为畏途。种种原因，导致使用vim的初用者很多，但真正喜爱并坚持下来的用户很少。
+    </para>
+    <para>
+      本系列文章，主要写给初次接触vi/vim的人，希望能帮他们更快一步经历"能用-会用-熟练-自我提升"的过程，如果能有更多人由此了解vim、喜爱vim，它的目的也达到了。
+    </para>
+    <para>
+      出于此目的，本系列文章尽量满足以下特点：
+    </para>
+    <itemizedlist>
+      <listitem>
+        浅显易用
+      </listitem>
+      <listitem>
+        短小精悍
+      </listitem>
+      <listitem>
+        主题单一
+      </listitem>
+      <listitem>
+        贴近实用
+      </listitem>
+    </itemizedlist>
+    <para>
+      也正因为上述特点，这一系列文章不适合已经具备vi/vim入门基础的读者，上述读者可以参阅我的<link xlink:href='&uri_vimad;'>vi/vim使用进阶</link>系列文章，或自行阅读vim的帮助手册。
+    </para>
+    <para>
+      另外，由于vim的初学者并不了解vi与vim的区别，二者经常混用。所以在本系列文章也不特别加以区分，除非特别说明，否则文中所说的vi，一般都指代vim。
+    </para>
+    <para> <emphasis role='bold'>[ 目录 ]</emphasis> </para>
+    <itemizedlist>
+      <listitem>
+        <link xlink:href=''>vi/vim使用入门: 初用vi必须知道的五条命令</link>
+        <para>
+          未完待续。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href=''>vi/vim使用入门: vi的前世今生</link>
+        <para>
+          未完待续。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_where_is_vimrc;'>vi/vim使用入门: vimrc在哪儿？</link>
+        <para>
+          本文介绍了你在哪里可以找到你的vimrc文件。
+        </para>
+      </listitem>
+      <!--
+      <listitem>
+        <link xlink:href=''>vi/vim使用入门: </link>
+        <para>
+        </para>
+      </listitem>
+      -->
+    </itemizedlist>
+  </chapter>
+  &where_is_vimrc;
+</book>

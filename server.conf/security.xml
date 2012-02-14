@@ -1,0 +1,26 @@
+<chapter xml:id='security'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <sect1>
+    <title>文件系统完整性检查</title>
+    <para>
+      
+    </para>
+  </sect1>
+  <sect1>
+    <title>后门检查</title>
+    <para>
+      检查文件系统中具有SUID/SGID的程序：
+    </para>
+    <programinglist>
+find / -type f \( -perm -4000 -o -perm -2000 \) -ls
+    </programinglist>
+  </sect1>
+  <sect1>
+    <title>参考文档</title>
+    <itemizedlist>
+      <listitem>
+        <link xlink:href='http://blog.chinaitlab.com/html/02/1597402-166751.html' xlink:show='new'>使用Tripwire保护Linux文件系统</link>
+      </listitem>
+    </itemizedlist>
+  </sect1>
+</chapter>

@@ -1,0 +1,201 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook' version='5.0'
+  xml:lang='zh-CN' xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在Debian Lenny中配置中文支持</title> 
+  <para>
+    <link xlink:href='http://easwy.com/blog/archives/thinkpad_trackpoint_on_linux/' xlink:show='new'>红点驱动</link>装好以后，就开始对中文进行配置。我配置中文按照如下步骤。
+  </para>
+  <section>
+    <title>产生语系 (locale) </title>
+    <para>
+      使用英文界面安装完后，系统所使用的locale是en_US.utf8，我们需要生成中文的locale。
+    </para>
+    <para>
+      如果没有安装locales，首先需要安装locales程序，Debian现在推荐使用aptitude来安装程序，它能比apt-get更好的解决软件包之间的冲突。
+    </para>
+    <programlisting>
+# aptitude install locales </programlisting>
+    <para>
+      安装完locales后，就重新选择Debian所使用的语系，命令是：
+    </para>
+    <programlisting>
+# dpkg-reconfigure locales </programlisting>
+    <para>
+      我选择了下面的locale：
+    </para>
+    <itemizedlist>
+      <listitem>en_US.ISO-8859-1</listitem>
+      <listitem>en_US.UTF-8</listitem>
+      <listitem>zh_CN.GB2312</listitem>
+      <listitem>zh_CN.GB18030</listitem>
+      <listitem>zh_CN.UTF-8</listitem>
+      <listitem>zh_CN.GBK</listitem>
+      <listitem>zh_TW.BIG5</listitem>
+      <listitem>zh_TW.UTF-8</listitem>
+    </itemizedlist>
+    <para>
+      不过我的缺省locale依旧设置为en_US.utf8，因为我更习惯于使用英文界面。在Linux中，即使使用英文locale，也能够很好的支持中文。
+    </para>
+    <para>
+      使用<command>locale -a</command>命令查看一下Lenny中的语系，在我的计算机上输出如下：
+    </para>
+    <screen>
+      # locale -a
+      C
+      en_US
+      en_US.iso88591
+      en_US.utf8
+      POSIX
+      zh_CN
+      zh_CN.gb18030
+      zh_CN.gb2312
+      zh_CN.gbk
+      zh_CN.utf8
+      zh_TW
+      zh_TW.big5
+      zh_TW.utf8
+    </screen>
+    <para>
+      配置好语系(locale)后，最好重新登录一次。
+    </para>
+  </section>
+  <section>
+    <title>配置中文字体</title>
+    <para>
+      接下来需要安装一下中文字体。在系统安装时，我已经选择了简体中文桌面(Simplified Chinese Desktop)和简体中文环境(Simplified Chinese Environment)，这里面就包含了一些中文字体和中文应用程序，比如中文输入法。
+    </para>
+    <para>
+      在我的系统里安装了下面这些中英文字体包，主要参考了<link xlink:href='http://edyfox.codecarver.org/html/debian_testing_chinese.html' xlink:show='new'>滇狐</link>的字体配置：
+    </para>
+    <itemizedlist>
+      <listitem>
+        ttf-arphic-ukai
+      </listitem>
+      <listitem>
+        ttf-arphic-uming
+      </listitem>
+      <listitem>
+        xfonts-wqy 
+      </listitem>
+      <listitem>
+        ttf-bitstream-vera
+      </listitem>
+      <listitem>
+        ttf-mscorefonts-installer
+      </listitem>
+    </itemizedlist>
+    <para>
+      上面的mscorefonts是Sourceforge上的一个项目，这是微软提供的Windows上的核心字体，允许用户下载使用。Debian Lenny提供了ttf-mscorefonts-installer这样一个包，这个包在安装时会自动到Sourceforge上下载mscorefont。因为很多Windows程序在mscorefont下显示比较美观，所以我们也安装这一字体。
+    </para>
+    <para>
+      安装了上述字体以后，再把滇狐提供的.font.conf(在上面滇狐的网页中下载)放在自己的HOME目录下。退出重新登录进来，Lenny的字体已经非常漂亮了!
+    </para>
+    <para>
+      下面贴两张图，一张是Debian Lenny刚刚安装完简体中文桌面和简体中文环境，未进行字体前的抓图，另外一张则是按上面的步骤进行了字体配置后的抓图，做一个比较。
+    </para>
+    <informalfigure>
+      <mediaobject>
+        <alt>Debian Lenny未配置字体前抓图</alt>
+        <imageobject>
+          <imagedata fileref='http://easwy.com/blog/uploads/2009/04/iceweasel_before_cn_font-300x176.png' align='center'/>
+        </imageobject>
+      </mediaobject>
+      <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/04/iceweasel_before_cn_font.png' xlink:show='new'>点击查看大图</link></caption>
+    </informalfigure>
+    <informalfigure>
+      <mediaobject>
+        <alt>Debian Lenny配置字体后抓图</alt>
+        <imageobject>
+          <imagedata fileref='http://easwy.com/blog/uploads/2009/04/iceweasel_after_font-300x187.png' align='center'/>
+        </imageobject>
+      </mediaobject>
+      <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/04/iceweasel_after_font.png' xlink:show='new'>点击查看大图</link></caption>
+    </informalfigure>
+  </section>
+  <section>
+    <title>配置中文输入法</title> 
+    <para>
+      Linux下中文输入法目前最常用的有两种，一个是scim，另外一个是fcitx。我更习惯于使用fcitx，所以这里以fcitx为例进行介绍。
+    </para>
+    <para>
+      在安装简体中文桌面时，其实已经安装了fcitx输入法，接下来配置一下就可以了。从理论上讲，使用im-switch应该可以很方便的在各个中文输入法间进行切换，可是我尝试了几次，即使使用<command>im-switch -c</command>把输入法切换到fcitx，还是不能启动fcitx，不知道是不是和我把LANG环境变量设置成en_US.UTF-8有关。没办法，还是按照网上流传的方法，编辑一个名为95xinput的文件，内容如下：
+    </para>
+    <programlisting>
+# easwy, 2009/03/15
+export LANG="en_US.UTF-8"
+export LC_CTYPE="zh_CN.UTF-8"
+export XMODIFIERS="@im=fcitx"
+fcitx &amp; </programlisting>
+  <para>
+    在这个文件里，我把我的LANG设置为en_US.UTF-8，但把LC_CTYPE设置成zh_CN.UTF-8，这样在英文环境中也可以输入中文。接下来就是设置输入法，并启动fcitx。
+  </para>
+  <para>
+    把这个文件放到/etc/X11/Xsession.d/目录即可，在X启动时/etcX11/Xsession脚本会自动执行此文件，启动fcitx输入法。
+  </para>
+  </section>
+  <section>
+    <title>安装Windows字体(可选)</title>
+    <para>
+      如果想在Linux里使用windows的字体,可以以root身份按如下步骤操作:
+    </para>
+    <programlisting>
+mount -t ntfs /dev/sda1 /mnt
+mkdir -p /usr/local/share/fonts/msfonts
+cp /mnt/WINDOWS/Fonts/sim* /usr/local/share/fonts/msfonts/
+chmod a+r /usr/local/share/fonts/msfonts/*
+fc-cache /usr/local/share/fonts/msfonts/ </programlisting>
+  <para>
+    上面的/dev/sda1是我的windows分区，你可以用<command>fdisk -l</command>查看一下你的windows分区是哪一个。因为windows分区一般都使用NTFS格式，所以在mount时要加上<emphasis>-t ntfs</emphasis>。上面的命令只拷贝了和简体中文相关的字体，我觉得Debian Linux下的英文已经比较好看了。
+  </para>
+  <para>
+    安装完后，用<command>fc-list | grep -i sun</command>查看一下，是不是宋体已经安装成功，在我的计算机上输出如下：
+  </para>
+  <screen>
+新宋体,NSimSun:style=Regular
+宋体\-PUA,SimSun\-PUA:style=Regular
+宋体,SimSun:style=Regular
+文鼎ＰＬ简报宋,AR PL SungtiL GB:style=Regular
+  </screen>
+  <para>
+    在滇狐的.font.conf中已经加入了对宋体和新宋体的支持，所以不需再进行配置就可以使用。
+  </para>
+  <para>
+    我在安装完windows字体后，在启动firefox时会出现下面的错误提示：
+  </para>
+  <programlisting>
+......
+(firefox-bin:4411): Pango-WARNING **: failed to create cairo scaled font, expect ugly output. the offending font is 'SimSun Bold 18'
+(firefox-bin:4411): Pango-WARNING **: failed to create cairo scaled font, expect ugly output. the offending font is '宋体 Bold 10.771484375'
+(firefox-bin:4411): Pango-WARNING **: failed to create cairo scaled font, expect ugly output. the offending font is '宋体 Bold 12'
+(firefox-bin:4411): Pango-WARNING **: shaping failure, expect ugly output. shape-engine='BasicEngineFc', font='宋体 Bold 12', text='Chinese ('
+(firefox-bin:4411): Pango-WARNING **: shaping failure, expect ugly output. shape-engine='BasicEngineFc', font='宋体 Bold 10.771484375', text=' '
+......  </programlisting>
+  <para>
+    这是由于字体文件的权限不正确，后来用<command>chmod a+r /usr/local/share/fonts/msfonts/*</command>为所有用户增加读权限后，就正常了。
+  </para>
+  <para>
+    如果你还是出现上面的错误，可以试着执行一遍以下几条命令：
+  </para>
+  <programlisting>
+dpkg-reconfigure libcairo2 libpango1.0-common
+fc-cache -fs
+update-pangox-aliases </programlisting>
+  </section>
+  <section>
+    <title>参考文档</title>
+    <itemizedlist>
+      <listitem>
+        <link xlink:href='http://www.debsir.org/main/?q=node/85' xlink:show='new'>Debian中文桌面的快速构建</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://211.100.7.181/~liling/debian-pretty.html' xlink:show='new'>Linux/美化及中文化</link>，原文似乎已经打不开，可以看<link xlink:href='http://zu.meltonfoundation.org/home/xg_liu2/public_html/wiki/index.php?title=Linux/%E7%BE%8E%E5%8C%96%E5%8F%8A%E4%B8%AD%E6%96%87%E5%8C%96' xlink:show='new'>这里的转载</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://edyfox.codecarver.org/html/debian_testing_chinese.html' xlink:show='new'>简单搞定debian下的字体</link>,原文经常不可访问,可以看<link xlink:href='http://blog.chinaunix.net/u1/51156/showart_407719.html' xlink:show='new'>这里的转载</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://www.fcitx.org/main/?q=node/37' xlink:show='new'>fcitx配置文件</link>
+      </listitem>
+    </itemizedlist>
+  </section>
+</article>

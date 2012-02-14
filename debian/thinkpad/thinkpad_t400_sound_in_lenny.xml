@@ -1,0 +1,74 @@
+  <chapter xml:id='sound'
+    xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在Debian Lenny中配置Thinkpad T400的声卡</title>
+  <para>
+    上一篇文章中我介绍了在Lenny中如何<link xlink:href='http://easwy.com/blog/archives/chinese_in_debian_lenny/' xlink:show='new'>配置中文</link>，这之后，Debian Linux环境基本满足我的需求了。直到有一天，需要在Linux中和一个朋友Skype通话，这时才发现我的声卡居然没有声音。
+  </para>
+  <para>
+    我在工作时不喜欢听着音乐，因为会干扰思路，所以，在准备skype之前我从未检查过声卡。现在发现声卡出现问题了，才想起要配置一下。
+  </para>
+  <para>
+    Thinkpad T400 AA1中所使用的是Intel内置的声卡，从<command>lspci</command>命令的输出中可以看到，此声卡已经被发现了：
+  </para>
+  <screen>
+# lspci | grep Audio    
+00:1b.0 Audio device: Intel Corporation 82801I (ICH9 Family) HD Audio Controller (rev 03)
+  </screen>
+  <para>
+    再用<command>lsmod</command>查看一下声卡的驱动：
+  </para>
+  <screen>
+# lsmod | grep snd
+snd_hda_intel         324248  4 
+snd_pcm_oss            32800  0 
+snd_mixer_oss          12320  1 snd_pcm_oss
+snd_pcm                62596  3 snd_hda_intel,snd_pcm_oss
+snd_seq_dummy           2660  0 
+snd_seq_oss            24992  0 
+snd_seq_midi            5728  0 
+snd_rawmidi            18496  1 snd_seq_midi
+snd_seq_midi_event      6432  2 snd_seq_oss,snd_seq_midi
+snd_seq                41456  6 snd_seq_dummy,snd_seq_oss,snd_seq_midi,snd_seq_midi_event
+snd_timer              17800  3 snd_pcm,snd_seq
+snd_seq_device          6380  5 snd_seq_dummy,snd_seq_oss,snd_seq_midi,snd_rawmidi,snd_seq
+snd                    45604  15 snd_hda_intel,snd_pcm_oss,snd_mixer_oss,snd_pcm,snd_seq_oss,snd_rawmidi,snd_seq,snd_timer,snd_seq_device
+soundcore               6368  1 snd
+snd_page_alloc          7816  2 snd_hda_intel,snd_pcm
+  </screen> 
+  <para>
+    我们看到，该声卡的驱动<emphasis>snd_hda_intel</emphasis>也装好了，那为什么没有声音呢？
+  </para>
+  <para>
+    在网上搜索了一下，找到这篇文章：<link xlink:href='http://www.klabs.be/~fpiat/linux/debian/Lenny_on_Thinkpad_T61.html' xlink:show='new'>Debian Lenny on Thinkpad T61</link>，它提出了一个解决声卡没声音的方法，我按照这种方法操作了一下：
+  </para>
+  <para>
+    首先执行下面两条命令：
+  </para>
+  <programlisting>
+apt-get remove --purge  alsa-modules-$(uname -r)
+invoke-rc.d alsa-utils restart </programlisting>
+  <para>
+    然后打开音量控制(volume control)，转到Switch页，我这里选择了"IEC958 Default PCM"，然后转到播放页(Playback)，确定PCM没有被静音。作者说这样设置一下就可以了，不过我的计算机还不行。
+  </para>
+  <para>
+    对这种情况，作者也给出了解决方法，先关闭掉使用声卡的程序，然后用CTRL-ALT-F1切换到终端上，运行<command>alsaconf</command>，重新配置一下声卡。配好后，再按照上面的步骤配置一下音量控制。我使用<command>alsaconf</command>重新配置后，就可以听到声音了。
+  </para>
+  <para>
+    现在无论是开机登录的声音，播放MP3还是使用skype,都没有问题。不过在用KsCD听CD时，却无论如何也没有声音。
+  </para>
+  <para>
+    再次启用google，搜到了<link xlink:href='http://www.linuxforums.org/forum/debian-linux-help/75894-sound-problems-kde-3-5-5-a.html' xlink:show='new'>这个贴子</link>，按照帖子中的步骤：打开Extras --> Configure KsCD --> CD Player，勾上"Use direct digital playback"，然后在"Select audio backend"选择中"arts"，这样设置后，我的KsCD也可以正常工作了。
+  </para>
+  <para>
+    声卡好了以后，在使用rxvt时，如果出现错误，总是"滴滴"的响，很是麻烦。我在~/.bashrc中添加了<command>xset b off</command>，这样就不用听到恼人的声音了。另外，在/etc/inputrc文件中加上<command>set bell-style none</command>，关闭console下的声音。
+  </para>
+  <para>
+    在vim中的错误提示音早就在vimrc中关掉了，前几天刚好<link xlink:href='http://easwy.com/blog/about/#comment-209' xlink:show='new'>SamPeng</link>问这个问题，也在这篇文章回答一下。方法是在你的vimrc中，加入以下两行：
+  </para>
+  <programlisting>
+set noerrorbells
+set visualbell t_vb= </programlisting>
+  <para>
+    如果想关掉gvim中的"滴滴"提示音，则需要在gvimrc中加入<command>set visualbell t_vb=</command>，这是因为gvim在启动时，会把<emphasis>t_vb</emphasis>的值恢复为缺省值，所以要重新设置一下。
+  </para>
+</chapter>

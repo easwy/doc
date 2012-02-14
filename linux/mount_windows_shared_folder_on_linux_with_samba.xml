@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>Linux使用笔记: 使用Samba访问windows的共享目录</title>
+  <para>
+    通常我们使用Samba都是在Windows上访问做为Samba服务器的Linux。但是在某些时候情况会反过来，你可能需要从Linux上访问Windows共享出来的目录。幸运的是，Samba本身也支持这种类型的访问。
+  </para>
+  <para>
+    要想从Linux访问Windows上的共享目录，需要安装<emphasis role='bold'>smbclient</emphasis>工具。在Debian或Ubuntu上可以使用下面的命令安装：
+  </para>
+  <programlisting>
+aptitude install smbclient smbfs</programlisting>
+  <para>
+    在CentOS上则使用yum命令安装：
+  </para>
+  <programlisting>
+yum install samba-client.i386 </programlisting>
+  <para>
+    安装好smbclient工具，就可以使用mount命令来挂载Windows上的共享目录了：
+  </para>
+  <programlisting>
+mount -t cifs -o username=easwy //windows-server/share /mnt/winshare </programlisting>
+  <para>
+    在这里我们使用的文件系统类型是cifs(Common Internet File System)而不是smbfs，因为Linux Kernel将不再支持smbfs。而从<link xlink:href='http://ashkan.tehlug.org/index.php/blog/show/A-Comparison-cifs-vs-smbfs.html' xlink:show='new'>这个网站测试结果</link>来看，smbfs的性能也远不如cifs。
+  </para>
+  <para>
+    我们所用的<command>mount -t cifs</command>命令其实会调用<command>mount.cifs</command>，如果你在mount时失败，先检查一下你的<command>mount.cifs</command>命令是否存在。
+  </para>
+  <para>
+    如果windows计算机处于域中，那么在<emphasis>username</emphasis>一项输入你的域用户名<emphasis>domain/username</emphasis>就可以了。windows-server可以是一台计算机的名称，也可以是一个IP地址。
+  </para>
+  <para>
+    如果想列出Windows上的所有共享资源，可以使用命令：
+  </para>
+  <programlisting>
+smbclient -L //windows-server -U easwy </programlisting>
+  <para>
+    这条命令会列出windows服务器上所有的共享目录和文件。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>Easwy的博客</link>上的其它文章。
+  </para>
+  <para><emphasis role='bold'>[ 参考文档 ]</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://www.howtogeek.com/wiki/Mount_a_Windows_Shared_Folder_on_Linux_with_Samba' xlink:show='new'>Mount a Windows Shared Folder on Linux with Samba</link>
+    </listitem>
+  </itemizedlist>
+</article>
+

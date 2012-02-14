@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在wordpress中为代码自动显示滚动条</title>
+  <para>
+    在写博客时，有时候添加的代码比较长，超过了一行所能显示的长度时，在WordPress的某些主题中会显示不全，只显示前半截出来，影响阅读。
+  </para>
+  <para>
+    解决这个问题方法其实很简单，只需要改一下主题的样式表就中可以了。
+  </para>
+  <para>
+    我以<link xlink:href='http://easwy.com/blog/'>Easwy博客</link>用的iNove主题为例，首先打开主题的样式表style.css，在样式表中搜索一下blockquote和pre。在inove主题里，它们使用相同的样式配置，在它们的样式里加上<emphasis>overflow-x: auto;</emphasis>，完整代码如下：
+  </para>
+  <programlisting>
+blockquote, pre {
+	background:#F4F5F7 3px 3px no-repeat;
+	border:1px dashed #CCC;
+	padding:8px 8px 8px 8px;
+	margin:5px 0;
+        <emphasis role='bold'>overflow-x:auto</emphasis>
+} </programlisting>
+  <para>
+    如果你的主题里没有关于blockquote和pre的样式，自己添加一下就行了。
+  </para>
+  <para>
+    加了这一句话以后，如果在blockquote和pre块的语句超过一行的长度，那么浏览器就会自动显示水平滚动条(scrollbar)，让读者滑过去看，很是方便。
+  </para>
+  <para>
+    比如，我下面这一句话，浏览器就会自动加滚动条：
+  </para>
+  <screen>
+This a very long text to test the scrollbar of my theme. If you don't see such a scrollbar, please report me bug. my email address is easwy.mail -at- gmail -dot- com. Thanks!
+  </screen>
+  <para>
+    另外，还可以设置滚动条的样式，使它与你的主题相符，具体实现参考文尾的第二篇参考文档。
+  </para>
+  <section>
+    <title>参考文档</title>
+    <itemizedlist>
+      <listitem>
+        <link xlink:href='http://www.ericstockwell.com/?p=27' xlink:show='new'>Automatic horizontal scrollbars in Wordpress</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://www.rl-digital.com/2006/custom-wordpress-scrollbar/' xlink:show='new'>Customizing the WordPress Scrollbar</link>
+      </listitem>
+    </itemizedlist>
+  </section>
+</article>

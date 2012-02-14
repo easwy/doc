@@ -1,0 +1,72 @@
+Solution at:
+    http://easwy.com/blog/archives/fop-errors-and-solution/ 
+Error Messages:
+================================
+xsltproc -o pdf/vim_advanced_usage.fo ~/00mydoc/docbook_fo.xsl vim_advanced_usage.xml
+Note: namesp. cut : stripped namespace before processing           vim使用进阶
+WARNING: cannot add @xml:base to node set root element.  Relative paths may not work.
+Note: namesp. cut : processing stripped document                   vim使用进阶
+Making portrait pages on USletter paper (8.5inx11in)
+Read /usr/share/doc/docbook-xsl/README.Debian.gz section 5(a).
+fop -c /etc/fop/fop.xconf pdf/vim_advanced_usage.fo -pdf pdf/vim_advanced_usage.pdf
+2009-4-17 21:30:27 org.apache.fop.apps.FopFactoryConfigurator configure
+信息: Default page-height set to: 11in
+2009-4-17 21:30:27 org.apache.fop.apps.FopFactoryConfigurator configure
+信息: Default page-width set to: 8.26in
+2009-4-17 21:30:30 org.apache.fop.hyphenation.Hyphenator getHyphenationTree
+严重: Couldn't find hyphenation pattern zh_cn
+2009-4-17 21:30:34 org.apache.fop.cli.Main startFOP
+严重: Exception
+javax.xml.transform.TransformerException: org.apache.fop.fo.ValidationException: file:/home/easwy/tmp/advancedvim/pdf/vim_advanced_usage.fo:173:59: Error(173/59): fo:inline is not a valid child element of fo:flow.
+	at org.apache.fop.cli.InputHandler.transformTo(InputHandler.java:168)
+	at org.apache.fop.cli.InputHandler.renderTo(InputHandler.java:115)
+	at org.apache.fop.cli.Main.startFOP(Main.java:166)
+	at org.apache.fop.cli.Main.main(Main.java:197)
+
+---------
+
+javax.xml.transform.TransformerException: org.apache.fop.fo.ValidationException: file:/home/easwy/tmp/advancedvim/pdf/vim_advanced_usage.fo:173:59: Error(173/59): fo:inline is not a valid child element of fo:flow.
+	at org.apache.xalan.transformer.TransformerIdentityImpl.transform(TransformerIdentityImpl.java:502)
+	at org.apache.fop.cli.InputHandler.transformTo(InputHandler.java:165)
+	at org.apache.fop.cli.InputHandler.renderTo(InputHandler.java:115)
+	at org.apache.fop.cli.Main.startFOP(Main.java:166)
+	at org.apache.fop.cli.Main.main(Main.java:197)
+Caused by: org.apache.fop.fo.ValidationException: file:/home/easwy/tmp/advancedvim/pdf/vim_advanced_usage.fo:173:59: Error(173/59): fo:inline is not a valid child element of fo:flow.
+	at org.apache.fop.fo.FONode.invalidChildError(FONode.java:411)
+	at org.apache.fop.fo.FONode.invalidChildError(FONode.java:396)
+	at org.apache.fop.fo.pagination.Flow.validateChildNode(Flow.java:106)
+	at org.apache.fop.fo.FOTreeBuilder$MainFOHandler.startElement(FOTreeBuilder.java:302)
+	at org.apache.fop.fo.FOTreeBuilder.startElement(FOTreeBuilder.java:185)
+	at org.apache.xalan.transformer.TransformerIdentityImpl.startElement(TransformerIdentityImpl.java:1073)
+	at org.apache.xerces.parsers.AbstractSAXParser.startElement(Unknown Source)
+	at org.apache.xerces.impl.XMLNSDocumentScannerImpl.scanStartElement(Unknown Source)
+	at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl$FragmentContentDispatcher.dispatch(Unknown Source)
+	at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+	at org.apache.xerces.parsers.XMLParser.parse(Unknown Source)
+	at org.apache.xerces.parsers.AbstractSAXParser.parse(Unknown Source)
+	at org.apache.xalan.transformer.TransformerIdentityImpl.transform(TransformerIdentityImpl.java:485)
+	... 4 more
+---------
+org.apache.fop.fo.ValidationException: file:/home/easwy/tmp/advancedvim/pdf/vim_advanced_usage.fo:173:59: Error(173/59): fo:inline is not a valid child element of fo:flow.
+	at org.apache.fop.fo.FONode.invalidChildError(FONode.java:411)
+	at org.apache.fop.fo.FONode.invalidChildError(FONode.java:396)
+	at org.apache.fop.fo.pagination.Flow.validateChildNode(Flow.java:106)
+	at org.apache.fop.fo.FOTreeBuilder$MainFOHandler.startElement(FOTreeBuilder.java:302)
+	at org.apache.fop.fo.FOTreeBuilder.startElement(FOTreeBuilder.java:185)
+	at org.apache.xalan.transformer.TransformerIdentityImpl.startElement(TransformerIdentityImpl.java:1073)
+	at org.apache.xerces.parsers.AbstractSAXParser.startElement(Unknown Source)
+	at org.apache.xerces.impl.XMLNSDocumentScannerImpl.scanStartElement(Unknown Source)
+	at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl$FragmentContentDispatcher.dispatch(Unknown Source)
+	at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+	at org.apache.xerces.parsers.XMLParser.parse(Unknown Source)
+	at org.apache.xerces.parsers.AbstractSAXParser.parse(Unknown Source)
+	at org.apache.xalan.transformer.TransformerIdentityImpl.transform(TransformerIdentityImpl.java:485)
+	at org.apache.fop.cli.InputHandler.transformTo(InputHandler.java:165)
+	at org.apache.fop.cli.InputHandler.renderTo(InputHandler.java:115)
+	at org.apache.fop.cli.Main.startFOP(Main.java:166)
+	at org.apache.fop.cli.Main.main(Main.java:197)
+make: *** [pdf/vim_advanced_usage.pdf] Error 1

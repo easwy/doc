@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>
+    更改永久链接结构所需的插件
+  </title>
+  <para>
+    由于最初没有设计好永久链接的结构，趁现在流量还比较小，就调整了<link xlink:href='http://easwy.com/blog/archives/select-permalinks-structure/' xlink:show='new'>我的自定义永久链接结构</link>。
+  </para>
+  <para>
+    调整了永久链接结构后，在wordpress里是即时生效的，只要刷新一下，就可以看到链接结构变化了。但是对已经存在的外链、或者google所抓取的网页来说，它仍然使用原来的永久网址来访问你的网页，这样就会导致HTTP 404 not found错误。
+  </para>
+  <para>
+    为了防止这种HTTP 404错误的发生，我们需要把原来的永久网址，映射成更改后的永久网址。所幸的是，在wordpress有很多插件可以完成这个工作。
+  </para>
+  <para>
+    我首先试用的是<link xlink:href='http://wordpress.org/extend/plugins/advanced-permalinks/' xlink:show='new'>Advanced Permalinks</link>插件，这个插件的功能很强大，它可能支持多种永久链接结构，可以针对一个帖子或指定ID范围的帖子来指定永久链接结构，或者单独某一分类的文章指定单独的永久链接结构。使用这个插件，你可以不改变老的文章的永久链接结构，让它们仍使用原来的永久网址，而且也不需要对旧的永久网址进行301重定向。这样，就不会出现链接失效的情况，你的Page Rank也不会有损失。
+  </para>
+  <para>
+    这个插件虽然强大，不过用在我的博客上，似乎有点大材小用。而且，我在使用这个插件时遇到一个问题。当激活这个插件后，访问我的分类页面会出现HTTP 404 not found错误，不过访问日志页面或tag页面又没有问题，不知道是我设置的问题，还是插件的bug。不过我没时间多试，于是就换用了另外一个插件。
+  </para>
+  <para>
+    在wordpress的官网上下载了<link xlink:href='http://wordpress.org/extend/plugins/permalinks-migration-plugin-for-wordpress/' xlink:show='new'>Dean's Permalinks Migration</link>，在wordpress的后台直接上传插件、激活，然后需要简单的设置一下。
+  </para>
+  <para>
+    在"设置"中找到Permalinks Migration，然后在"Old Permalink Structure:" (旧永久链接结构)一栏中添入你的旧永久链接结构，然后"Update Options"。OK，现在所有访问你旧永久网址的请求，都被301重定向到新的永久网址了。因为采用的301永久重定向，你并不会损失Page Rank。
+  </para>
+  <para>
+  </para>
+  <para><emphasis role='bold'>原创文章，转载请注明：</emphasis>转载自<link xlink:href="http://easwy.com/blog/" xlink:show='new'>Easwy的博客</link> [  <link xlink:href="http://easwy.com/blog/" xlink:show="new">http://easwy.com/blog/</link> ]</para>
+  <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='http://easwy.com/blog/archives/useful-wordpress-permalinks-plugin/'/></para>
+</article>

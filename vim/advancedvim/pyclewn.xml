@@ -1,0 +1,152 @@
+<chapter xml:id='pyclewn'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在vim中进行GDB调试 - 使用pyclewn</title>
+  &tocatalog;
+  <para>
+    本节所用命令的帮助入口：
+  </para>
+<programlisting>
+:help pyclewn </programlisting>
+  <para>
+    在前面的文章中介绍了<link xlink:href='&uri_vimgdb;'>使用vimgdb在vim中调试程序</link>，这种方法允许在终端中的vim，以及图形化的gvim中调试你的程序。不过它的局限也是很明显的：首先，它需要给vim的源代码打补丁并重新编译vim；另外，它只能在Linux下使用，不能在windows上进行gdb调试。
+  </para>
+  <para>
+    要想在vim中调试，除了使用vimgdb外，还可以使用clewn和pyclewn，这两个工具也是vimgdb的作者提供的，用法基本相同。区别在于，clewn是使用C语言编写的，而pyclewn是使用python语言编写的，具有更好的跨平台能力。本文主要介绍pyclewn工具。
+  </para>
+  <para>
+    使用pyclewn需要计算机上安装有python 2.4(或以上版本)以及gvim 7.0或以上版本。需注意的是，pyclewn只能与gvim配合使用，它不支持终端中的vim(clewn也是如此)。另外，gvim在编译时需要使能<emphasis role='bold'>netbeans_intg</emphasis>特性和<emphasis role='bold'>autocmd</emphasis>特性。
+  </para>
+  <para>
+    如果上面的条件都已经满足，到<link xlink:href='http://sourceforge.net/projects/pyclewn/'/>下载pyclewn，下载后解压准备安装。安装pyclewn很简单，在我的计算机上，gvim安装目录在我的HOME目录，因此，也把pyclewn安装在HOME目录，使用如下命令：
+  </para>
+  <programlisting>
+cd /home/easwy/download/pyclewn-0.7/
+vimdir=$HOME/.vim python setup.py install --home=$HOME </programlisting>
+  <para>
+    在pyclewn的源码目录中有一个名为<emphasis role='bold'>INSTALL</emphasis>的文件，介绍了如何在UNIX以及windows上安装pyclewn，你可以根据自己的环境决定如何安装pyclewn。
+  </para>
+  <para>
+    安装完pyclewn后，启动gvim，执行<command>:help pyclewn</command>命令，就可以看到pyclewn的帮助文件，里面有很多有用的信息。
+  </para>
+  <para>
+    下面通过一个例子讲解一下如何使用pyclewn进行调试。例子中所调试的程序在这里下载：<link xlink:href='http://easwy.com/blog/uploads/2009/10/pyclewn-ex.zip'>调试程序下载</link>
+  </para>
+  <para>
+    首先启动pyclewn。启动pyclewn的办法很简单，在一个终端中执行下面的命令就可以了：
+  </para>
+  <programlisting>
+pyclewn </programlisting>
+  <para>
+    pyclewn启动时，它会启动一个gvim窗口，我们的调试将在这个gvim窗口中进行。运行pyclewn的终端将做为gdb的控制终端，所调试程序的输入输出都会通过这个终端进行(当然，你也可以在gdb中通过tty命令更改控制终端)。
+  </para>
+  <para>
+    接下来，我们在pyclewn所打开的gvim窗口中输入下面的命令，编译该程序，打开要调试的文件，并在文件中设置断点：
+  </para>
+  <programlisting>
+:cd pyclewn-ex
+:make
+:e main.c
+:Cfile factor
+:Cbreak 14 </programlisting>
+  <para>
+    前面三条命令是标准的vim命令，切换到示例程序所在目录，编译该程序，并打开文件main.c。后面两条命令以大写字母C做为起始，这是pyclewn自定义的命令，pyclewn将会把字母C后的命令内容传递给GDB调试器。所以上面两条命令相当于在GDB中执行<command>file factor</command>和<command>break 14</command>，加载factor做为被调试的程序，并在main.c的第14行设置一个断点。
+  </para>
+  <para>
+    在执行pyclewn自定义的C命令时，pyclewn会在gvim中分隔出一个窗口，用于显示GDB调试器的输入输出。所以，执行完上面命令后，屏幕看起来是这样的：
+  </para>
+  <informalfigure>
+    <mediaobject>
+      <alt>
+        pyclewn调试窗口
+      </alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/10/pyclewn_debug-300x240.png' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/10/pyclewn_debug.png' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  <para>
+    在上面已经设置好断点了，现在就可以开始调试了。pyclewn已经定义了一些调试相关的键映射，我们可以通过下面的命令加载这些键映射：
+  </para>
+  <programlisting>
+:Cmapkeys </programlisting>
+  <para>
+    执行完这条命令，会在clewn_console中打印出所定义的键映射，我在此不再赘述。在下面的调试过程中，我也会使用几个最常用的映射。
+  </para>
+  <para>
+    我们继续调试。我在上面已经定义了一个断点，所以直接按<command>SHIFT-R</command>键运行程序。程序运行到断点后会停下来，然后我们连按三次<command>CTRL-N</command>，执行三条语句，现在切换到控制终端，可以看到程序在等待输入，我们输入一个数字，然后按回车。现在看到的屏幕是这样的：
+  </para>
+  <informalfigure>
+    <mediaobject>
+      <alt>
+        pyclewn调试输入输出窗口
+      </alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/10/pyclewn_io-300x240.png' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/10/pyclewn_io.png' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  <para>
+    在上面的抓图中，我们把鼠标移动到变量n上，可以看到弹出了一个小气泡，显示变量n的值为4，这和我们输入的数字是一致的。
+  </para>
+  <para>
+    接下来再按一次<command>CTRL-N</command>向下执行一个语句，然后再按<command>SHIFT-S</command>步进到函数factorial()中，现在gvim会打开文件util/factorial.c。然后用下面的命令，把变量t和i加入到watch窗口中：
+  </para>
+  <programlisting>
+:Cdbgvar t
+:Cdbgvar i </programlisting>
+  <para>
+    上面的命令会创建一个名为<emphasis>(clewn)_dbgvar</emphasis>的缓冲区，不过此缓冲区并未显示出来。用下面的命令可以新建一个窗口显示此缓冲区：
+  </para>
+  <programlisting>
+:sb (clewn)_dbgvar </programlisting>
+  <para>
+    现在屏幕看起来是这样的：
+  </para>
+  <informalfigure>
+    <mediaobject>
+      <alt>
+        pyclewn调试Watch窗口
+      </alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/10/pyclewn_watch_window-300x240.png' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/10/pyclewn_watch_window.png' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  <para>
+    按一次<command>SHIFT-C</command>使程序运行至结束，我们的调试也就告一段落了。
+  </para>
+  <para>
+    从上面的调试过程可以看出，使用pyclewn调试很方便。而且，使用pyclewn也可以在windows上进行调试，不过我没有试过，有兴趣的朋友可以试一下。在windows上调试，可能需要使用cygwin中所带的gdb。
+  </para>
+  <para>
+    如果觉得pyclewn缺省所设置的键映射不能满足自己的需求，也可以自己定义更多GDB调试键映射，方法是把pyclewn发行目录中的<emphasis>.clewn_keys.gdb</emphasis>拷贝到你的HOME目录，然后修改此文件定制自己的键绑定即可。
+  </para>
+  <programlisting>
+cd /home/easwy/download/pyclewn-0.7/
+cp runtime/.clewn_keys.gdb $HOME </programlisting>
+  <para>
+    要想了解更多关于pyclewn的使用，请阅读pyclewn的帮助手册：<command>:help pyclewn</command>。
+  </para>
+  <para>
+    <emphasis role='bold'>[参考文档]</emphasis>
+  </para>
+  <itemizedlist>
+    <listitem>
+      vim帮助文件
+    </listitem>
+    <listitem>
+      <link xlink:href='http://vimcdoc.sourceforge.net/' xlink:show='new'>vim中文手册</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://pyclewn.sourceforge.net/' xlink:show='new'>Pyclewn</link>
+    </listitem>
+  </itemizedlist>
+  &tocatalog;
+  &copyright;
+  <para>
+    <emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='&uri_pyclewn;'/>
+  </para>
+</chapter>

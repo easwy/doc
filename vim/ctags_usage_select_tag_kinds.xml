@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>Exuberant Ctags用法：选择tag文件中所包含的tag类型</title>
+  <para>
+    网友<link xlink:href='http://easwy.com/blog/archives/exuberant-ctags-chinese-manual/#comment-352'>SamPeng问</link>:
+  </para>
+  <blockquote>
+<para>请问哪个参数是不解析方法中变量的。</para>
+<para>方法中的变量纯粹是浪费tag标签。从来不用。因为一个文件里有多个同明变量</para>
+  </blockquote>
+  <para>
+    这个问题比较普遍，因此写一篇文章来解释一下。
+  </para>
+  <para>
+    大多数人在使用Exuberant Ctags时，一般都使用缺省的<command>ctags -R</command>。一般来讲，这条缺省命令已经可以满足大部分人的需求了。在某些情况下，可能对tag文件中标签的类型有特殊要求，这时就需要进行定制了。
+  </para>
+  <para>
+    对SamPeng所提出的问题，解决方法如下：
+  </para>
+  <orderedlist>
+    <listitem>
+      首先用ctags --list-kinds=&lt;LANG&gt;列出这个语言所支持的标签类型
+    </listitem>
+    <listitem>
+      然后在生成tag文件时，用ctags --&lt;LANG&gt;-kinds=[+|-]kinds来增加或去掉这种tag类型
+    </listitem>
+    <listitem>
+      需要把&lt;LANG&gt;换成你所用的编程语言的名字，用ctags --list-languages查看ctags支持哪些语言。
+    </listitem>
+  </orderedlist>
+  <para>
+    其实我们在文章<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-omin-complete/'>vim使用进阶: 智能补全</link>中已经用过Exuberant Ctags的定制功能了，在那篇文章里，我们使用命令
+  </para>
+  <programlisting>
+ctags -R --c++-kinds=+p --fields=+iaS --extra=+q src </programlisting>
+  <para>
+    来为OmniCppComplete插件生成定制的tag文件。仔细分析一下上面这条命令，相信你对Exuberant Ctags的了解会更加深一层的。
+  </para>
+  <para>
+    从上面的介绍我们可以看到，Exuberant Ctags的功能非常强大(例如，甚至可以用它为任意文件提取tag，你只需要指定生成tag的规则就行了)，只是大多数人并不了解。如果你对tag文件的内容有特殊的需求，建议你仔细阅读一下Exuberant Ctags的手册。你可以在这里找到我翻译的<link xlink:href='http://easwy.com/blog/archives/exuberant-ctags-chinese-manual/'>Exuberant Ctags中文手册</link>。
+  </para>
+</article>

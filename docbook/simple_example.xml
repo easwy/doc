@@ -1,0 +1,164 @@
+<chapter xml:id='simple_example'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>一个简单的Docbook 5.0例子</title>
+  <para>
+    我使用Docbook写文档大约才一两个月的时间，但关注Docbook已经很久了，在网上也阅读了很多中文及英文的Docbook文档。一直没用Docbook的主要原因是Docbook 4.2的编译环境配置看起来很繁琐。我曾经尝试配置过一次，但看到一大堆catalog配置、SGML配置、OpenJade配置，最终放弃了。
+  </para>
+  <para>
+    直到有一天，我看到benr写的<link xlink:href='http://www.cuddletech.com/blog/pivot/entry.php?id=509' xlink:show='new'>Playing With DocBook 5.0</link>，才第一次真正书写Docbook文档。Docbook 5.0不再使用旧的SGML DTD，转而使用XML，编译环境配置简单多了。
+  </para>
+  <para>
+    下面我先介绍Windows下如何搭建Docbook 5.0编译环境，然后再以一个简单的Docbook 5.0文档为例，讲一下如何把Docbook文档转换成其它格式。
+  </para>
+  <para>
+    <emphasis role='bold'>[ Windows下Docbook编译环境的搭建 ]</emphasis>
+  </para>
+  <orderedlist>
+    <listitem>
+      下载Docbook XSL样式表
+      <para>
+        首先下载<link xlink:href='http://sourceforge.net/project/showfiles.php?group_id=21935#files' xlink:show='new'>Docbook XSL</link>样式表。我们只需要下载docbook-xsl-ns即可，目前的最新版本是1.74.3。下载后，把它解压到一个目录中，我这里假设解压到C:\docbook目录，也就是说，Docbook XSL所在的目录是: <emphasis>C:\docbook\docbook-xsl-ns-1.74.3\</emphasis>。
+      </para>
+      <para>
+        在<link xlink:href='&uri_intro;' xlink:show='new'>Docbook介绍</link>一文中我讲过Docbook是"内容与格式分离"的，我们写Docbook文档时只关注文档的内容，而Docbook转换成其它文档类型时所显示的格式，则由Docbook XSL来定义。
+      </para>
+    </listitem>
+    <listitem>
+      下载xsltproc转换程序
+      <para>
+        接下来，需要下载XML语言转换工具。我喜欢用的转换工具是<link xlink:href='http://xmlsoft.org/XSLT/' xlink:show='new'>xsltproc</link>，这是一个由C语言写成的XML转换工具，它的特点是转换速度很快，并且同时支持Windows和Linux。除了这个转换工具外，还有很多Java写的转换工具，例如<link xlink:href='saxon.sourceforge.net/' xlink:show='new'>Saxon</link>, <link xlink:href='http://xml.apache.org/xalan-j/index.html' xlink:show='new'>Xalan</link>。
+      </para>
+      <para>
+        我们到这里下载<link xlink:href='http://www.zlatkovic.com/pub/libxml/' xlink:show='new'>Windows版本的xsltproc</link>，需要下载下面几个包：
+      </para>
+      <itemizedlist>
+        <listitem>
+          iconv-1.9.2.win32.zip - 编码转换工具
+        </listitem>
+        <listitem>
+          zlib-1.2.3.win32.zip - 压缩工具
+        </listitem>
+        <listitem>
+          libxslt-1.1.24.win32.zip - XSL和EXSL转换工具，xsltproc程序就在此包中
+        </listitem>
+        <listitem>
+          libxml2-2.7.3.win32.zip - XML解析工具和处理工具，同时提供了验证工具xmllint和xmlcatalog
+        </listitem>
+      </itemizedlist>
+      <para>
+        下载后，把这些包解压到同一个目录里，假设解压到<emphasis>C:\docbook\xsltproc</emphasis>目录，解压后，你可以看到在C:\docbook\xsltproc\下多了三个目录：bin，include和lib。现在需要在环境变量PATH中增加<emphasis role='bold'>C:\docbook\xsltproc\bin</emphasis>，设置后，再打开一个DOS窗口，可以直接输入xsltproc命令，不需要输入使用全路径了。
+      </para>
+    </listitem>
+    <listitem>
+      安装FOP
+      <para>
+        安装了上面的两个工具，你就可以把Docbook文档转换成HTML格式了。如果你需要把Docbook文档转换成PDF格式，还需要安装把XSL-FO格式转换为PDF格式的转换工具，<link xlink:href='http://xmlgraphics.apache.org/fop/' xlink:show='new'>Apache FOP</link>是一个不错的选择。不过我现在没有这方面的需求，暂时没有安装。据说配置Apache FOP支持中文比较繁琐，改天我试过再把经过写出来。
+      </para>
+    </listitem>
+  </orderedlist>
+  <para>
+    现在，Docbook的编译环境就建好了。相比Docbook 4.2，编译环境的搭建容易了很多，你不必再去配置catalog这些东西，因为Docbook 5.0已经不再需要文档类型定义了。
+  </para>
+  <para>
+    接下来，我们写一个简单的Docbook文档。
+  </para>
+  <para><emphasis role='bold'>[ 编写Docbook文档 ]</emphasis></para>
+  <para>
+    下面是一个简单的Docbook 5.0文档，把这段内容保存一下，例如，存为文件docbook.xml。
+  </para>
+  <programlisting>
+&lt;?xml version='1.0' encoding="utf-8"?&gt;
+&lt;article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="zh-CN"
+  xmlns:xlink='http://www.w3.org/1999/xlink'&gt;
+  &lt;articleinfo&gt;
+    &lt;title&gt;我的第一篇Docbook 5.0文档&lt;/title&gt;
+    &lt;author&gt;
+      &lt;firstname&gt;Easwy&lt;/firstname&gt;
+      &lt;surname&gt;Yang&lt;/surname&gt;
+    &lt;/author&gt;
+  &lt;/articleinfo&gt; 
+                  
+  &lt;section&gt;   
+    &lt;title&gt;文档介绍&lt;/title&gt;
+    &lt;para&gt;
+      这是我的第一篇Docbook 5.0文档，欢迎你来到&lt;link xlink:href='http://easwy.com/blog/'&gt;Easwy的博客&lt;/link&gt;。
+    &lt;/para&gt;
+  &lt;/section&gt;
+&lt;/article&gt; </programlisting>
+  <para><emphasis role='bold'>[ 将文档转换成HTML格式 ]</emphasis></para>
+  <para>
+    在转换之前，要先把输出编码设置为UTF-8。docbook-xsl-ns的缺省输出编码是ISO-8859-1，但对于中文字符，我们应该把输出编码设置为UTF-8，否则输出的文件会显示为乱码。
+  </para>
+  <para>
+    更改输出编码很简单，你可以直接修改你的C:\docbook\docbook-xsl-ns-1.74.3\html\docbook.xsl文件，在文件中找到
+  </para>
+  <programlisting>
+    <![CDATA[
+   <xsl:output method="html"
+            encoding="ISO-8859-1"
+            indent="no"/> 
+   ]]> </programlisting>
+  <para>
+    把它改成
+  </para>
+  <programlisting>
+    <![CDATA[
+   <xsl:output method="html"
+            encoding="UTF-8"
+            indent="no"/> 
+   ]]> </programlisting>
+  <para>
+    我一般是另外写一个xsl文件，在这个文件中包含标准的docbook-xsl，然后重新定义自己的编码为UTF-8。把下面的文件保存为docbook_easwy.xsl：
+  </para>
+  <programlisting>
+    <![CDATA[
+<?xml version='1.0'?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                version='1.0'>
+<xsl:include href="C:/docbook/docbook-xsl-ns-1.74.3/html/docbook.xsl"/>
+<xsl:output method="html"
+            encoding="UTF-8"
+            indent="no"/>
+</xsl:stylesheet>
+]]> </programlisting>
+  <para>
+    接下来，我们把上面的Docbook文档转换成HTML格式，使用下面的命令：
+  </para>
+  <programlisting>
+xsltproc -o docbook.html docbook_easwy.xsl docbook.xml </programlisting>
+  <para>
+    如果你看到类似下面的提示，那么你的xsl不是docbook-xsl-ns，而是docbook-xsl。如果不想下载docbook-xsl-ns的话，忽略告警即可，这些告警并不影响使用。
+  </para>
+  <blockquote>
+<para>    1: Note: namesp. cut : stripped namespace before processing           我的第一篇Docbook 5.0文档</para>
+<para>    2: WARNING: cannot add @xml:base to node set root element.  Relative paths may not work.</para>
+<para>    3: Note: namesp. cut : processing stripped document                   我的第一篇Docbook 5.0文档</para>
+  </blockquote>
+  <para>
+    如果嫌每次输入转换命令太麻烦，可以把上面的命令保存为一个批处理文件。我在Windows里安装了Cygwin (参考<link xlink:href='http://easwy.com/blog/archives/linux-remote-desktop-via-cygwin-x-server/' xlink:show='new'>这篇文章</link>安装cygwin)，所以一般用Makefile来转换Docbook源文件。我的Makefile内容如下：
+  </para>
+  <programlisting>
+# Docbook Makefile
+# Easwy Yang
+
+XSLFILE=docbook_easwy.xsl
+
+XML_FILE=$(wildcard *.xml)
+HTML_FILE=$(XML_FILE:.xml=.html)
+
+.PHONY: html clean
+
+html : $(HTML_FILE)
+
+%.html : %.xml
+	xsltproc -o $(@F) $(XSLFILE) $&lt;
+
+clean:
+	rm *.html </programlisting>
+  <para>
+    现在，我在vim里可以直接使用<command>:make</command>命令转换我的Docbook源文档了。
+  </para>
+  <para>
+    你可以在<link xlink:href='http://easwy.com/blog/uploads/2009/03/easwy_docbook_example.zip' xlink:show='new'>这里</link>下载本例中的文件，包括docbook.xml、docbook_easwy.xsl和Easwy的Makefile。
+  </para>
+</chapter>

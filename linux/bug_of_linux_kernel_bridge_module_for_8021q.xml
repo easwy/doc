@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>Linux使用笔记: 解决Xen虚拟机中VLAN接口不能ping大包的问题</title>
+  <para>
+    出于调试的需要，想在两个Xen虚拟机间使用VLAN相互访问。在Linux上启用VLAN非常简单，只需要使用命令<command>vconfig</command>配置一个VLAN接口就可以了：
+  </para>
+  <programlisting>
+vconfig add eth0 3
+ifconfig eth0.3 11.11.4.2 netmask 255.255.255.0 up </programlisting>
+  <para>
+    删除VLAN则使用<command>vconfig rem eth0.3</command>。当然你也可以在网络脚本中配置你的VLAN接口，这样每次系统启动后会自动配置VLAN接口，具体的配置参见文尾的第一篇参考文档。
+  </para>
+  <para>
+    当<link xlink:href='&myblog;'>Easwy</link>在两个Xen虚拟机上都配置了VLAN后，使用ping命令可以使两台虚拟机相互ping通。但发现一个问题，一旦ping包的大小超过一定长度，也就是说当ping包开始分片后，两台虚拟机之间就不能ping通了:
+  </para>
+  <programlisting>
+root@nti etc> ping 11.11.4.30 -s 1476 -c 3
+PING 11.11.4.30 (11.11.4.30) 1476(1504) bytes of data.
+1484 bytes from 11.11.4.30: icmp_seq=1 ttl=64 time=0.536 ms
+1484 bytes from 11.11.4.30: icmp_seq=2 ttl=64 time=0.213 ms
+1484 bytes from 11.11.4.30: icmp_seq=3 ttl=64 time=0.238 ms
+
+--- 11.11.4.30 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 1998ms
+rtt min/avg/max/mdev = 0.213/0.329/0.536/0.146 ms
+root@nti etc> ping 11.11.4.30 -s 1477 -c 3
+PING 11.11.4.30 (11.11.4.30) 1477(1505) bytes of data.
+
+--- 11.11.4.30 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2009ms </programlisting>
+  <para>
+    上面的输出显示，当ping包长度为1476字节时，可以正常ping通，但当ping包长度变为<emphasis role='bold'>1477</emphasis>字节时，就无法ping通了。
+  </para>
+  <para>
+    在网上搜索了很久，终于找到了原因。原来，在Xen中，虚拟机的网卡是通过宿主机(Domain-0)上的虚拟接口<emphasis>vifX.X</emphasis>以及虚拟网桥设备<emphasis>virbrX</emphasis>来实现网络通信的。
+  </para>
+  <para>
+    下面的<command>/sbin/ifconfig</command>输出列出了宿主机相应的网络接口：
+  </para>
+  <programlisting>
+$ /sbin/ifconfig
+
+eth0      Link encap:Ethernet  HWaddr 00:13:72:18:E0:99  
+          inet addr:192.168.19.84  Bcast:192.168.190.255  Mask:255.255.255.0
+          inet6 addr: fe80::213:72ff:fe18:e099/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:36017777 errors:43235 dropped:0 overruns:0 frame:46756
+          TX packets:894337 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:105224895 (100.3 MiB)  TX bytes:424826680 (405.1 MiB)
+          Interrupt:17 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:4698 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:4698 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:2439660 (2.3 MiB)  TX bytes:2439660 (2.3 MiB)
+
+vif3.0    Link encap:Ethernet  HWaddr FE:FF:FF:FF:FF:FF  
+          inet6 addr: fe80::fcff:ffff:feff:ffff/64 Scope:Link
+          UP BROADCAST RUNNING NOARP  MTU:1500  Metric:1
+          RX packets:38149 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:512426 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:32 
+          RX bytes:7652947 (7.2 MiB)  TX bytes:41352902 (39.4 MiB)
+
+vif4.0    Link encap:Ethernet  HWaddr FE:FF:FF:FF:FF:FF  
+          inet6 addr: fe80::fcff:ffff:feff:ffff/64 Scope:Link
+          UP BROADCAST RUNNING NOARP  MTU:1500  Metric:1
+          RX packets:65806 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:553557 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:32 
+          RX bytes:3835916 (3.6 MiB)  TX bytes:157035614 (149.7 MiB)
+
+virbr0    Link encap:Ethernet  HWaddr FE:FF:FF:FF:FF:FF  
+          inet addr:192.168.122.1  Bcast:192.168.122.255  Mask:255.255.255.0
+          inet6 addr: fe80::200:ff:fe00:0/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:555514 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:824276 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:64025226 (61.0 MiB)  TX bytes:968699886 (923.8 MiB) </programlisting>
+  <para>
+    也就是说，当虚拟机1发包给虚拟机2时，它的报文首先经过<emphasis>vif3.0</emphasis>，然后经过网桥设备(bridge)<emphasis>virbr0</emphasis>，最后到达虚拟机2的虚拟接口<emphasis>vif4.0</emphasis>。
+  </para>
+  <para>
+    而<link xlink:href='&myblog;'>Easwy</link>所用的Linux内核版本2.6.18-128.el5xen中，它的bridge驱动中存在bug，当使能了conntrack模块时，bridge会把分片包重组起来进行检查，但由bridge再向外发时，却没有重新分片，这导致报文被二层丢弃。也正是这个原因，当ping包大小大于1476时，两台虚拟机间就无法相互ping通了。
+  </para>
+  <para>
+    要解决这个问题，可以重新编译内核(不过我不知道这个问题在哪一个内核版本中得到了解决)。对于Easwy来说，因为不需要使用防火墙，所以解决起来就不用这么麻烦了，只需要使用下面的命令禁用bridge的防火墙就行了：
+  </para>
+  <programlisting>
+# echo 0 > /proc/sys/net/bridge/bridge-nf-call-iptables </programlisting>
+  <para>
+    禁用掉防火墙后，两台虚拟机间的大包可以ping通了，分片包的通过不存在问题。
+  </para>
+  <para>
+    要了解这个bug的详细信息，参见文末的第二篇参考文档。文末的第三篇和第四篇参考文档，则列出了在Xen中使用VLAN的配置方法，有兴趣的朋友可以看一下。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>Easwy的博客</link>上的其它文章。
+  </para>
+  <para><emphasis role='bold'>[ 参考文档 ]</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://www.cyberciti.biz/tips/howto-configure-linux-virtual-local-area-network-vlan.html' xlink:show='new'>Howto: Configure Linux Virtual Local Area Network (VLAN)</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='https://lists.linux-foundation.org/pipermail/bridge/2007-May/005436.html' xlink:show='new'>[Bridge] [BUG] Dropping fragmented IP packets within VLAN frames on bridge</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://renial.net/weblog/2007/02/27/xen-vlan' xlink:show='new'>Bridging domains to tagged VLANs in Xen</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://www.felipe-alfaro.org/blog/2006/07/21/xen-network-configuration-and-multiple-vlans/' xlink:show='new'>Xen network configuration and multiple VLANs</link>
+    </listitem>
+  </itemizedlist>
+</article>

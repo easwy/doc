@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE book [
+<!ENTITY uri_blog 'http://easwy.com/blog/'>
+<!ENTITY uri_docbook 'http://easwy.com/blog/archives/tag/docbook/'>
+<!ENTITY uri_intro 'http://easwy.com/blog/archives/docbook_intro/'>
+
+<!ENTITY intro SYSTEM 'docbook_intro.xml'>
+<!ENTITY simple_example SYSTEM 'simple_example.xml'>
+]>
+
+<book xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="zh-CN"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+  <info>
+    <title>学习Docbook 5.0</title>
+    <author><firstname>Easwy</firstname><surname>Yang</surname></author>
+  </info>
+
+  &intro;
+  &simple_example;
+</book>

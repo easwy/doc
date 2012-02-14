@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE book [
+<!ENTITY uri_blog 'http://easwy.com/blog/'>
+<!ENTITY buy_domain_name SYSTEM 'buy_domain_name.xml'>
+]>
+
+<book xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'>
+  <info>
+    <title>我的建站经历</title>
+    <subtitle>从零开始建立自己的网站</subtitle>
+    <copyright>
+      <year>2009</year>
+    </copyright>
+    <author>
+      <firstname>Easwy</firstname>
+      <surname>Yang</surname>
+      <affiliation>
+        <address> <otheraddr> <link xlink:href='&uri_blog;'/> </otheraddr> </address>
+      </affiliation>
+    </author>
+    <legalnotice>
+      <para>本文可以自由应用于非商业用途。转载请注明：<emphasis role='bold'>转载自<link xlink:href='http://easwy.com/blog/' xlink:show='new'>Easwy的博客</link> [  <link xlink:href='http://easwy.com/blog/' xlink:show='new'/> ] </emphasis></para>
+    </legalnotice>
+  </info> 
+
+  <chapter xml:id='catalog' xmlns:xlink='http://www.w3.org/1999/xlink'>
+    <title>目录</title>
+    <para>
+      几经周折，<link xlink:href="http://easwy.com/blog/" xlink:show="new">Easwy的博客</link>终于走上正轨了，其中辛苦值得回味。建站的过程，也是学习的过程，经历过整个过程，再回头来看，发现自己收获颇多。由此撰写此文，记录下整个过程，一方面给自己下次建站做一个参考，另一方面，也希望对后来者能有所帮助，使之不必经历我所经历的诸多波折。
+    </para>
+    <para>
+      本文是这一系列文章的总目录，可由此访问本系列所有文章。
+    </para>
+    <para><emphasis role='bold'>[目录]</emphasis></para>
+    <itemizedlist>
+      <listitem>
+        <link xlink:href='' xlink:show='new'>我的建站经历: 域名注册</link>
+        <para>
+        </para>
+      </listitem>
+      <!--
+      <listitem>
+        <link xlink:href='' xlink:show='new'>我的建站经历: </link>
+        <para>
+        </para>
+      </listitem>
+      -->
+    </itemizedlist>
+  </chapter>
+&buy_domain_name;
+
+By electing to use your PayPal account to make a purchase through GoDaddy.com, Inc you are agreeing to the Merchant-Initiated Payment billing agreement through PayPal. This billing agreement establishes a relationship between you and GoDaddy.com through PayPal and allows you to authorize GoDaddy.com, Inc to withdraw funds for payment of purchases you make at our site directly from your PayPal account.
+You will receive an email notification from PayPal informing you of the acceptance of this Merchant-Initiated Payment agreement and your monthly billing limit. Your monthly billing limit is based on the amount of your initial purchase using the account with us. We start at $500.00USD and round up your limit to the nearest $100.00USD. You are free to increase or lower your monthly billing limit, if you choose to, by visiting www.PayPal.com
+Limit for this Merchant-Initated Payment: $500.00USD per month
+
+</book>

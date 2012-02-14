@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<article xmlns='http://docbook.org/ns/docbook' version='5.0'
+  xmlns:xlink='http://www.w3.org/1999/xlink' xml:lang='zh-CN'>
+  <para>
+    这个技巧是在VIM邮件列表中看到的，非常实用。
+  </para>
+  <para>
+    这里以编写C语言程序为例， 假设，我们最终想完成的代码如下：
+  </para>
+  <programlisting>
+#define BIT_MASK_1      (1 &lt;&lt; 0)
+#define BIT_MASK_2      (1 &lt;&lt; 1)
+#define BIT_MASK_3      (1 &lt;&lt; 2)
+#define BIT_MASK_4      (1 &lt;&lt; 3)
+#define BIT_MASK_5      (1 &lt;&lt; 4)
+#define BIT_MASK_6      (1 &lt;&lt; 5)
+#define BIT_MASK_7      (1 &lt;&lt; 6)
+#define BIT_MASK_8      (1 &lt;&lt; 7)
+#define BIT_MASK_9      (1 &lt;&lt; 8)
+#define BIT_MASK_10      (1 &lt;&lt; 9)
+#define BIT_MASK_11      (1 &lt;&lt; 10)
+#define BIT_MASK_12      (1 &lt;&lt; 11)
+#define BIT_MASK_13      (1 &lt;&lt; 12)
+#define BIT_MASK_14      (1 &lt;&lt; 13)
+#define BIT_MASK_15      (1 &lt;&lt; 14)
+#define BIT_MASK_16      (1 &lt;&lt; 15)
+#define BIT_MASK_17      (1 &lt;&lt; 16)
+#define BIT_MASK_18      (1 &lt;&lt; 17)
+#define BIT_MASK_19      (1 &lt;&lt; 18)
+#define BIT_MASK_20      (1 &lt;&lt; 19)
+#define BIT_MASK_21      (1 &lt;&lt; 20)
+#define BIT_MASK_22      (1 &lt;&lt; 21)
+#define BIT_MASK_23      (1 &lt;&lt; 22)
+#define BIT_MASK_24      (1 &lt;&lt; 23)
+#define BIT_MASK_25      (1 &lt;&lt; 24)
+#define BIT_MASK_26      (1 &lt;&lt; 25)
+#define BIT_MASK_27      (1 &lt;&lt; 26)
+#define BIT_MASK_28      (1 &lt;&lt; 27)
+#define BIT_MASK_29      (1 &lt;&lt; 28)
+#define BIT_MASK_30      (1 &lt;&lt; 29)
+#define BIT_MASK_31      (1 &lt;&lt; 30)
+#define BIT_MASK_32      (1 &lt;&lt; 31) &lt;</programlisting>
+  <para>
+    我们不需要一行一行的去写，只需要先写好第一行，如下：
+  </para>
+  <programlisting>
+#define BIT_MASK_1      (1 &lt;&lt; 0) </programlisting>
+  <para>
+    然后，我们回到Normal模式，在这一行上输入"Y31p"，拷贝此行，然后粘贴31次。这样，我们得到总共32行上面的内容。
+  </para>
+  <para>
+    现在使用"V31j"命令选中这32行，然后使用两次替换命令：
+  </para>
+  <programlisting>
+:'&lt;,'>s/BIT_MASK_\zs\d*\ze/\=line(".") - line("'&lt;") + 1
+:'&lt;,'>s/\zs\d*\ze)$/\=line(".")-line("'&lt;")</programlisting>
+  <para>
+    这样，我们就得到了我们想要的结果。
+  </para>
+  <para>
+    这种方式还可以用于数组下标的自动增加，以及文本的章节自动编号等功能。只要你能够用正则表达式准确的定位出你想要自动编号的的数字，那么就可以使用这种方法来自动编号。
+  </para>
+  <para>
+    将在<link xlink:href='http://easwy.com/blog/archives/vim-tips-advanced-substitute-2/' xlink:show='new'>下一篇文章</link>中详细介绍本文中使用的VIM命令。
+  </para>
+  <section>[参考文档]</section>
+  <itemizedlist>
+    <listitem>
+      VIM邮件列表，2007/01/29， 邮件标题："replace with a number sequence"
+    </listitem>
+  </itemizedlist>
+</article>

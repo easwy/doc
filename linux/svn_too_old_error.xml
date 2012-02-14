@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>解决Subversion提交时提示svn客户端版本太旧的问题</title>
+  <para>
+    从另外一台计算机上拷贝了一份subversion的版本库，完成修改后提交时，出现如下错误： 
+  </para>
+  <programlisting>
+$ svn ci -m "commit a new version"
+subversion/libsvn_wc/questions.c:126: (apr_err=155021)
+svn: This client is too old to work with working copy '/home/easwy/subversion/'; please get a newer Subversion client </programlisting>
+  <para>
+    以前也遇到过这个问题，当时是升级了subversion的版本。这次因为升级计算机比较麻烦，所以打算用其它的方法绕过。
+  </para>
+  <para>
+    在网上搜索了一下，找到了subversion的FAQ，里面提到有时svn的工作拷贝在不同subversion版本间会存在不兼容，所以由新版本svn导出的版本库，就不能使用旧版本svn来提交，此时就会提交客户端版本太老。不过subversion的开发人员提供了一个python脚本，可以对工作拷贝的格式进行转换，转换后就可以commit了。
+  </para>
+  <para>
+    这个脚本在这里下载：<link xlink:href='http://svn.collab.net/repos/svn/trunk/tools/client-side/change-svn-wc-format.py'/>
+  </para>
+  <para>
+    下载后，在工作拷贝所在的目录中执行：
+  </para>
+  <programlisting>
+   change-svn-wc-format.py . 1.4 </programlisting>
+  <para>
+    上面的命令，会把working copy的格式转换成subversion 1.4的格式，转换后再提交就可以成功了。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>Easwy的博客</link>上的其它文章。
+  </para>
+  <para><emphasis role='bold'>[ 参考文档 ]</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://subversion.tigris.org/faq.html#working-copy-format-change' xlink:show='new'>I got an error saying "This client is too old to work with working copy '...' ". How can I fix it without upgrading Subversion?</link>
+    </listitem>
+  </itemizedlist>
+</article>
+

@@ -1,0 +1,48 @@
+  <chapter xml:id='installation'
+    xmlns:xlink='http://www.w3.org/1999/xlink'>
+    <title>在thinkpad t400上安装debian lenny</title>
+    <para>
+      上周末从<link xlink:href='http://www.upnb.com/' xlink:show='new'>upnb</link>搬了一部Thinkpad T400-aa1回来，价钱比较实惠。刚好debian 5.0 (lenny)发布，于是打算在小黑上安装lenny，这一系列文章主要是记录安装、配置lenny的过程。
+    </para>
+    <para>
+      安装前的准备花费了一点时间。因为t400 aa1是港版学生机，自带的操作系统是繁体中文windows vista，也可以转换成英文vista用，不过据说运行简体软件仍会出现乱码。于是就把它格掉，准备安装windows xp。之所以装xp，是因为对vista系统印象一直不好。家里DELL计算机上的vista，用了两年多了，还是用不习惯。
+    </para>
+    <para>
+      安装xp的过程就不细讲了，用的是<link xlink:href='http://www.upnb.com/' xlink:show='new'>upnb</link>提供的windows xp恢复盘。
+    </para>
+    <para>
+      安装完xp后，整个硬盘只有两个分区，一个系统分区，另外一个是一键恢复占用的隐藏分区。虽然说lenovo的一键恢复没什么大用，不过懒得删掉它，放在那儿放着吧，反正250G的硬盘足够大了。
+    </para>
+    <para>
+      要安装debian，首先要为debian留出空闲分区。可以使用PQMAGIC来重新分区，不过这样分区后，一键恢复功能就不能用了。在网上搜了一下，联想网站上介绍了一种分区方法，这种方法不会影响一键恢复功能。
+    </para>
+    <para>
+      参照文章<link xlink:href="http://think.lenovo.com.cn/support/knowledge/detail.aspx?docID=KN1199274542828&amp;docTypeID=DOC_TYPE_KNOWLEDGE" xlink:show='new'>对ThinkPad预装系统重新分区</link>，先磁盘整理(其实没什么好整理的，刚装的xp)，然后拿出我DELL机配的vista安装盘，运行diskpart，收回了不到120G的硬盘空间。把这120G建成扩展分区，里面再拿出两个32G来格成fat32系统。之所以格成fat32系统，主要考虑到这两个分区要同时能在debian以及windows里访问，而32G是fat32文件系统能支持的最大分区大小。
+    </para>
+    <para>
+      现在还剩下大概50多G的空间，对安装debian来说足够了。
+    </para>
+    <para>
+      我安装debian，都是使用netinst映像。先由netinst光盘安装完基本系统，然后再由网络安装。这样的好处是不用下载几张光盘镜像，这些镜像在装过一次后基本没什么用了，因为debian在不断更新中；不过网络安装要求有便利的上网条件，以及高速的下载源。在当前的宽带环境下，这倒不是什么问题。
+    </para>
+    <para>
+      到<link xlink:href='http://www.debian.org/distrib/netinst' xlink:show='new'>debian官方网站</link>下载netinst光盘映像，我下的是大约180MB的映像。如果你更懒的话，可以下载不到40MB的映像。
+    </para>
+    <para>
+      把映像刻录到光盘后，光盘启动，按照提示一步步做就可以了。lenny在安装过程中有中文界面，如果选用中文界面的话，安装后系统的默认语言就是中文。我在这里选的是英文界面，中文打算安装完lenny后再配置。
+    </para>
+    <para>
+      安装过程不必多讲，大概只有硬盘分区时费一点脑子，要想好自己怎么分区。我通常是分三个区，一个/分区，一个/home分区，一个swap分区。debian也可以帮你自动分区，不过我看了一下，自动分区后，留给/分区的空间不够，最好还是手动分区。
+    </para>
+    <para>
+      在配置apt源的时候，要等上很长一段时间，当时以为出了什么问题，不过后来还是走过去了。apt源设置成网速最快的，以前我都使用debian.cn99.com，不过最近用它更新好像不正常，改用台湾的源http://ftp.tw.debian.org/debian，下载的速度还不错。配置完apt源，会让你选择安装哪些包，我在这儿把所有选项都清掉了，先把基本系统装好再装这些包也不迟。
+    </para>
+    <para>
+      跳过package安装后，很快基本系统就装好了。重启计算机，进入debian，本本的硬件差不多都能识别出来。切换到root用户，运行<command>aptitude</command>，把自己想装的任务(task)选中，GO，开始下载安装~~ 下载安装的过程差不多花了两个小时，主要取决于你所选的包的数目，我选了xfce、KDE、笔记本相关组件、中文组件等。
+    </para>
+    <para>
+      安装完成了，接下来要进行系统配置，下篇文章继续。
+    </para>
+    <para><emphasis role='bold'>原创文章，转载请注明：</emphasis>转载自<link xlink:href="http://easwy.com/blog/" xlink:show='new'>Easwy的博客</link> [  <link xlink:href="http://easwy.com/blog/" xlink:show="new">http://easwy.com/blog/</link> ]</para>
+    <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='&uri_install;'/></para>
+  </chapter>

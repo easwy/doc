@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>vi在启动时没有响应问题的解决</title>
+  <para>
+    最近<link xlink:href='&myblog;'>Easwy</link>在某台服务器上启动vi时，总出现vi没有响应的情况。 现象是输入<command>vi</command>命令后，vi窗口显示不出来，并且此时终端也没有响应，不能输入任何命令。只能用ssh再登录一个终端，在新登录终端上使用<command>kill</command>命令杀死此vi进程，此时运行vi的终端中显示如下信息：
+  </para>
+  <programlisting>
+*** info [lib/liblow.c(329)]:
+/dev/gpmctl: Interrupted system call
+*** err [lib/liblow.c(336)]:
+/dev/gpmctl: No such device or address
+Vim: Caught deadly signal TERM
+Vim: Finished.
+Terminated </programlisting>
+  <para>
+    在偶然中发现，使用putty登录这台服务器时，运行<command>vi</command>命令没有问题。因此怀疑和<emphasis>TERM</emphasis>环境变量的设置有关。检查putty中此环境变量：
+  </para>
+  <programlisting>
+$ echo $TERM
+xterm </programlisting>
+  <para>
+    而在vi没响应的终端里，TERM环境变量的值为：
+  </para>
+  <programlisting>
+$ echo $TERM
+linux </programlisting>
+  <para>
+    如果把TERM环境变量的值也改成<emphasis>xterm</emphasis>，那么vi可以正常启动。看来的确是TERM环境变量引起的这个问题。后来又发现，如果在linux screen中启动vim的话(此时TERM环境变量的值为<emphasis>screen</emphasis>)，vim也不能正常启动。
+  </para>
+  <para>
+    那么为什么TERM环境变量的取值会影响vim的启动呢？经过认真排查，终于把问题定位到vimrc中的一个设置上：
+  </para>
+  <programlisting>
+set mouse=a </programlisting>
+  <para>
+    如果在.vimrc中设置了<command>set mouse=a</command>，那么在TERM环境变量为linux或screen的终端上，vi启动时就会没有反应；如果去掉这个设置，不管TERM环境变量的取值是什么，vi都能正常启动。
+  </para>
+  <para>
+    阅读了vim的帮助手册，手册中说，这个选项只在一些特定类型的终端上支持，比如xterm、使能了gpm的linux终端等。看来问题是出在gpm上，从上面vim被kill后的打印中也可以看出，是/dev/gpmctl设备无法访问导致vi失去反应的。
+  </para>
+  <para>
+    后来在vimrc中把<command>set mouse=a</command>一句去掉，vi终于正常了。如果有其它朋友也遇到类似的问题，不妨试一下上述解决方案。
+  </para>
+  <para>
+    更多关于<link xlink:href='http://easwy.com/blog/archives/tag/vim/'>vim</link>的内容，请阅读<link xlink:href='&myblog;'>Easwy的博客</link>上的其它文章。
+  </para>
+</article>
+

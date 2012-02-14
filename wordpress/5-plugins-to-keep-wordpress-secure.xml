@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>5个插件使wordpress更安全</title>
+  <para><emphasis role='bold'>[ 译注 ]</emphasis></para>
+  <para>
+    <emphasis role='bold'>原文链接：</emphasis><link xlink:href='http://www.dailyblogtips.com/5-plugins-to-keep-wordpress-secure/' xlink:show='new'>5 Plugins to Keep WordPress Secure</link>
+  </para>
+  <para>
+    <emphasis role='bold'>译文链接：</emphasis><link xlink:href='http://easwy.com/blog/archives/5-plugins-to-keep-wordpress-secure/'>5个插件使wordpress更安全</link>
+  </para>
+  <para>
+    <emphasis role='bold'>翻译：</emphasis><link xlink:href='http://easwy.com/'>Easwy</link>@<link xlink:href='http://easwy.com/blog/'>Easwy的博客</link>
+  </para>
+  <para><emphasis role='bold'>[ 译文 ]</emphasis></para>
+  <para>
+    <emphasis>本文由Mr. I.供稿</emphasis>
+  </para>
+  <para>
+    几天前，有读者在他的博客被入侵后寻求Daniel的建议，Daniel给出了一些好的安全措施以保证wordpress的安全。万一你没看到这篇文章，请在这里阅读：<link xlink:href='http://www.dailyblogtips.com/qa-what-if-my-wordpress-blog-got-hacked-with-the-google-redirect/'>What if my WordPress Blog Got Hacked with the Google Redirect?</link>。
+  </para>
+  <para>
+    我应用了Daniel建议的这些安全举措，并找到了一些支持这些功能的插件。
+  </para>
+  <para>
+    下面是我找到的一些插件，可以使wordpress更安全：
+  </para>
+  <orderedlist>
+    <listitem>
+      <link xlink:href='http://wordpress.org/extend/plugins/limit-login-attempts/' xlink:show='new'>Limit Login Attempts</link> : 这个插件在用户4次(可以修改)输错密码后阻塞该用户20分钟。这是避免暴力破解的一个好方法。
+    </listitem>
+    <listitem>
+      <link xlink:href='http://wordpress.org/extend/plugins/sabre/' xlink:show='new'>Sabre</link> : 如果你的wordpress博客允许用户注册，并且你看到很多虚假注册，这个插件可以阻止那些由机器人产生的虚假注册。它可以增加图像验证或者算术验证以及其它手段，来保证不会创建虚假注册。
+    </listitem>
+    <listitem>
+      <link xlink:href='http://wordpress.org/extend/plugins/semisecure-login-reimagined/' xlink:show='new'>Semisecure Login</link> : 这个插件使用公钥对密码进行加密，来增强登录过程的安全性。然后服务器端通过私钥进行解密。需要Javascript和PHP的支持。
+    </listitem>
+    <listitem>
+      <link xlink:href='http://wordpress.org/extend/plugins/bad-behavior/' xlink:show='new'>Bad Behavior</link> : 这个插件通过<link xlink:href='http://en.wikipedia.org/wiki/Project_Honey_Pot' xlink:show='new'>密罐项目(Project Honey Pot)</link>的数据库查询访问者的IP地址，以确定访问者是否是Spammer。如果可疑，它会阻止这个IP访问你的博客。
+    </listitem>
+    <listitem>
+      <link xlink:href='http://wordpress.org/extend/plugins/secure-wordpress/' xlink:show='new'>Secure WordPress</link> : 这个插件提供了一些小功能，检查你的wordpress是否安装安全。它对非管理员用户隐藏wordpress的版本信息，并在plugin目录中放置一个空的index.php文件以防止访问者访问plugin目录。
+    </listitem>
+  </orderedlist>
+  <para>
+    所有这些插件都是wordpress 2.7兼容的。
+  </para>
+  <para>
+    深入阅读：Daniel的<link xlink:href='http://www.dailyblogtips.com/3-must-apply-security-tips-for-wordpress/' xlink:show='new'>3 Must Apply Security Tips for WordPress</link>。
+  </para>
+  <para>
+    不要忘记分享你所采用的使wordpress更安全的插件及技巧。
+  </para>
+  <para>
+    <emphasis>Mr. I是<link xlink:href='http://bloggingwithsuccess.net/' xlink:show='new'>Blogging With Success</link>的发起人之一，也是主要作者之一。如果你喜欢这篇文章，请察看他写的<link xlink:href='http://bloggingwithsuccess.net/50-must-have-wordpress-plugins' xlink:show='new'>50 Must Have WordPress Plugins for WordPress 2.7</link>。</emphasis>
+  </para>
+</article>

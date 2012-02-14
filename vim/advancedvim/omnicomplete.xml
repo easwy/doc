@@ -1,0 +1,230 @@
+<chapter xml:id='omin-complete'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>智能补全</title>
+  &tocatalog;
+  <para>
+    本节所用命令的帮助入口：
+  </para>
+  <programlisting>
+:help ins-completion
+:help compl-omni
+:help 'omnifunc'
+:help i_CTRL-X_CTRL-O
+:help ins-completion-menu
+:help popupmenu-keys
+:help 'completeopt'
+:help compl-omni-filetypes
+:help omnicppcomplete.txt </programlisting>
+  <para>
+    使用过Source Insight的人一定对它的自动补全功能印象深刻，在很多的集成开发环境中，也都支持自动补全。vim做为一个出色的编辑器，这样的功能当然少不了。而且，作为一个通用的编辑器，vim实现的补全功能并不仅仅限于对程序的补全，它可以对文件名补全、根据字典进行补全、根据本缓冲区或其它缓冲区类似的内容进行补全、根据文件语法补全等等，它甚至允许用户自己编写函数来实现定制的补全。
+  </para>
+  <para>
+    作为<link xlink:href='&uri_catalog;' xlink:show='new'>vim进阶系列文章</link>中的一篇，本文以介绍vim对程序的补全为主，也顺带介绍一下其它的补全方式。本文将分为两篇，第一篇主要介绍vim的OMNI补全，下一篇简要介绍<link xlink:href='&uri_auto_complete;' xlink:show='new'>其它的补全方式</link>，以及SuperTab插件。
+  </para>
+  <para>
+    vim的OMNI补全(以下称"全能补全")可以支持多种程序语言，包括C，C++， XML/HTML，CSS，JAVASCRIPT，PHP，RUBY等，详细列表请参阅"<command>:help compl-omni-filetypes</command>"。在本文中，主要介绍C及C++的全能补全。
+  </para>
+  <para>
+    vim在对不同类型的文件进行补全时，会根据文件类型，为其设置不同的补全函数。也就是说，要实现全能补全功能，需要<link xlink:href='&uri_filetype;' xlink:show='new'>打开文件类型检测</link>。把下面的命令加到你的vimrc中：
+  </para>
+  <programlisting>
+filetype plugin indent on </programlisting>
+  <para>
+    你可以查看'<emphasis>omnifunc</emphasis>'选项，来知道当前的补全函数是什么。
+  </para>
+  <para>
+    对C及C++代码的全能补全需要使用<link xlink:href='http://easwy.com/blog/archives/exuberant-ctags-chinese-manual/' xlink:show='new'>Exuberant ctags</link>生成的标签文件，我们在前面的文章中介绍过如何<link xlink:href='&uri_tag_file;' xlink:show='new'>使用Exuberant ctags程序来生成标签文件</link>。不过，如果你的Exuberant ctags版本为5.5.4，那么需要为其打上增加"<emphasis>typename:</emphasis>"字段补丁，才能支持C的全能补全。补丁在这里下载：
+  </para>
+  <programlisting>
+<link xlink:href='ftp://ftp.vim.org/pub/vim/unstable/patches/ctags-5.5.4.patch'/></programlisting>
+  <para>
+    可以在这里找到MS-Windows上已经编译好的可执行版本：
+  </para>
+  <programlisting>
+<link xlink:href='http://georgevreilly.com/vim/ctags.html'/> </programlisting>
+  <para>
+    不过我建议使用最新5.6版本Exuberant Ctags。在下面的网站可以下载：
+  </para>
+  <programlisting>
+<link xlink:href='http://ctags.sourceforge.net/'/></programlisting>
+  <para>
+    你可以直接下载已经编译好的rpm版本，或者下载源代码。如果是后者，使用以下命令对源代码进行编译：
+  </para>
+  <programlisting>
+tar zvxf ctags-5.6.tar.gz
+cd ctags-5.6
+./configure
+make
+make install </programlisting>
+  <para>
+    如果你没有系统目录的写权限，你可能要把Exuberant Ctags安装到自己的主目录，只需要把上面的"<command>./configure</command>"命令改为"<command>./configure –prefix=/home/xxx</command>"就可以了。
+  </para>
+  <para>
+    Ctags升级后，使用"<command>ctags –R</command>"更新一下标签文件，现在再进入vim就可以在C程序中全能补全了。我们依旧以vim 7.0的源代码为例。
+  </para>
+  <para>
+    例如，我们在VimMain()函数中，输入"<emphasis>gui</emphasis>"三个字符，然后按下"<command>CTRL-X CTRL-O</command>"，在vim的状态行会显示"<emphasis>Omni Completeion</emphasis>"，表明现在进行的是全能补全，同时会弹出一个下拉菜单，显示所有匹配的标签。你可以使用来"<command>CTRL-P</command>"和"<command>CTRL-N</command>"上下选择，在选择的同时，所选中的项就被放在光标位置，不需要再按回车来把它放在光标位置（像Source Insight那样）。
+  </para>
+  <para>
+    如果更习惯于使用Source Insight这种方式，你可以使用上、下光标键来选择项目，然后按回车把选中的项目放到光标位置。不过这样一来，你的手指就会离开主编辑区，并且需要多输入一个回车键。
+  </para>
+  <para>
+    本文结尾处提供了一个键绑定，允许在使"<command>CTRL-P</command>"和"<command>CTRL-N</command>"时，输入回车表示补全结束，而不是插入回车。
+  </para>
+  <para>
+    如果补全处于激活状态，可以用"<command>CTRL-E</command>"停止补全并回到原来录入的文字。用"<command>CTRL-Y</command>"可以停止补全，并接受当前所选的项目。
+  </para>
+  <informalfigure>
+    <mediaobject>
+      <alt>omni补全抓图</alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/03/omni_complete1-300x224.jpg' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/03/omni_complete1.jpg' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  <para>
+    下图是使用"CTRL-N"选择的抓图。该图中，我选择了"gui_exit("函数，接下来可以直接输入这个函数的参数，这会结束当前补全，并插入我所输入的参数。
+  </para>
+  <informalfigure>
+    <mediaobject>
+      <alt>omni补全抓图</alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/03/omni_complete2-300x224.jpg' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/03/omni_complete2.jpg' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  <para>
+    下图是对结构的成员进行补全的抓图：
+  </para>
+  <informalfigure>
+    <mediaobject>
+      <alt>omni补全抓图</alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/03/omni_complete3-300x225.jpg' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/03/omni_complete3.jpg' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  <para>
+    缺省的，vim会使用下拉菜单和一个preview窗口(预览窗口)来显示匹配项目，下拉菜单列出所有匹配的项目，预览窗口则显示选中项目的详细信息。打开预览窗口会导致下拉菜单抖动，因此我一般都去掉预览窗口的显示，这需要改变'<emphasis>completeopt</emphasis>'的值，我的设置如下：
+  </para>
+  <programlisting>
+set completeopt=longest,menu </programlisting>
+  <para>
+    上面的设置表明，只在下拉菜单中显示匹配项目，并且会自动插入所有匹配项目的相同文本。
+  </para>
+  <para>
+    如果要支持C++的全能补全，需要到<link xlink:href='http://www.vim.org/' xlink:show='new'>vim主页</link>下载OmniCppComplete插件，链接如下：
+  </para>
+  <programlisting>
+    <link xlink:href='http://www.vim.org/scripts/script.php?script_id=1520' xlink:show='new'/></programlisting>
+  <para>
+    下载后，把它解压到你的.vim目录(在windows下是vimfiles目录)，它会安装以下文件：
+  </para>
+  <programlisting>
+after\ftplugin\cpp.vim
+autoload\omni\common\debug.vim
+\utils.vim
+autoload\omni\cpp\complete.vim
+\includes.vim
+\items.vim
+\maycomplete.vim
+\namespaces.vim
+\settings.vim
+\tokenizer.vim
+\utils.vim
+doc\omnicppcomplete.txt </programlisting>
+  <para>
+    确保你已关闭了vi兼容模式，并允许进行文件类型检测：
+  </para>
+  <programlisting>
+set nocp
+filetype plugin on </programlisting>
+  <para>
+    接下来，使用下面的命令，为C++文件生成标签文件，假定你的文件在src目录树下：
+  </para>
+  <programlisting>
+ctags -R --c++-kinds=+p --fields=+iaS --extra=+q src </programlisting>
+  <para>
+    在对C++文件进行补全时，OmniCppComplete插件需要tag文件中包含C++的额外信息，因此上面的ctags命令不同于以前我们所使用的，它专门为C++语言生成一些额外的信息，上述选项的含义如下：
+  </para>
+  <programlisting>
+<emphasis role='bold'>--c++-kinds=+p  :</emphasis> 为C++文件增加函数原型的标签
+<emphasis role='bold'>--fields=+iaS   :</emphasis> 在标签文件中加入继承信息(i)、类成员的访问控制信息(a)、以及函数的指纹(S)
+<emphasis role='bold'>--extra=+q      :</emphasis> 为标签增加类修饰符。注意，如果没有此选项，将不能对类成员补全 </programlisting>
+  <para>
+    现在，进入vim，设置好tag选项（我在前面的文章中介绍过）。好极了，vim能够对C++自动补全了！
+  </para>
+  <para>
+    我写了一个简单的例子，来演示C++的自动补全功能，如下图所示，在输入"<emphasis>t.</emphasis>"后，OmniCppComplete插件会自动弹出struct test1的成员供选择，而在输入"<emphasis>b-&gt;</emphasis>"后，又会自动弹出class base的成员供选择，非常方便，连"<command>CTRL-X CTRL-O</command>"都不必输入。OmniCppComplete插件的缺省设置比较符合我的习惯，因此不须对其设置进行调整，如果你需要调整，参阅OmniCppComplete的帮助页。
+  </para>
+  <informalfigure>
+    <mediaobject>
+      <alt>c++ omni补全抓图</alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/03/omni_complete4-300x224.jpg' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/03/omni_complete4.jpg' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  <informalfigure>
+    <mediaobject>
+      <alt>c++ omni补全抓图</alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/03/omni_complete5-300x225.jpg' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/03/omni_complete5.jpg' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  <para>
+    下表是我的vimrc中设置的键绑定，使用pumvisible()来判断下拉菜单是否显示，如果下拉菜单显示了，键映射为了一个值，如果未显示，又会映射为另一个值。
+  </para>
+  <programlisting>
+" mapping
+inoremap &lt;expr&gt; &lt;CR&gt;       pumvisible()?"\&lt;C-Y&gt;":"\&lt;CR&gt;"
+inoremap &lt;expr&gt; &lt;C-J&gt;      pumvisible()?"\&lt;PageDown&gt;\&lt;C-N&gt;\&lt;C-P&gt;":"\&lt;C-X&gt;&lt;C-O&gt;"
+inoremap &lt;expr&gt; &lt;C-K&gt;      pumvisible()?"\&lt;PageUp&gt;\&lt;C-P&gt;\&lt;C-N&gt;":"\&lt;C-K&gt;"
+inoremap &lt;expr&gt; &lt;C-U&gt;      pumvisible()?"\&lt;C-E&gt;":"\&lt;C-U&gt;" </programlisting>
+  <para>
+    上面的映射都是在插入模式下的映射，解释如下：
+  </para>
+  <itemizedlist>
+    <listitem>
+      如果下拉菜单弹出，回车映射为接受当前所选项目，否则，仍映射为回车；
+    </listitem>
+    <listitem>
+      如果下拉菜单弹出，<command>CTRL-J</command>映射为在下拉菜单中向下翻页。否则映射为<command>CTRL-X CTRL-O</command>；
+    </listitem>
+    <listitem>
+      如果下拉菜单弹出，<command>CTRL-K</command>映射为在下拉菜单中向上翻页，否则仍映射为<command>CTRL-K</command>；
+    </listitem>
+    <listitem>
+      如果下拉菜单弹出，<command>CTRL-U</command>映射为<command>CTRL-E</command>，即停止补全，否则，仍映射为<command>CTRL-U</command>；
+    </listitem>
+  </itemizedlist>
+  <para>
+    在下一篇文章中，将继续介绍vim提供的<link xlink:href='&uri_auto_complete;' xlink:show='new'>其它补全方式</link>。
+  </para>
+  <para>
+    <emphasis role='bold'>[参考文档]</emphasis>
+  </para>
+  <itemizedlist>
+    <listitem>
+      vim手册
+    </listitem>
+    <listitem>
+      <link xlink:href='http://vimcdoc.sourceforge.net/' xlink:show='new'>vim中文手册</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://www.vim.org/tips/tip.php?tip_id=1228' xlink:show='new'/>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://www.vim.org/tips/tip.php?tip_id=1386' xlink:show='new'/>
+    </listitem>
+  </itemizedlist>
+  &tocatalog;
+  &copyright;
+  <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='&uri_omni_complete;'/></para>
+</chapter>

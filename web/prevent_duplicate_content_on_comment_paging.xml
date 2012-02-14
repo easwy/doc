@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>去除分页评论造成的重复内容</title>
+  <para>
+    今天在Google网站管理员工具中发现有"重复的标题标记"问题，我的文章中应该没有重复标题呀？是什么造成的呢？
+  </para>
+  <para>
+    仔细一看，原来和wordpress新加的评论分页功能有关。在wordpress 2.7中支持对评论分页显示，这是一个很好的功能，因为在评论比较多时可以允许用户来翻页查看。不过搜索引擎在收录评论页时，也同时把该评论所在文章收录进去，这就导致出现重复内容、重复标题标记的问题。
+  </para>
+  <para>
+    因为网站上重复内容较多会产生不好的SERP，甚至会导致你的Page Rank降低，所以这个问题还是要解决一下。在网上搜索了一下，已经有人专门写了个插件来防止评论分页造成的重复内容。可以到<link xlink:href='http://blog.kaizeku.com/wordpress/prevent-wordpress-27-duplicate-content/' xlink:show='new'>Kaizeku Ban</link>下载Avice提供的插件。我也把这个作者的插件放在我的网站上了，如果你访问不了此页面，也可以点击这里下载<link xlink:href='http://easwy.com/blog/uploads/2009/03/add_comment_paging_noindex_meta3.zip' xlink:show='new'>add_comment_paging_noindex_meta.php</link>。把它上传到wordpress的插件目录，然后到后台页面中激活即可。
+  </para>
+  <para>
+    另外一个解决办法是干脆关闭评论分页的功能。我的博客上评论还不多，所以暂时关闭了此功能，这个插件也就用不着了。过几天再登录Google网站管理员工具，看看重复标题标记的问题是不是解决了。
+  </para>
+</article>

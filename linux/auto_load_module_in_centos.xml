@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在CentOS启动时自动加载内核模块</title>
+  <para>
+    要想在CentOS中自动加载内核模块，需要在<emphasis>/etc/sysconfig/modules/</emphasis>目录中增加一个脚本，在此脚本中加载所需的模块。
+  </para>
+  <para>
+    下面是我所用的一个名为<emphasis>8021q.modules</emphasis>的脚本，用来在我的CentOS 5.3中自动加载802.1Q模块：
+  </para>
+  <programlisting>
+#! /bin/sh
+
+/sbin/modinfo -F filename 8021q &gt; /dev/null 2&gt;&amp;1
+if [ $? -eq 0 ]; then
+    /sbin/modprobe 8021q
+fi </programlisting>
+  <para>
+    上面的脚本首先检查8021q模块文件是否存在，如果存在，则调用<command>/sbin/modprobe</command>命令加载此模块。
+  </para>
+  <para>
+    把这个文件放在<emphasis>/etc/sysconfig/modules/</emphasis>目录中，并为其增加可执行权限。这样，下次重启系统时，802.1Q模块就会被自动加载。
+  </para>
+  <para>
+    在网上有些文章建议在<emphasis>/etc/rc.local</emphasis>文件中增加modprobe命令，这样做在某些情况下工作会不正常。因为在启动时，<emphasis>/etc/rc.local</emphasis>在执行完rc.d目录中的程序后才执行，因此，如果在rc.d中的程序如果用到了所需加载的模块，就会出错。
+  </para>
+  <para>
+    另外有些文章提到修改<emphasis>/etc/modprobe.conf</emphasis>文件，其实是错误的。这个文件仅仅是定义一些内核模块的别名、以及一些特殊的加载、卸载命令。修改此文件并不能使模块在启动时被自动加载。
+  </para>
+  <para>
+    本文参考了<link xlink:href='http://www.centos.org/modules/newbb/viewtopic.php?topic_id=15303&amp;forum=37&amp;post_id=53665' xlink:show='new'/>。
+  </para>
+</article>

@@ -1,0 +1,223 @@
+<chapter xml:id='vimrc_info'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>vimrc初步</title>
+  &tocatalog;
+  <para>
+    <link xlink:href='&uri_session;' xlink:show='new'>上一章</link>我们介绍了会话(session)文件和viminfo文件，其中<emphasis>'sessionoptions'</emphasis>选项和<emphasis>'viminfo'</emphasis>选项的配置可能会根据你的需要进行调整。但如何保存你所做的调整呢？我们将在这一章中介绍。
+  </para>
+  <para>
+    本节所用命令的帮助入口：
+  </para>
+  <programlisting>
+:help compatible
+:help mapleader
+:help map
+:help autocmd </programlisting>
+  <para>
+    <emphasis>为什么我的vim这么难用？不能语法高亮，没有折行，不能打开多个窗口多个buffer，不能...... </emphasis>
+  </para>
+  <para>
+    <emphasis> 为什么别人用几个键就可以完成一个很复杂的功能，而我不能？ </emphasis>
+  </para>
+  <para>
+    <emphasis> 为什么别人的vim看起来和我的很不一样？ </emphasis>
+  </para>
+  <para><emphasis> ......  </emphasis></para>
+  <para>
+    当你开始问这些问题的时候，是时候去检查一下你的vimrc了。
+  </para>
+  <para>
+    当vim在启动时，如果没有找到vimrc或gvimrc，它缺省工作VI兼容的模式。这意味着，你只能使用VI所具备的功能，而vim中的大量扩展功能将无法使用。也许这就是你的vim如此难用的原因。
+  </para>
+  <para>
+    vim中自带了一个vimrc例子，让我们从这个例子开始吧。
+  </para>
+  <para>
+    下面我以Linux下的vim为例，windows版本的vim，会在后面提到。
+  </para>
+  <para>
+    示例的vimrc(名为vimrc_example.vim)通常位于/usr/share/vim/vimXXX/目录下，其中vimXXX与你所使用的vim版本有关。
+  </para>
+  <para>
+    首先把这个示例的vimrc拷贝到相应的目录，在Linux下，应该把它拷贝到你的home目录下，名字为".vimrc"，下面是shell命令：
+  </para>
+  <programlisting>
+cp /usr/share/vim/vim70/vimrc_example.vim ~/.vimrc </programlisting>
+  <para>
+    或者你在vim中执行下面的命令，和上面的shell命令完成相同的功能：
+  </para>
+  <programlisting>
+:!cp $vimRUNTIME/vimrc_example.vim ~/.vimrc </programlisting>
+  <para>
+    现在，你退出vim后再进入，你的vim和刚才已经不一样了。
+  </para>
+  <para>
+    你可以先读一下你的vimrc，看看它都设定了什么：
+  </para>
+  <programlisting>
+:e ~/.vimrc </programlisting>
+  <para>
+    这是一个注释良好的文件，不需要多解释。
+  </para>
+  <para>
+    对windows版本的vim，它已经缺省的有了一个vimrc，你可以在vim在使用下面的命令来查看它：
+  </para>
+  <programlisting>
+:e $vim/_vimrc </programlisting>
+  <para>
+    在这个文件中，它包含了上面提到的vimrc_example.vim。同时，它会把vim设置的更符合windows的操作习惯。比如，支持CTRL-C拷贝，CTRL-V粘贴等等。Windows下的用户，可以使用$vim/_vimrc来做为你的第一个vimrc。
+  </para>
+  <para>
+    顺便提一句，在unix/linux中，文件名可以以"."开头，表明此文件是隐藏的。而在windows中，不允许文件名以"."开头，所以，windows版本的vim，将读取_vimrc来做为自己的配置文件。
+  </para>
+  <para>
+    在今后使用vim的日子里，你会频繁的更改你的vimrc。所以我们需要设置一些快捷方式，使我们能快速的访问vimrc。
+  </para>
+  <para>
+    把下面这段内容拷贝到你的vimrc中：
+  </para>
+  <programlisting>
+1    "Set mapleader
+2    let mapleader = ","
+3
+4    "Fast reloading of the .vimrc
+5    map &lt;silent&gt; &lt;leader&gt;ss :source ~/.vimrc&lt;cr&gt;
+6    "Fast editing of .vimrc
+7    map &lt;silent&gt; &lt;leader&gt;ee :e ~/.vimrc&lt;cr&gt;
+8    "When .vimrc is edited, reload it
+9    autocmd! bufwritepost .vimrc source ~/.vimrc </programlisting>
+  <para>
+    为了方便解释，我给每一行都加了一个行号。
+  </para>
+  <itemizedlist>
+    <listitem>
+      在vimrc中，双引号开头的行，将被当作注释忽略。
+    </listitem>
+    <listitem>
+      第2行，用来设置mapleader变量，当mapleader为未设置或为空时，使用缺省的"\"来作为mapleader。
+      <para>
+        mapleader变量是作用是什么呢？看下面的介绍。
+      </para>
+    </listitem>
+    <listitem>
+      第5行定义了一个映射(map)，这个映射把<command>&lt;leader&gt;ss</command>，映射为命令<command>:source ~/.vimrc&lt;cr&gt;</command>。当定义一个映射时，可以使用<emphasis>&lt;leader&gt;</emphasis>前缀。而在映射生效时，vim会把<emphasis>&lt;leader&gt;</emphasis>替换成mapleader变量的值。也就是说，我们这里定义的<command>&lt;leader&gt;ss</command>在使用时就变成了"<command>,ss</command>"，当输入这一快捷方式时，就会source一次~/.vimrc文件(也就是重新执行一遍.vimrc文件)。
+    </listitem>
+    <listitem>
+      第7行，定义了<command>&lt;leader&gt;ee</command>快捷键，当输入<command>,ee</command>时，会打开~/.vimrc进行编辑。
+    </listitem>
+    <listitem>
+      第9行，定义了一个自动命令，每次写入.vimrc后，都会执行这个自动命令，source一次~/.vimrc文件。
+    </listitem>
+  </itemizedlist>
+  <para>
+    有了上面的快捷键，我们就能快速的打开vimrc文件编辑，快速重新source vimrc文件，方便多了。
+  </para>
+  <para>
+    无论在windows还是在linux中，我都使用vim作为我的缺省编辑器。并且，我想使用同一个vimrc文件。因此，我定义了一个MySys()函数，用来区分不同的平台，以进行不同的配置。
+  </para>
+  <para>
+    另外，在编辑vimrc文件时，我更喜欢新开一个标签页来编辑，而不是在当前窗口中。因此，我定义了SwitchToBuf()函数，它在所有标签页的窗口中查找指定的文件名，如果找到这样一个窗口，就跳到此窗口中；否则，它新建一个标签页来打开vimrc文件。(注：标签页(tab)功能只有在vim 7.0版本以上才支持。)
+  </para>
+  <para>
+    下面是我的vimrc中使用的设定，希望能够抛砖引玉：
+  </para>
+  <programlisting>
+" Platform
+function! MySys()
+  if has("win32")
+    return "windows"
+  else
+    return "linux"
+  endif
+endfunction
+
+function! SwitchToBuf(filename)
+    "let fullfn = substitute(a:filename, "^\\~/", $HOME . "/", "")
+    " find in current tab
+    let bufwinnr = bufwinnr(a:filename)
+    if bufwinnr != -1
+        exec bufwinnr . "wincmd w"
+        return
+    else
+        " find in each tab
+        tabfirst
+        let tab = 1
+        while tab &lt;= tabpagenr("$")
+            let bufwinnr = bufwinnr(a:filename)
+            if bufwinnr != -1
+                exec "normal " . tab . "gt"
+                exec bufwinnr . "wincmd w"
+                return
+            endif
+            tabnext
+            let tab = tab + 1
+        endwhile
+        " not exist, new tab
+        exec "tabnew " . a:filename
+    endif
+endfunction
+
+"Fast edit vimrc
+if MySys() == 'linux'
+    "Fast reloading of the .vimrc
+    map &lt;silent&gt; &lt;leader&gt;ss :source ~/.vimrc&lt;cr&gt;
+    "Fast editing of .vimrc
+    map &lt;silent&gt; &lt;leader&gt;ee :call SwitchToBuf("~/.vimrc")&lt;cr&gt;
+    "When .vimrc is edited, reload it
+    autocmd! bufwritepost .vimrc source ~/.vimrc
+elseif MySys() == 'windows'
+    " Set helplang
+    set helplang=cn
+    "Fast reloading of the _vimrc
+    map &lt;silent&gt; &lt;leader&gt;ss :source ~/_vimrc&lt;cr&gt;
+    "Fast editing of _vimrc
+    map &lt;silent&gt; &lt;leader&gt;ee :call SwitchToBuf("~/_vimrc")&lt;cr&gt;
+    "When _vimrc is edited, reload it
+    autocmd! bufwritepost _vimrc source ~/_vimrc
+endif
+
+" For windows version
+if MySys() == 'windows'
+    source $VIMRUNTIME/mswin.vim
+    behave mswin
+endif </programlisting>
+  <para>
+    注意：我在windows中也定义一个"HOME"环境变量，然后把_vimrc放在"HOME"环境变量所指向的目录中。如果你打算在windows中使用上面的设定，也需要这样做！
+  </para>
+  <para>
+    好了，现在我们知道如何永久更改<link xlink:href='&uri_session;' xlink:show='new'><emphasis>'sessionoptions'</emphasis></link>选项和<link xlink:href='&uri_session;' xlink:show='new'><emphasis>'viminfo'</emphasis></link>选项了，把对它们的配置放入你的vimrc即可。
+  </para>
+  <para>
+    vim自带的示例vimrc中，只定义最基本的配置。
+  </para>
+  <para>
+    在<link xlink:href='http://www.amix.dk/vim/vimrc.html' xlink:show='new'/>有一个非常强大的vimrc，有人戏称为"史上最强的vimrc"，或许有些言过其实。不过，如果你通读了这个vimrc，相信能从中学到很多......
+  </para>
+  <para>
+    <link xlink:href='http://blog.csdn.net/redguardtoo/archive/2006/09/03/1172136.aspx'>这里</link>有一个redguardtoo修改过的版本，可以对照参考一下。
+  </para>
+  <para>
+    我的vimrc也是基于Amix的模板，然后自已做了很多修改。
+  </para>
+  <para>
+    <emphasis role='bold'>建议：</emphasis>不要照拷这个vimrc！可能这个文件的设定并不符合你的习惯。另外，这个文件的设定，可能也不能在你的工作环境中运行。
+  </para>
+  <para>
+    <emphasis role='bold'>[参考文档]</emphasis>
+  </para>
+  <itemizedlist>
+    <listitem>
+      vim手册
+    </listitem>
+    <listitem>
+      <link xlink:href='http://vimcdoc.sourceforge.net/' xlink:show='new'>vim中文手册</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://www.amix.dk/vim/vimrc.html' xlink:show='new'/>
+    </listitem>
+  </itemizedlist>
+
+  &tocatalog;
+  &copyright;
+  <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='&uri_vimrc;'/></para>
+</chapter>

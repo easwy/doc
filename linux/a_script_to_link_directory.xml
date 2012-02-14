@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>符号链接一个目录树</title>
+  <para>
+    前几天写了一个脚本，用来为目录树A中所有文件在目录树B中创建符号链接。它的工作原理是，对目录树中的目录及及子目录，在目录中创建相应的目录层级，但对目录树A的文件，则只在目录B中创建一个符号链接。
+  </para>
+</article>

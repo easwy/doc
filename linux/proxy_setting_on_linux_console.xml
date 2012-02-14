@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='utf8'?>
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>Linux下常用程序的代理服务器(proxy)配置</title>
+  <para>
+    Linux下有很多程序都只有命令行接口，对于这类程序，它们通过代理服务器(proxy)访问网络的方式也不尽相同。在本文中<link xlink:href='&myblog;'>Easwy</link>总结了一些常用Linux程序配置代理服务器的方法。
+  </para>
+  <para><emphasis role='bold'>[ 通用代理服务器配置 ]</emphasis></para>
+  <para>
+    对于大多数Linux控制台程序，例如<link xlink:href='http://easwy.com/blog/archives/tag/debian/'>Debian</link>或Ubuntu中的<command>apt-get</command>和<command>aptitude</command>命令、<link xlink:href='http://easwy.com/blog/archives/use_http_proxy_for_git/'>git命令</link>、wget命令，这些程序都使用<emphasis>http_proxy</emphasis>和<emphasis>ftp_proxy</emphasis>环境变量来获取代理服务的配置。
+  </para>
+  <para>
+    方法是在你的~/.bashrc里加上类似下面的话：
+  </para>
+  <programlisting>
+export http_proxy=http://username:password@proxyserver:port/
+export ftp_proxy=http://username:password@proxyserver:port/ </programlisting>
+  <para>
+    如果你的代理服务器需要用户名和密码才能访问，需要填写上面的username和passwd部分，否则的话，省略这两部分。
+  </para>
+  <para>
+    例如，假设你的代理服务器为<emphasis>192.168.1.1</emphasis>，端口是<emphasis>8080</emphasis>，用户名为<emphasis>easwy</emphasis>，密码是<emphasis>123456</emphasis>，那么应该这样设置这两个环境变量：
+  </para>
+  <programlisting>
+export http_proxy=http://easwy:123456@192.168.1.1:8080 
+export ftp_proxy=http://easwy:123456@192.168.1.1:8080 </programlisting>
+  <para>
+    这样配置之后，退出再登录一次，或者直接使用下面的命令source一下.bashrc：
+  </para>
+  <programlisting>source ~/.bashrc</programlisting>
+  <para>
+    现在，上述程序就可以通过代理服务器访问网络了。
+  </para>
+  <para><emphasis role='bold'>[ subversion的代理服务器配置 ]</emphasis></para>
+  <para>
+    要配置subversion的代理服务器，需要修改<emphasis>$HOME/.subversion/servers</emphasis>文件，在此文件的<emphasis>[global]</emphasis>段加上：
+  </para>
+  <programlisting>
+http-proxy-host = 192.168.1.1
+http-proxy-port = 8080 
+http-proxy-username = easwy
+http-proxy-password = 123456 </programlisting>
+  <para>
+    现在<command>svn</command>就可以使用代理服务器访问版本库了。
+  </para>
+  <para><emphasis role='bold'>[ yum的代理服务器配置 ]</emphasis></para>
+  <para>
+    如果想让CentOS中的<command>yum</command>可以通过代理服务器更新程序，则需要修改文件<emphasis>/etc/yum.conf</emphasis>，在此文件中加上：
+  </para>
+  <para>
+proxy=http://easwy:123456@192.168.1.1:8080</para>
+  <para>
+    现在使用<command>yum</command>就可以更新你的软件了。
+  </para>
+</article>

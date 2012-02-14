@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>设置Linux Samba服务器中新建文件/目录的属性</title>
+  <para>
+    通过Samba服务器实现windows和Linux之间的文件共享，相信是绝大多数人的选择。通常我们都会使用Samba的缺省配置，这样，每次通过Samba从Windows向Linux中拷贝文件时，文件都会被加上"可执行"的属性。对Easwy来说，这是很让人头疼的问题，每次都要通过chmod去修改文件的权限很是麻烦。
+  </para>
+  <para>
+    今天仔细看了一下Samba的手册，发现只要把下面的配置加入<emphasis role='bold'>/etc/samba/smb.conf</emphasis>就可以解决这个问题：
+  </para>
+  <programlisting>
+create mode = 0644
+force create mode = 0644
+directory mode = 0755
+force directory mode = 0755 </programlisting>
+  <para>
+    下面简单介绍一下这几个参数的含义：
+  </para>
+  <itemizedlist>
+    <listitem>
+      <emphasis role='bold'>create mode</emphasis> - 这个配置定义新创建文件的属性。Samba在新建文件时，会把dos文件的权限映射成对应的unix权限，在映射后所得的权限，会与这个参数所定义的值进行与操作。然后再和下面的<emphasis role='bold'>force create mode</emphasis>进行或操作，这样就得到最终linux下的文件权限。
+    </listitem>
+    <listitem>
+      <emphasis role='bold'>force create mode</emphasis> - 见上面的描述。相当于此参数所设置的权限位一定会出现在文件属性中。
+    </listitem>
+    <listitem>
+      <emphasis role='bold'>directory mode</emphasis> - 这个配置与<emphasis role='bold'>create mode</emphasis>参数类似，只是它是应用在新创建的目录上。Samba在新建目录时，会把dos-->linux映射后的文件属性，与此参数所定义的值相与，再和<emphasis role='bold'>force directory mode</emphasis>相或，然后按这个值去设置目录属性。
+    </listitem>
+    <listitem>
+      <emphasis role='bold'>force directory mode</emphasis> - 见上面的描述。相当于此参数中所设置的权限位一定会出现在目录的属性中。
+    </listitem>
+  </itemizedlist>
+  <para>
+    说明一点，上面的<emphasis role='bold'>create mode</emphasis>和<emphasis role='bold'>create mask</emphasis>参数是同义词，用哪个都可以；而<emphasis role='bold'>directory mode</emphasis>和<emphasis role='bold'>directory mask</emphasis>参数是相同的。
+  </para>
+  <para>
+    当你发现Samba中新建的目录/文件权限不正确，例如无法访问某个目录、无法更改文件，就需要检查上面几个值的设置。
+  </para>
+  <para>
+    另外需要说明的是，上面几个配置项，会和<emphasis role='bold'>security mask</emphasis>、<emphasis role='bold'>force security mode</emphasis>、<emphasis role='bold'>directory security mask</emphasis>、<emphasis role='bold'>force directory security mode</emphasis>这几个配置项相互作用。这几个带"security"的配置项会影响Windows NT/2000的ACL功能，一般我们不需要设置。
+  </para>
+  <para>
+    更多关于Linux的内容，请关注<link xlink:href='http://easwy.com/blog/'>Easwy</link>的其它文章。
+  </para>
+
+</article>

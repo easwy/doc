@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在Linux上使用adb访问魅族M9</title>
+  <para>
+    在windows上通过adb访问M9很简单，WinXP用户到<link xlink:href='http://www.meizu.com/services/M9.html' xlink:show='new'>魅族 M9 产品支持 </link>下载USB驱动，安装后就可以通过adb访问M9了。似乎Win 7能直接识别M9，不需要手动安装驱动。
+  </para>
+  <para>
+    要在Linux上访问魅族M9手机，并不需要安装驱动，不过需要设置一下udev。以root身份增加一个文件<emphasis>/etc/udev/rules.d/51-android.rules</emphasis>，内容如下：
+  </para>
+  <programlisting>
+SUBSYSTEM=="usb_device", SYSFS{idVendor}=="18d1", MODE="0666" </programlisting>
+  <para>
+    这个文件需要对所有用户可读，执行一下下面的命令：
+  </para>
+  <programlisting>
+chmod a+r /etc/udev/rules.d/51-android.rules</programlisting>
+  <para>
+    然后就可以通过USB线把M9手机连接到Linux，通过adb可以检测到M9：
+  </para>
+  <programlisting>
+$ platform-tools> ./adb devices
+* daemon not running. starting it now on port 5037 *
+* daemon started successfully *
+List of devices attached 
+M9W1B00AKAP5NU1064	device</programlisting>
+  <para>
+    这种方法在Ubuntu 10.04及Centos 5.3上都可以正常工作。我比较奇怪的一点是，18d1是Google公司的USB vendor ID，为什么魅族不用自己的vendor ID呢？
+  </para>
+  <para>
+    更多文章，请访问<link xlink:href='&myblog;'>易水博客</link>。</para>
+  <para><emphasis role='bold'>[ 参考文档 ]</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://developer.android.com/guide/developing/device.html' xlink:show='new'>Developing on a Device</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://www.linux-usb.org/usb.ids' xlink:show='new'>>List of USB ID's</link>
+    </listitem>
+  </itemizedlist>
+</article>

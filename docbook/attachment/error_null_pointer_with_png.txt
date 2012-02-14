@@ -1,0 +1,83 @@
+Solution at:
+    http://easwy.com/blog/archives/fop-errors-and-solution/ 
+Error Messages:
+================================
+
+xsltproc -o pdf/vim_advanced_usage.fo ~/00mydoc/docbook_fo.xsl vim_advanced_usage.xml
+Note: namesp. cut : stripped namespace before processing           vim使用进阶
+WARNING: cannot add @xml:base to node set root element.  Relative paths may not work.
+Note: namesp. cut : processing stripped document                   vim使用进阶
+Making portrait pages on USletter paper (8.5inx11in)
+Read /usr/share/doc/docbook-xsl/README.Debian.gz section 5(a).
+fop -c /etc/fop/fop.xconf pdf/vim_advanced_usage.fo -pdf pdf/vim_advanced_usage.pdf
+2009-4-17 21:42:56 org.apache.fop.apps.FopFactoryConfigurator configure
+信息: Default page-height set to: 11in
+2009-4-17 21:42:56 org.apache.fop.apps.FopFactoryConfigurator configure
+信息: Default page-width set to: 8.26in
+2009-4-17 21:42:59 org.apache.fop.hyphenation.Hyphenator getHyphenationTree
+严重: Couldn't find hyphenation pattern zh_cn
+2009-4-17 21:43:25 org.apache.fop.cli.Main startFOP
+严重: Exception
+java.lang.NullPointerException
+	at org.apache.fop.cli.InputHandler.transformTo(InputHandler.java:168)
+	at org.apache.fop.cli.InputHandler.renderTo(InputHandler.java:115)
+	at org.apache.fop.cli.Main.startFOP(Main.java:166)
+	at org.apache.fop.cli.Main.main(Main.java:197)
+
+---------
+
+java.lang.NullPointerException
+	at org.apache.fop.render.pdf.FopPDFImage.setup(FopPDFImage.java:144)
+	at org.apache.fop.pdf.PDFDocument.addImage(PDFDocument.java:794)
+	at org.apache.fop.render.pdf.PDFRenderer.putImage(PDFRenderer.java:1725)
+	at org.apache.fop.render.pdf.PDFRenderer.renderImage(PDFRenderer.java:1652)
+	at org.apache.fop.render.AbstractRenderer.renderViewport(AbstractRenderer.java:748)
+	at org.apache.fop.render.AbstractPathOrientedRenderer.renderViewport(AbstractPathOrientedRenderer.java:541)
+	at org.apache.fop.render.AbstractRenderer.renderInlineArea(AbstractRenderer.java:631)
+	at org.apache.fop.render.pdf.PDFRenderer.renderInlineArea(PDFRenderer.java:1316)
+	at org.apache.fop.render.AbstractRenderer.renderLineArea(AbstractRenderer.java:606)
+	at org.apache.fop.render.pdf.PDFRenderer.renderLineArea(PDFRenderer.java:1307)
+	at org.apache.fop.render.AbstractRenderer.renderBlocks(AbstractRenderer.java:532)
+	at org.apache.fop.render.AbstractRenderer.renderBlock(AbstractRenderer.java:582)
+	at org.apache.fop.render.pdf.PDFRenderer.renderBlock(PDFRenderer.java:1300)
+	at org.apache.fop.render.AbstractRenderer.renderBlocks(AbstractRenderer.java:522)
+	at org.apache.fop.render.AbstractRenderer.renderBlock(AbstractRenderer.java:582)
+	at org.apache.fop.render.pdf.PDFRenderer.renderBlock(PDFRenderer.java:1300)
+	at org.apache.fop.render.AbstractRenderer.renderBlocks(AbstractRenderer.java:522)
+	at org.apache.fop.render.AbstractRenderer.renderFlow(AbstractRenderer.java:427)
+	at org.apache.fop.render.AbstractRenderer.renderMainReference(AbstractRenderer.java:406)
+	at org.apache.fop.render.AbstractRenderer.renderBodyRegion(AbstractRenderer.java:340)
+	at org.apache.fop.render.AbstractRenderer.renderRegionViewport(AbstractRenderer.java:285)
+	at org.apache.fop.render.AbstractRenderer.renderPageAreas(AbstractRenderer.java:258)
+	at org.apache.fop.render.AbstractRenderer.renderPage(AbstractRenderer.java:232)
+	at org.apache.fop.render.pdf.PDFRenderer.renderPage(PDFRenderer.java:757)
+	at org.apache.fop.area.RenderPagesModel.addPage(RenderPagesModel.java:120)
+	at org.apache.fop.layoutmgr.PageSequenceLayoutManager.finishPage(PageSequenceLayoutManager.java:424)
+	at org.apache.fop.layoutmgr.PageSequenceLayoutManager.makeNewPage(PageSequenceLayoutManager.java:377)
+	at org.apache.fop.layoutmgr.PageBreaker.handleBreakTrait(PageBreaker.java:492)
+	at org.apache.fop.layoutmgr.PageBreaker.startPart(PageBreaker.java:398)
+	at org.apache.fop.layoutmgr.AbstractBreaker.addAreas(AbstractBreaker.java:420)
+	at org.apache.fop.layoutmgr.AbstractBreaker.addAreas(AbstractBreaker.java:370)
+	at org.apache.fop.layoutmgr.PageBreaker.doPhase3(PageBreaker.java:262)
+	at org.apache.fop.layoutmgr.AbstractBreaker.doLayout(AbstractBreaker.java:345)
+	at org.apache.fop.layoutmgr.AbstractBreaker.doLayout(AbstractBreaker.java:263)
+	at org.apache.fop.layoutmgr.PageSequenceLayoutManager.activateLayout(PageSequenceLayoutManager.java:144)
+	at org.apache.fop.area.AreaTreeHandler.endPageSequence(AreaTreeHandler.java:233)
+	at org.apache.fop.fo.pagination.PageSequence.endOfNode(PageSequence.java:145)
+	at org.apache.fop.fo.FOTreeBuilder$MainFOHandler.endElement(FOTreeBuilder.java:378)
+	at org.apache.fop.fo.FOTreeBuilder.endElement(FOTreeBuilder.java:194)
+	at org.apache.xalan.transformer.TransformerIdentityImpl.endElement(TransformerIdentityImpl.java:1102)
+	at org.apache.xerces.parsers.AbstractSAXParser.endElement(Unknown Source)
+	at org.apache.xerces.impl.XMLNSDocumentScannerImpl.scanEndElement(Unknown Source)
+	at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl$FragmentContentDispatcher.dispatch(Unknown Source)
+	at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+	at org.apache.xerces.parsers.XMLParser.parse(Unknown Source)
+	at org.apache.xerces.parsers.AbstractSAXParser.parse(Unknown Source)
+	at org.apache.xalan.transformer.TransformerIdentityImpl.transform(TransformerIdentityImpl.java:485)
+	at org.apache.fop.cli.InputHandler.transformTo(InputHandler.java:165)
+	at org.apache.fop.cli.InputHandler.renderTo(InputHandler.java:115)
+	at org.apache.fop.cli.Main.startFOP(Main.java:166)
+	at org.apache.fop.cli.Main.main(Main.java:197)
+make: *** [pdf/vim_advanced_usage.pdf] Error 1

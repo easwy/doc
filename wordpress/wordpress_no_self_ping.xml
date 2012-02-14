@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook'
+  xmlns:xlink='http://www.w3.org/1999/xlink' xml:lang='zh-CN'>
+  <para>
+    刚开始使用wordpress，对其功能还在摸索中，也有诸多的不习惯。
+  </para>
+  <para>
+    wordpress有一个自动发送pingbacks的功能，当发表文章时，会自动向文章内的链接发送pingbacks。但感到不爽的是，它也会向自己的文章发送pingbacks。有的人喜欢用这个功能，因为这个功能可以实现类似"相关文章"的功能，不过我觉得很不习惯。
+  </para>
+  <para>
+    我在写文章时，会在文章中插入很多内链，这就导致wordpress向这些文章发送pingbacks。如果有几个内链都指向同一篇文章，那么pingback也会发送几次，这会导致很多重复的pingbacks。另外，似乎在更新文章时，wordpress还会把pingback再发送一次。
+  </para>
+  <para>
+    因此，我想把wordpress给自己的文章发pingbacks的功能关闭，在<link xlink:href='http://blogwaffe.com/2006/10/04/421/' xlink:show='new'>这里</link>下载no-self-ping插件，把它上传到wordpress的plugin目录，再到后台把它激活。OK，麻烦解决了!
+  </para>
+  <para>
+    想到一个问题：我在更新文章时，会不会也给别人的站点发送很多重复的pingbacks？改天做个实验。
+  </para>
+</article>

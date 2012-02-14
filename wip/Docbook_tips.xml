@@ -1,0 +1,13 @@
+<chapter xml:id='docbook_tips'>
+  <title>Docbook小技巧</title>
+  <section>
+    <title>使用xml:lang</title>
+    <para>
+      xml:lang属性用来定义文章/段落所使用的语言，如果在你的 Docbook 文档中
+      未定义此字段的话，将会使用缺省的 <emphasis role="bold">en</emphasis>。这将会影响
+      最终生成的文件中的章节等信息。
+      例如，如果在文档中加入 xml:lang="zh-CN"，则生成的章节为“第 1 章”，
+      否则则显示为“Chapter 1”。
+    </para>
+  </section>
+</chapter>

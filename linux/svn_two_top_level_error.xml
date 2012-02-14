@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>Linux使用笔记: subversion版本库不一致错误</title>
+  <para>
+    今天在subversion中遇到一个很奇怪的问题。 
+  </para>
+  <para>
+    我准备向版本库增加一些文件，但是遇到了几个问题，一是不小心把trunk目录中的.svn子目录删除了，不过马上又使用<command>svn update</command>将其恢复。另外还从其它目录拷贝了一些文件，恰好所拷贝的文件中有一个test目录和版本库已有的test文件重名。用<command>svn rm test</command>把原有的test文件删除，然后再用<command>svn add</command>把test目录加进来。
+  </para>
+  <para>
+    经过这些操作后，再向版本库中提交，总是显示失败信息。于是打算重新用<command>svn update</command>命令更新一下版本库，但这个命令也执行失败了，显示如下信息：
+  </para>
+  <blockquote>
+<para>easwy:~/trunk$ svn update</para>
+<para>svn: Two top-level reports with no target</para>
+  </blockquote>
+  <para>
+    在网上搜索了一下，似乎出现这个错误是由于本地的拷贝和版本库上状态不一致造成的，不过并找没有一个很好的解决方法。
+  </para>
+  <para>
+    没有办法，只好再次checkout一下版本库，然后按步就班的重新操作了一遍，问题就解决了。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>Easwy的博客</link>上的其它文章。
+  </para>
+</article>

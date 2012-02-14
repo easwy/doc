@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>Linux下动态链接库配置</title>
+  <para>
+    当<link xlink:href='&myblog;'>Easwy</link>尝试telent一个远端设备(ssh也遇到同样的错误)时，遇到下面的提示：
+  </para>
+  <programlisting>
+/usr/local/bin/cli: error while loading shared libraries: libAbc.so: cannot open shared object file: No such file or directory </programlisting>
+  <para>
+    在这个设备里，由<command>xinetd</command>来启动<command>in.telnetd</command>，而<command>in.telnetd</command>则调用<command>/usr/local/bin/cli</command>来做为登录程序。看上述提示，应该是<command>in.telnetd</command>在启动<command>/usr/local/bin/cli</command>时找不到动态链接库。
+  </para>
+  <para>
+    首先用<command>ldd</command>命令查看一下<command>/usr/local/bin/cli</command>所使用的动态链接库：
+  </para>
+  <programlisting>
+$ ldd /usr/local/bin/cli
+linux-vdso32.so.1 =  (0x00100000)
+libAbc.so =&gt; /usr/local/lib/libAbc.so (0x0fdfc000)
+libreadline.so.5 =&gt; /lib/libreadline.so.5 (0x0f376000)
+libncurses.so.5 =&gt; /lib/libncurses.so.5 (0x0f337000)
+libstdc++.so.6 =&gt; /lib/libstdc++.so.6 (0x0f24e000)
+libm.so.6 =&gt; /lib/libm.so.6 (0x0f17a000)
+libgcc_s.so.1 =&gt; /lib/libgcc_s.so.1 (0x0f14a000)
+/lib/ld.so.1 (0x48000000)
+libtinfo.so.5 =&gt; /lib/libtinfo.so.5 (0x0efaa000)&gt; </programlisting>
+  <para>
+    从上面的命令输出可以看到，<command>cli</command>程序的确会调用libAbc.so这个库，不过上面的输出中，这个库已经被找到了，它对应着文件/usr/local/lib/libAbc.so。考虑到在shell中已经设置了<emphasis>LD_LIBRARY_PATH</emphasis>环境变量，在此环境变量中增加了<emphasis>/usr/local/lib</emphasis>目录，那么是不是xinetd在启动in.telnetd时没有传递此环境变量呢？
+  </para>
+  <para>
+    于是修改<emphasis>/etc/xinetd.d/telnet</emphasis>，在里面增加一行：
+  </para>
+  <programlisting>
+env = LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib </programlisting>
+  <para>
+    再次telnet，还是显示上述错误。似乎是in.telnetd在启动cli时没有传递上述环境变量。
+  </para>
+  <para>
+    幸好还有一个方法来指定动态链接库的位置。
+  </para>
+  <para>
+    <link xlink:href='&myblog;'>Easwy</link>在目录<emphasis>/etc/ld.so.conf.d</emphasis>中新增加一个文件<emphasis>cli.conf</emphasis>，内容是：
+  </para>
+  <programlisting>
+$  cat cli.conf 
+/usr/local/lib </programlisting>
+  <para>
+    然后再以root身份执行一下<command>ldconfig</command>命令。现在再telnet或ssh，就不会出现上述错误提示了。
+  </para>
+  <para>
+    <command>/usr/ldconfig</command>命令会读取命令行参数、<emphasis>/etc/ld.so.conf</emphasis>配置文件以及/lib和/usr/lib目录，为动态链接器<command>ld.so</command>和<command>ld-linux.so</command>生成所需的链接和缓存信息。也就是说，如果不修改任何配置，只有位于/lib和/usr/lib目录的库才能被动态链接器使用。<link xlink:href='&myblog;'>Easwy</link>上面的修改新增了<emphasis>/usr/local/lib</emphasis>目录，并且使用<command>/sbin/ldconfig</command>命令重新生成了缓存，使动态链接器可以引用上述目录的库。这样就解决了此问题。
+  </para>
+  <para>
+    因此，在你也遇到类似的错误时，如果有root权限，就可以用这种方法来解决；如果没有root权限，那就只能设置一下<command>LD_LIBRARY_PATH</command>环境变量了。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>易水博客</link>上的其它文章。
+  </para>
+</article>
+

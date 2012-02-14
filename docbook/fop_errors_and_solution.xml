@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>使用FOP转换Docbook到PDF时遇到的错误及解决 (一)</title>
+  <para>
+    本文记录了我在配置使用<link xlink:href='http://xmlgraphics.apache.org/fop/index.html' xlink:show='new'>Apache FOP</link>时遇到的错误以及解决方法。一方面是做个记录，将来再遇到此类问题时可以查询；另一方面也希望对其它遇到同样问题的人有所帮助。
+  </para>
+  <orderedlist>
+    <listitem>
+      <emphasis role='bold'>问题</emphasis>：fo:inline错误
+      <para><emphasis role='bold'>解决</emphasis>：</para>
+      <para>
+        转换<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-catalog/'>vim使用进阶</link>到PDF时，遇到了下面这样一个问题(完整错误信息见<link xlink:href='http://easwy.com/blog/uploads/2009/04/error_inline.txt'>fo:inline错误</link>)：
+      </para>
+      <screen>
+javax.xml.transform.TransformerException: org.apache.fop.fo.ValidationException: file:/home/easwy/tmp/advancedvim/pdf/vim_advanced_usage.fo:173:59: Error(173/59): fo:inline is not a valid child element of fo:flow.
+	at org.apache.fop.cli.InputHandler.transformTo(InputHandler.java:168)
+	at org.apache.fop.cli.InputHandler.renderTo(InputHandler.java:115)
+	at org.apache.fop.cli.Main.startFOP(Main.java:166)
+	at org.apache.fop.cli.Main.main(Main.java:197)
+      </screen>
+      <para>
+        看错误提示，是说<emphasis>fo:inline</emphasis>不是<emphasis>fo:flow</emphasis>元素的有效子结点。在网上搜了一下没找到有用的信息。仔细检查出错的位置，终于发现错误的原因，错误出在下面这个语句：
+      </para>
+      <programlisting>
+<![CDATA[
+<emphasis role='bold'> [文件浏览] </emphasis>
+<para>
+  ...
+</para>
+]]> </programlisting>
+      <para>
+        在上面的<emphasis>emphasis</emphasis>元素是一个inline元素，对于这种inline元素来讲，一定要包含在某个块元素中。而上面的语句中，emphasis不属于任何一个<emphasis>para</emphasis>，所以出现上述错误。
+      </para>
+      <para>
+        把上面的语句改成下面的形式，错误消除：
+      </para>
+      <programlisting>
+<![CDATA[
+<para><emphasis role='bold'> [文件浏览] </emphasis></para>
+<para>
+  ...
+</para>
+]]> </programlisting>
+    </listitem>
+    <listitem>
+      <emphasis role='bold'>问题</emphasis>：转换PNG插图时出现空指针异常
+      <para><emphasis role='bold'>解决</emphasis>：</para>
+      <para>
+        还是在转换<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-catalog/'>vim使用进阶</link>时，出现下面的空指针异常(详细错误信息见<link xlink:href='http://easwy.com/blog/uploads/2009/04/error_null_pointer_with_png.txt'>PNG插件导致的空指针异常</link>)：
+      </para>
+      <screen>
+严重: Exception
+java.lang.NullPointerException
+	at org.apache.fop.cli.InputHandler.transformTo(InputHandler.java:168)
+	at org.apache.fop.cli.InputHandler.renderTo(InputHandler.java:115)
+	at org.apache.fop.cli.Main.startFOP(Main.java:166)
+        at org.apache.fop.cli.Main.main(Main.java:197) 
+      </screen>
+      <para>
+        经排除，这个异常是在转换下面的语句时发生的：
+      </para>
+      <programlisting>
+<![CDATA[
+  <informalfigure>
+    <mediaobject>
+      <alt>在vim中使用gdb调试 - vimgdb</alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/03/vimgdb2-300x216.png' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/03/vimgdb2.png' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  ]]> </programlisting>
+    <para>
+      如果把<emphasis>imagedata</emphasis>中文件的URL换成JPG格式的图像文件，则转换正常。一旦使用PNG格式的文件，就会出现上面的空指针异常提示。在网上也没找到解决办法，查看了一下自己的FOP版本：
+    </para>
+    <screen>
+FOP Version 0.94      
+    </screen>
+    <para>
+      猜想可能这是旧版本的BUG，于是下载了最新的FOP trunk版本，进行编译：
+    </para>
+    <programlisting>
+svn co http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/
+ant all </programlisting>
+    <para>
+      使用这个版本再进行转换，果然错误消除。
+    </para>
+    </listitem>
+    <listitem>
+      <emphasis role='bold'>问题</emphasis>：zh_cn hyphenation的问题
+      <para><emphasis role='bold'>解决</emphasis>：</para>
+      <para>
+        在我的docbook文档中，都加有<emphasis>xml:lang='zh-CN'</emphasis>这样的标志，指明本文档的语言是中文简体。
+      </para>
+      <para>
+        但每次进行PDF文件转换时，都有下面的提示：
+      </para>
+      <screen>
+严重: Couldn't find hyphenation pattern zh_cn
+      </screen>
+      <para>
+        在网上搜了一下，感觉这应该不是一个问题。对其它西文语言如英语、法语等，它们以单词为单位，单词之间采用空格隔开，如果单词太长需要换行时，就要在合适的地方加上一个连字符"-"。但对中文来讲，根本没有这个需要。所以这个错误提示忽略即可。
+      </para>
+      <para>
+        不过，如果提示你找不到其它语言的hyphenation，例如找不到en_US的hyphenation，就需要到<link xlink:href='http://offo.sourceforge.net/hyphenation/index.html'>Objects For Formatting Objects(OFFO)</link>去下载，出于版权方面的考虑，hyphenation缺省不再包含在FOP中了。
+      </para>
+    </listitem>
+  </orderedlist>
+</article>

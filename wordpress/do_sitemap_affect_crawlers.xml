@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>Sitemap会影响搜索引擎蜘蛛吗？</title>
+  <para>
+    <emphasis role='bold'>[ 译注 ]</emphasis>
+  </para>
+  <para>
+    本文译自<link xlink:href='http://www.seomoz.org/blog/do-sitemaps-effect-crawlers' xlink:show='new'>Do Sitemaps Affect Crawlers?</link>。由Easwy翻译，转载请注明：<emphasis>转载自<link xlink:href='http://easwy.com/blog/'>Easwy的博客</link> : <link xlink:href='http://easwy.com/blog/'/></emphasis>
+  </para>
+  <para>
+    看了这篇文章，你也要思考一下是否使用Sitemap生成器来生成Sitemap。对一个wordpress博客来说，它的网站链接结构很好，不会影响搜索引擎蜘蛛(也有译做搜索引擎机器人)自然爬行，所以为了使Google尽快收录，最好使用Google XML Sitemaps生成器(Google XML网站地图生成器)来生成并提交你的Sitemap。我从一开始就使用了这个插件，发现Google收录我的新文章确实非常快，具体时间没有测试，应该在半小时内。
+  </para>
+  <para>
+    <emphasis role='bold'>[ 译文 ]</emphasis>
+  </para>
+  <para>
+    就像其它人一样，我也形成了习惯，好的坏的都有。最近正为一个客户的网站工作，就像我一直以来的做法那样，我创建了一个sitemap，把它提交给了搜索引擎。我开始思考这样做是否真的对网站有帮助，以及当我提交sitemap时的影响是什么。
+  </para>
+  <para>
+    我联系到我的一个客户，他有一个受欢迎的博客，使用了<link xlink:href='http://wordpress.org/' xlink:show='new'>WordPress</link>和Wordpress的<link xlink:href='http://www.arnebrachhold.de/projects/wordpress-plugins/google-xml-sitemaps-generator/' xlink:show='new'>Google XML Sitemaps生成器</link>插件。我请求他给我权限在他们的网站上安装一个监控搜索引擎蜘蛛行踪的脚本。对那些不知道Google XML网站地图生成器的人解释一下，这个插件当你每次在WordProess里编辑或创建文章时，都会生成一个新的Sitemap，并把Sitemap提交给主要的搜索引擎。
+  </para>
+  <para>
+    我的客户经常在他们的博客上增加原创文章，通常一周2至3篇。我在他们网站上安装的脚本用PHP写的，会把搜索引擎蜘蛛每次访问Sitemap、每次提交Sitemap、以及搜索引擎蜘蛛每次在网站上爬过的网页记录下来。这个脚本会把时间戳信息、IP地址、以及用户客户端记录到一个MySQL数据库中。我也修改了一下Google XML网站地图生成器，加入了给搜索引擎提交Sitemap的时间戳。
+  </para>
+  <para>
+    <emphasis role='bold'>看一看数据！</emphasis>
+  </para>
+  <para>
+    这个实验的目的是看是否提交Sitemap到Google和Yahoo可以缩短Google爬行和收录页面的时间。在这个博客的测试结果让人吃惊！当提交Sitemap时，Google搜索引擎蜘蛛访问新文章页面的平均时间是14分钟，Yahoo是245分钟。当不提交Sitemap时，搜索引擎搜索引擎蜘蛛必须自己爬行到新的文章页面，Google用了1375分钟，而Yahoo用了1773分钟。这个平均值基于12篇文章计算，6篇提交Sitemap，6篇不提交。
+  </para>
+  <informalfigure>
+    <alt>搜索引擎蜘蛛访问新页面的时间</alt>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/03/1.jpg' align='center'/>
+      </imageobject>
+    </mediaobject>
+  </informalfigure>
+  <informalfigure>
+    <alt>搜索引擎蜘蛛访问新页面的时间</alt>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/03/2.jpg' align='center'/>
+      </imageobject>
+    </mediaobject>
+  </informalfigure>
+  <para>
+    当算出这个结果时，我想这应该是一个错误。我回到我的网站(<link xlink:href='http://www.gr-webdesigns.com/' xlink:show='new'>GR Web Designs</link>)，然后迅速发表一篇文章并提交Sitemap到Google和Yahoo。30分钟后我检查我的监控脚本，Google已经访问过了，并且新页面已经被收录。Yahoo在Google后不久也这样做了。
+  </para>
+  <para>
+    看到搜索引擎蜘蛛在没有Sitemap的情况下爬行到新页面后的时间后，我一度以为这个网站的结构有问题，导致搜索引擎蜘蛛不能爬到新页面。但我和其它人都测试了网站的爬行，没有发现问题。我甚至发现搜索引擎蜘蛛已经爬到包含这篇新文章链接的页面，但却没有立即访问这篇新文章，而是后来才访问的。
+  </para>
+  <para>
+    我正在写这篇文章时，发现了Rand的<link xlink:href='http://www.seomoz.org/blog/expert-advice-on-google-sitemaps-verify-but-dont-submit' xlink:show='new'>My Advice on Google Sitemaps - Verify, but Don't Submit</link>，我由此感到很困惑。我提交Sitemap获得这么多好处，为什么还Rand告诉我不要提交Sitemap？在读完这篇文章后，我发现他对获得有价值的爬行数据更感兴趣。我使用的是WordPress，所有的页面都允许搜索引擎蜘蛛爬，为什么不提交Sitemap呢？特别是提交了有这么大的好处。
+  </para>
+  <para>
+    对那些和这个试验站点类似的网站，也就是知道自己的网站不存在影响搜索引擎蜘蛛自然爬行的网站，我建议他们提交Sitemap，因为这会使网页更快的被爬行和收录。如果你有一个网站你并不知道网站的结构是否有问题，我建议你不要提交网站地图，这可以帮助你确定你的网站结构是否存在问题。对那些有良好链接结构的网站，为什么不今天就提交Sitemap，那事情进行的更迅速呢？
+  </para>
+  <para>
+    我很高兴听到SEOmoz社区说他们也在使用网站地图，记住，这个实验只是在一个网站上完成的，如果从你们那获得更多的回馈，我会做更多关于Sitemap的研究。
+  </para>
+</article>

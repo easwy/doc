@@ -1,0 +1,295 @@
+<chapter xml:id='advanced_movement'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>指随意动，移动如飞 (二)</title>
+  &tocatalog;
+  <para>
+    本节所用命令的帮助入口：
+  </para>
+  <programlisting>
+:help usr_03.txt
+:help motion.txt
+:help usr_29.txt
+:help scroll.txt
+:help folding </programlisting>
+  <para>
+    上一篇文章中我们介绍了一些<link xlink:href='&uri_move1;' xlink:show='new'>常用的移动命令</link>，本篇将继续介绍更多的命令，使你在文档中自由穿梭。
+  </para>
+  <para>
+    <emphasis role='bold'>[ 利用跳转表 ]</emphasis>
+  </para>
+  <para>
+    在vim中，很多命令可以引起跳转，vim会记住把跳转前光标的位置记录到跳转表中，并提供了一些命令来根据跳转表进行跳转。要知道哪些命令引起跳转，参见"<command>:help jump-motions</command>"。
+  </para>
+  <para>
+    使用命令"<command>''</command>"（两个单引号）和"<command>``</command>"(两个反引号，在键盘上和"~"共用一个键)可以返回到最后跳转的位置。例如，当前光标位于文件中第1234行，然后我使用"<command>4321G</command>"命令跳转到第4321行；这时如果我按"<command>''</command>"或"<command>``</command>"，就会跳回到1234行。
+  </para>
+  <para>
+    因为这两个命令也属于跳转命令，所以第4321行也被记入跳转表，如果你再次使用这两个命令，就会发现自己又跳回第4321行了。
+  </para>
+  <para>
+    这两个命令有一点不同，"<command>``</command>"在跳转时会精确到列，而"<command>''</command>"不会回到跳转时光标所在的那一列，而是把光标放在第一个非空白字符上。
+  </para>
+  <para>
+    如果想回到更老的跳转位置，使用命令"<command>CTRL-O</command>"；与它相对应的，是"<command>CTRL-I</command>"，它跳转到更新的跳转位置(<command>:help CTRL-O</command>和<command>:help CTRL-I</command>)。这两个命令前面可以加数字来表示倍数。
+  </para>
+  <para>
+    使用命令"<command>:jumps</command>"可以查看跳转表(<command>:help :jumps</command>)。
+  </para>
+  <para>
+    <emphasis role='bold'>[ 使用标记 ]</emphasis>
+  </para>
+  <para>
+    标记(mark)是vim提供的精确定位技术，其功能相当于GPS技术，只要你知道标记的名字，就可以使用命令直接跳转到该标记所在的位置。
+  </para>
+  <para>
+    vim中的标记都有一个名字，这个名字用单一的字符表示。大写和小写字母(A-Za-z)都可以做为标记的名字，这些标志的位置可以由用户来设置；而数字标记0-9，以及一些标点符号标记，用户不能进行设置，由vim来自动设置。
+  </para>
+  <para>
+    我们主要讲述字母标记的使用，对于数字标记和标点符号标记，请自行参阅帮助手册(<command>:help mark-motions</command>)。
+  </para>
+  <para>
+    小写字母标记局限于缓冲区，也就是说，每个缓冲区都可以定义自己的小写字母标记，各缓冲区间的小写字母标记彼此不干扰。如果我在文件A中设置一个标记t，然后在文件B中也可以设置一个标记t。那么在文件A中，可以用"<command>'t</command>"命令跳到文件A的标记t位置 ；在文件B中，可以用"<command>'t</command>"命令跳到文件B的标记t位置。如果文件在缓冲区列表中被删除，小写字母标记就丢失了。
+  </para>
+  <para>
+    大写字母标记是全局的，它在文件间都有效。如果在文件A中定义一个标记T，那么当使用命令"<command>'T</command>"时，就会跳到文件A的标记T位置，不管你当前处于哪个文件中。
+  </para>
+  <para>
+    设定一个标记很简单，使用命令"<command>m{a-zA-Z}</command>"就可以了。例如，命令"<command>mt</command>"在把当前光标位置设定为标记t；命令"<command>mT</command>"把当前光标位置设定为标记T。(<command>:help m</command>)
+  </para>
+  <para>
+    要跳转到指定的标记，使用命令"<command>'{a-zA-Z}</command>"或"<command>{a-zA-Z}</command>"。例如，命令"<command>'t</command>"会跳转到标记t；命令"<command>'T</command>"会跳转到标记T。( <command>:help '</command>)
+  </para>
+  <para>
+    单引号和反引号的区别和上面所讲的一样，"<command>`</command>"在跳转时会精确到列，而"<command>'</command>"不会回到跳转时光标所在的那一列，而是把光标放在第一个非空白字符上。
+  </para>
+  <para>
+    标记也可以被删除，使用命令"<command>:delmarks</command>"可以删除指定标记。命令"<command>:marks</command>"列出所有的标记。
+  </para>
+  <para>
+    关于标记，有两个非常有用的插件，一个是ShowMarks，另外一个叫marks browser。
+  </para>
+  <para>
+    <link xlink:href='http://www.vim.org/scripts/script.php?script_id=152' xlink:show='new'>ShowMarks</link>是我最常用的插件之一，它使用vim提供的sign功能以及高亮功能显示出标记的位置。这样，你在设定了一个标记后，它就会在你的vim窗口中显示出标记的名字，并高亮这一行。
+  </para>
+  <para>
+    在你的$HOME/.vim目录把它解压，然后进行简单设置。 在我的vimrc中，对ShowMarks进行了如下配置：
+  </para>
+  <programlisting>
+""""""""""""""""""""""""""""""
+" showmarks setting
+""""""""""""""""""""""""""""""
+" Enable ShowMarks
+let showmarks_enable = 1
+" Show which marks
+let showmarks_include = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+" Ignore help, quickfix, non-modifiable buffers
+let showmarks_ignore_type = "hqm"
+" Hilight lower &amp; upper marks
+let showmarks_hlline_lower = 1
+let showmarks_hlline_upper = 1 </programlisting>
+  <para>
+    首先，使能showmarks插件，然后定义showmarks只显示全部的大写标记和小写，并高亮这两种标记；对文件类型为help、quickfix和不可修改的缓冲区，则不显示标记的位置。
+  </para>
+  <para>
+    你可以定义自己的颜色来高亮标记所在的行，下面是我的定义，我把它放在<link xlink:href='&uri_colorscheme;' xlink:show='new'>我自己的colorscheme文件</link>中：
+  </para>
+  <programlisting>
+" For showmarks plugin
+hi ShowMarksHLl ctermbg=Yellow   ctermfg=Black  guibg=#FFDB72    guifg=Black
+hi ShowMarksHLu ctermbg=Magenta  ctermfg=Black  guibg=#FFB3FF    guifg=Black </programlisting>
+  <para>
+    ShowMarks插件中已经定义了一些快捷键：
+  </para>
+  <programlisting>
+<command>&lt;Leader&gt;mt</command>   - 打开/关闭ShowMarks插件
+<command>&lt;Leader&gt;mo</command>   - 强制打开ShowMarks插件
+<command>&lt;Leader&gt;mh</command>   - 清除当前行的标记
+<command>&lt;Leader&gt;ma</command>   - 清除当前缓冲区中所有的标记
+<command>&lt;Leader&gt;mm</command>   - 在当前行打一个标记，使用下一个可用的标记名 </programlisting>
+  <para>
+    我最常使用的是"<command>&lt;Leader&gt;mm</command>"和"<command>&lt;Leader&gt;mh</command>"，用起来非常方便。在我的vimrc中，把<link xlink:href='&uri_vimrc;' xlink:show='new'>Leader定义为"<emphasis>,</emphasis>"</link>，所以每次都使用"<command>,mm</command>"和"<command>,mh</command>"来设置和删除mark。
+  </para>
+  <para>
+    在vim 7.0中，如果大写的标记被定义了，那么函数line()无论在哪个缓冲区里都会返回该标记的行号，导致showmarks在每个缓冲区里都会把这个大写标记显示出来。因此我为这个插件打了个补丁来修正此问题。
+  </para>
+  <para>
+    vim 7.0中也可以真正的删除一个mark标记，所以也改了showmarks插件的删除标记功能。原来的功能在删除标记时，并未真正删除它，只是把这个标记指向缓冲区的第一行；现在则是真正删除此标记。
+  </para>
+  <para>
+    如果想使用我为showmarks打的补丁，请点击这里下载<link xlink:href='http://easwy.com/blog/uploads/2009/03/showmarksvim.zip' xlink:show='new'>showmarks补丁</link>。
+  </para>
+  <para>
+    <emphasis role='bold'>用法：</emphasis>
+  </para>
+  <orderedlist>
+    <listitem>
+      保存该patch到某一目录，例如：/tmp/showmarks.vim.patch
+    </listitem>
+    <listitem>
+      cd到你的.vim目录：cd ~/.vim
+    </listitem>
+    <listitem>
+      运行命令：<command>cat /tmp/showmarks.vim.patch | patch -p0</command>
+    </listitem>
+  </orderedlist>
+  <para>
+    <link xlink:href='http://www.vim.org/scripts/script.php?script_id=1706' xlink:show='new'>Marks Browser插件</link>可以显示出当前缓冲区中定义的小写标记的位置，在你无法对应上标记的名字和其位置时，非常有用。
+  </para>
+  <para>
+    下载后把它放到你的$HOME/.vim/plugin目录即可，我为其定义了一个快捷键：
+  </para>
+  <programlisting>
+""""""""""""""""""""""""""""""
+" markbrowser setting
+""""""""""""""""""""""""""""""
+nmap &lt;silent&gt; &lt;leader&gt;mk :MarksBrowser&lt;cr&gt; </programlisting>
+  <para>
+    这样，直接使用"<command>,mk</command>"就可以打开Mark Browser窗口了。
+  </para>
+  <para>
+    下图显示这两个插件工作时的效果。我在文件中定义了三个标记，一个大写标记A，两个小写标记a和t。最上面的窗口是Mark Browser窗口，主编辑窗口中的高亮行及sign标记是ShowMarks插件放置的。
+  </para>
+  <informalfigure>
+    <mediaobject>
+      <alt>showmarks插件和Mark Browser插件</alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/03/showmarks-300x216.jpg' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/03/showmarks.jpg' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  <para>
+    <emphasis role='bold'>[ 折行 ]</emphasis>
+  </para>
+  <para>
+    在文件比较大时，在文件中移动也许会比较费力。这个时候，你可以根据自己的需要把暂时不会访问的文本折叠起来，既减少了对空间的占用，移动速度也会快很多。
+  </para>
+  <para>
+    vim提供了多种方法来进行折叠，既可以手动折叠，也可以根据缩进、语法，或使用表达式来进行折叠。
+  </para>
+  <para>
+    程序文件一般都具有良好的结构，所以根据语法进行折叠是一个不错的选择。
+  </para>
+  <para>
+    要启用折叠，首先要使能'<emphasis>foldenable</emphasis>'选项，这个选项是局部于窗口的选项，因此可以为每个窗口定义不同的折叠。
+  </para>
+  <para>
+    接下来，设置'<emphasis>foldmethod</emphasis>'选项，对于程序，我们可以选择根据语法高亮进行折叠。需注意的，要根据语法高亮进行折叠，必须打开文件类型检测和语法高亮功能，请参见我前面的文章。
+  </para>
+  <para>
+    下面是我的vimrc中的设置，它使用了自动命令，如果发现文件类型为c或cpp，就启用折叠功能，并按语法进行折叠：
+  </para>
+  <programlisting>
+autocmd FileType c,cpp  setl fdm=syntax | setl fen </programlisting>
+  <para>
+    注意，vim的很多命令、选项名都有简写形式，在帮助手册中可以看到简写形式，也可以按简写形式来help，例如，要查看'<emphasis>foldmethod</emphasis>'选项的帮助，可以只输入"<command>:help 'fdm'</command>"。
+  </para>
+  <para>
+    折叠后的效果见下图：
+  </para>
+  <informalfigure>
+    <mediaobject>
+      <alt>折叠(fold)抓图</alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/03/fold-300x216.jpg' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/03/fold.jpg' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  <para>
+    图中以黑色背景显示的行就是被折叠起来的行，vim会显示这个fold中被折叠了多少行，以及起始行的内容。留意一下左下方的"__Tag_List__"窗口，在这个窗口中也存在着折叠，我把macro, typedef, variable几项折叠起来了，而把function的折叠打开。从该窗口最左边的折叠栏(<command>:help fold-foldcolumn</command>)也可以看出不同：被折叠的文本前显示了"<emphasis>+</emphasis>"，打开的折叠前显示的是"<emphasis>|</emphasis>"。
+  </para>
+  <para>
+    折叠的背景色及显示文字等都可以修改，参阅帮助手册(<command>:help folding</command>)。
+  </para>
+  <para>
+    下面的命令用来打开和关闭折叠：
+  </para>
+  <programlisting>
+    <command>zo</command> – 打开光标下的折叠
+    <command>zO</command> – 循环打开光标下的折叠，也就是说，如果存在多级折叠，每一级都会被打开
+    <command>zc</command> – 关闭光标下的折叠
+    <command>zC</command> – 循环关闭光标下的折叠 </programlisting>
+  <para>
+    更多的命令，请参阅手册(<command>:help folding</command>)。
+  </para>
+  <para>
+    vim提供了一些命令在折叠间快速移动：
+  </para>
+  <programlisting>
+    <command>[z</command> – 到当前打开折叠的开始
+    <command>]z</command> – 到当前打开折叠的结束
+    <command>zj</command> – 向下移动到下一个折叠的开始处
+    <command>zk</command> – 向上移动到上一个折叠的结束处 </programlisting>
+  <para>
+    我通常不喜欢把文本折叠起来，因为我更喜欢一目了然的看到全部文本。你可以根据自己的喜好来决定是否启用折叠。
+  </para>
+  <para>
+    多说一点，手动创建的折叠是可以<link xlink:href='&uri_session;' xlink:show='new'>保存在session文件</link>中的，这样下次进入vim时可以载入之前创建的折叠，参见<command>:help 'sessionoptions'</command>。
+  </para>
+  <para>
+    <emphasis role='bold'>[ 在程序中移动 ]</emphasis>
+  </para>
+  <para>
+    vim的作者是一个程序员，这就不难理解为什么vim提供了众多在程序中移动的命令。这里面既包括我们前面的文章中介绍过的<link xlink:href='&uri_tag_file;' xlink:show='new'>利用tag文件</link>及<link xlink:href='&uri_cscope;' xlink:show='new'>cscope</link>在标签间跳转，也包括众多在函数、注释、预处理指令、程序段，及其它程序元素中移动的命令。
+  </para>
+  <para>
+    本文不再详细介绍这些命令，作为程序员，一定要熟读usr_29.txt！这些命令，可以帮助你在程序中得心应手的移动。 
+  </para>
+  <para>
+    在这里介绍两个插件，增强了在程序中移动的功能，一个是a.vim，另外一个是matchit。
+  </para>
+  <para>
+    <link xlink:href='http://www.vim.org/scripts/script.php?script_id=31' xlink:show='new'>a.vim</link>的功能非常简单，它帮助你在源文件和头文件间进行切换，这个简单的功能，却非常实用，至少它为我节省了很多时间。
+  </para>
+  <para>
+    下载a.vim后，把它放到你的.vim/plugin目录就可以了。
+  </para>
+  <para>
+    假设你正在浏览C语言的源文件，这时想修改它对应的头文件，只需要输入"<command>:A</command>"命令，就切换到头文件了（需要源文件和头文件在同一目录中）。a.vim插件还定义了其它一些命令和快捷键，参见它的帮助手册。
+  </para>
+  <para>
+    在vim中，"<command>%</command>"命令跳转到与当前项目相匹配的项目。例如，当光标位置在"<command>{</command>"时，按下%，光标就跳转到对应的"<command>}</command>"( <command>:help %</command>)。
+  </para>
+  <para>
+    但vim提供的%命令，只能在括号，或者C注释的开始和结束( /*  */)，或者C编译预处理指令间进行跳转。对于其它程序结构，例如HTML，%命令不能从&lt;html&gt;标记，跳转到对应的&lt;/html&gt;标记。
+  </para>
+  <para>
+    <link xlink:href='http://www.vim.org/scripts/script.php?script_id=39' xlink:show='new'>Matchit插件</link>则扩展了%命令的功能，使%命令可以对其它程序语言的开始和结束标记间进行跳转。
+  </para>
+  <para>
+    下载后，把这个插件放到你的.vim/plugin目录，你就可以用%在各种开始/结束标记间跳转了，目前，它可以支持Ada, ASP with VBS, Csh, DTD, Essbase, Fortran, HTML, JSP (same as HTML), LaTeX, Lua, Pascal, SGML, Shell, Tcsh, Vim, XML等语言。
+  </para>
+  <para>
+    <emphasis role='bold'>[ 插入模式下的移动 ]</emphasis>
+  </para>
+  <para>
+    上面介绍的移动命令，都是在normal模式下使用的，如果想在insert模式下移动，阅读<command>:help ins-special-special</command>。
+  </para>
+  <para>
+    你真的需要在插入模式下移动吗？我几乎不会！通常我会先按ESC返回Normal模式，然后再移动，当你习惯了以后，你会发现效率会更高。
+  </para>
+  <para>
+    <emphasis role='bold'>[ 小结 ]</emphasis>
+  </para>
+  <para>
+    你会发现，本文的内容，和usr_03.txt帮助文档很相似。是的，只要你学会了usr_03.txt中列出的命令，你就掌握了最常用最实用的vim移动命令(<command>:help usr_03.txt</command>)。
+  </para>
+  <para>
+    如果你想了解更多的移动命令，请通篇阅读motion.txt，记住你最有可能用到的那些键。当你的手指能够不假思索的使用这些命令后，你在vim中就能做到指随意动、移动如飞了。
+  </para>
+  <para>
+    <emphasis role='bold'>[参考文档]</emphasis>
+  </para>
+  <itemizedlist>
+    <listitem>
+      vim手册
+    </listitem>
+    <listitem>
+      <link xlink:href='http://vimcdoc.sourceforge.net/' xlink:show='new'>vim中文手册</link>
+    </listitem>
+  </itemizedlist>
+  &tocatalog;
+  &copyright;
+  <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='&uri_move2;'/></para>
+</chapter>

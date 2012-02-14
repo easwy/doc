@@ -1,0 +1,181 @@
+<chapter xml:id='use_taglist_plugin'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>使用taglist插件</title>
+  &tocatalog;
+  <para>
+    本节所用命令的帮助入口：
+  </para>
+  <programlisting>
+:help helptags
+:help taglist.txt </programlisting>
+  <para>
+    <link xlink:href='&uri_tag_file;' xlink:show='new'>上篇文章</link>介绍了在vim中如何使用tag文件，本文主要介绍如何使用taglist插件(plugin)。
+  </para>
+  <para>
+    想必用过Source Insight的人都记得这样一个功能：SI能够把当前文件中的宏、全局变量、函数等tag显示在Symbol窗口，用鼠标点上述tag，就跳到该tag定义的位置；可以按字母序、该tag所属的类或scope，以及该tag在文件中出现的位置进行排序；如果切换到另外一个文件，Symbol窗口更新显示这个文件中的tag。
+  </para>
+  <para>
+    在vim中的taglist插件所实现的就是上述类似的功能，有些功能比SI弱，有些功能比SI更强。而且，taglist插件还在不断完善中！
+  </para>
+  <para>
+    要使用taglist plugin，必须满足：
+  </para>
+  <itemizedlist>
+    <listitem>
+      打开vim的文件类型自动检测功能：<link xlink:href='&uri_filetype;' xlink:show='new'>filetype on</link>
+    </listitem>
+    <listitem>
+      系统中装了<link xlink:href='http://ctags.sourceforge.net/' xlink:show='new'>Exuberant ctags</link>工具，并且taglist plugin能够找到此工具（因为taglist需要调用它来生成tag文件）
+    </listitem>
+    <listitem>
+      你的vim支持system()调用
+    </listitem>
+  </itemizedlist>
+  <para>
+    在文章<link xlink:href='&uri_vimrc;' xlink:show='new'>vimrc初步</link>中，我们使用了vim自带的示例vimrc，这个vimrc中已经打开了文件类型检测功能；在<link xlink:href='&uri_tag_file;' xlink:show='new'>上篇文章</link>中，我们也已用到了Exuberant ctags；system()调用在一般的vim版本都会支持(suse Linux发行版中出于安全考虑，关闭了此功能)，所以我们已经满足了这三个条件。
+  </para>
+  <para>
+    现在我们到<link xlink:href='http://www.vim.org/scripts/script.php?script_id=273'/>下载最新版本的taglist plugin，目前版本是4.3。
+  </para>
+  <para>
+    下载后，把该文件在~/.vim/目录中解压缩，这会在你的~/.vim/plugin和~/.vim/doc目录中各放入一个文件：
+  </para>
+  <programlisting>
+plugin/taglist.vim – taglist插件
+doc/taglist.txt    - taglist帮助文件 </programlisting>
+  <para>
+    <emphasis role='bold'>注：</emphasis>windows用户需要把这个插件解压在你的$vim/vimfiles或$HOME/vimfiles目录。
+  </para>
+  <para>
+    使用下面的命令生成帮助标签（下面的操作在vim中进行）：
+  </para>
+  <programlisting>
+:helptags ~/.vim/doc </programlisting>
+  <para>
+    生成帮助标签后，你就可以用下面的命令查看taglist的帮助了：
+  </para>
+  <programlisting>
+:help taglist.txt </programlisting>
+  <para>
+    Taglist提供了相当多的功能，我的vimrc中这样配置：
+  </para>
+  <programlisting>
+""""""""""""""""""""""""""""""
+" Tag list (ctags)
+""""""""""""""""""""""""""""""
+if MySys() == "windows"                "设定windows系统中ctags程序的位置
+let Tlist_Ctags_Cmd = 'ctags'
+elseif MySys() == "linux"              "设定linux系统中ctags程序的位置
+let Tlist_Ctags_Cmd = '/usr/bin/ctags'
+endif
+let Tlist_Show_One_File = 1            "不同时显示多个文件的tag，只显示当前文件的
+let Tlist_Exit_OnlyWindow = 1          "如果taglist窗口是最后一个窗口，则退出vim
+let Tlist_Use_Right_Window = 1         "在右侧窗口中显示taglist窗口 </programlisting>
+  <para>
+    这样配置后，当你输入"<command>:TlistOpen</command>"时，显示如下窗口：
+  </para>
+  <informalfigure xml:id='taglist_window'>
+    <mediaobject>
+      <alt>taglist窗口</alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/02/taglist-300x227.jpg' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'>
+      <link xlink:href='http://easwy.com/blog/uploads/2009/02/taglist.jpg' xlink:show='new'>点击查看大图</link>
+    </caption>
+  </informalfigure>
+  <para>
+    在屏幕右侧出现的就是taglist窗口，你从中可以看到在main.c文件中定义的所有tag：宏、定义、变量、函数等；你也可以双击某个tag，跳到该tag定义的位置；你还可以把某一类的tag折叠起来（使用了vim的<link xlink:href='&uri_move2;' xlink:show='new'>折行</link>功能），方便查看，就像上图中macro和variable那样。更多的功能，请查看taglist的帮助页，本文也会介绍一些常用功能。
+  </para>
+  <para>
+    下面介绍常用的taglist配置选项，你可以根据自己的习惯进行配置：
+  </para>
+  <itemizedlist>
+    <listitem>
+<emphasis>Tlist_Ctags_Cmd</emphasis>选项用于指定你的Exuberant ctags程序的位置，如果它没在你PATH变量所定义的路径中，需要使用此选项设置一下；
+    </listitem>
+    <listitem>
+如果你不想同时显示多个文件中的tag，设置<emphasis>Tlist_Show_One_File</emphasis>为1。缺省为显示多个文件中的tag；
+    </listitem>
+    <listitem>
+设置<emphasis>Tlist_Sort_Type</emphasis>为"<emphasis role='bold'>name</emphasis>"可以使taglist以tag名字进行排序，缺省是按tag在文件中出现的顺序进行排序。按tag出现的范围（即所属的namespace或class）排序，已经加入taglist的TODO List，但尚未支持；
+    </listitem>
+    <listitem>
+如果你在想taglist窗口是最后一个窗口时退出vim，设置<emphasis>Tlist_Exit_OnlyWindow</emphasis>为1；
+    </listitem>
+    <listitem>
+如果你想taglist窗口出现在右侧，设置<emphasis>Tlist_Use_Right_Window</emphasis>为1。缺省显示在左侧。
+    </listitem>
+    <listitem>
+在gvim中，如果你想显示taglist菜单，设置<emphasis>Tlist_Show_Menu</emphasis>为1。你可以使用<emphasis>Tlist_Max_Submenu_Items</emphasis>和<emphasis>Tlist_Max_Tag_Length</emphasis>来控制菜单条目数和所显示tag名字的长度；
+    </listitem>
+    <listitem>
+缺省情况下，在双击一个tag时，才会跳到该tag定义的位置，如果你想单击tag就跳转，设置<emphasis>Tlist_Use_SingleClick</emphasis>为1；
+    </listitem>
+    <listitem>
+如果你想在启动vim后，自动打开taglist窗口，设置<emphasis>Tlist_Auto_Open</emphasis>为1；
+    </listitem>
+    <listitem>
+如果你希望在选择了tag后自动关闭taglist窗口，设置<emphasis>Tlist_Close_On_Select</emphasis>为1；
+    </listitem>
+    <listitem>
+当同时显示多个文件中的tag时，设置<emphasis>Tlist_File_Fold_Auto_Close</emphasis>为1，可使taglist只显示当前文件tag，其它文件的tag都被折叠起来。
+    </listitem>
+    <listitem>
+在使用<command>:TlistToggle</command>打开taglist窗口时，如果希望输入焦点在taglist窗口中，设置<emphasis>Tlist_GainFocus_On_ToggleOpen</emphasis>为1；
+    </listitem>
+    <listitem>
+如果希望taglist始终解析文件中的tag，不管taglist窗口有没有打开，设置<emphasis>Tlist_Process_File_Always</emphasis>为1；
+    </listitem>
+    <listitem>
+<emphasis>Tlist_WinHeight</emphasis>和<emphasis>Tlist_WinWidth</emphasis>可以设置taglist窗口的高度和宽度。<emphasis>Tlist_Use_Horiz_Window</emphasis>为1设置taglist窗口横向显示；
+    </listitem>
+  </itemizedlist>
+  <para>
+    在taglist窗口中，可以使用下面的快捷键：
+  </para>
+  <programlisting>
+&lt;CR&gt;          跳到光标下tag所定义的位置，用鼠标双击此tag功能也一样
+o             在一个新打开的窗口中显示光标下tag
+&lt;Space&gt;       显示光标下tag的原型定义
+u             更新taglist窗口中的tag
+s             更改排序方式，在按名字排序和按出现顺序排序间切换
+x             taglist窗口放大和缩小，方便查看较长的tag
++             打开一个折叠，同zo
+-             将tag折叠起来，同zc
+*             打开所有的折叠，同zR
+=             将所有tag折叠起来，同zM
+[[            跳到前一个文件
+]]            跳到后一个文件
+q             关闭taglist窗口
+&lt;F1&gt;          显示帮助 </programlisting>
+  <para>
+    可以用":<command>TlistOpen</command>"打开taglist窗口，用"<command>:TlistClose</command>"关闭taglist窗口。或者使用"<command>:TlistToggle</command>"在打开和关闭间切换。在我的vimrc中定义了下面的映射，使用&lt;F9&gt;键就可以打开/关闭taglist窗口：
+  </para>
+  <programlisting>
+map &lt;silent&gt; &lt;F9&gt; :TlistToogle&lt;cr&gt; </programlisting>
+  <para>
+    Taglist插件还提供了很多命令，你甚至可以用这些命令创建一个taglist的会话，然后在下次进入vim时加载此会话。
+  </para>
+  <para>
+    Taglist插件还可以与winmanager插件协同使用，这将在<link xlink:href='&uri_winmanager;' xlink:show='new'>下篇文章</link>中介绍。
+  </para>
+  <para>
+    <emphasis role='bold'>[参考文档]</emphasis>
+  </para>
+  <itemizedlist>
+    <listitem>
+      vim手册
+    </listitem>
+    <listitem>
+      <link xlink:href='http://vimcdoc.sourceforge.net/' xlink:show='new'>vim中文手册</link>
+    </listitem>
+    <listitem>
+      taglist手册
+    </listitem>
+  </itemizedlist>
+  &tocatalog;
+  &copyright;
+  <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='&uri_taglist;'/></para>
+</chapter>

@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>使用Synergy共享你的鼠标和键盘</title>
+  <para>
+    公司为每个软件开发人员配置了两部计算机，一部台式机安装Linux操作系统，一部笔记本安装Windows XP。开发编程主要在Linux下，处理文档和邮件则在Windows下。
+  </para>
+  <para>
+    工作经常需要在两台电脑间切换，一般情况下，<link xlink:href='&myblog;'>Easwy</link>都是把椅子移来移去来切换，或者是使用远程桌面来从一台计算机上访问另外一台计算机，由Windows访问Linux远程桌面可以使用<link xlink:href='http://easwy.com/blog/archives/linux-remote-desktop-via-cygwin-x-server/'>cygwin X server</link>，由Linux访问Windows远程桌面可以用<link xlink:href='http://www.rdesktop.org/' xlink:show='new'>rdesktop</link>。但这两种方式都不太方便，移动椅子就不说了，用远程桌面只能使用一个屏幕来做显示，不能充分利用两个屏幕。
+  </para>
+  <para>
+    有时需要在两台电脑间交换数据，文件共享一般使用Samba，在Windows上访问Linux的Samba服务器，或者<link xlink:href='http://easwy.com/blog/archives/mount-a-windows-shared-folder-on-linux-with-samba/'>从Linux上通过Samba访问Windows的共享目录</link>。而少量数据的共享，例如剪切板中数据的共享则比较麻烦。
+  </para>
+  <para>
+    前几天同事介绍了一个很好的软件<link xlink:href='http://synergy2.sourceforge.net/' xlink:show='new'>Synergy</link>，使用这个软件，可以在多台计算机间共享一个鼠标/键盘，每台计算机都可以有自己的屏幕，可以安装相同或不同的操作系统。
+  </para>
+  <para>
+    Easwy马上试用了一下这个软件，立刻就喜欢上了。安装完后，<link xlink:href='&myblog;'>Easwy</link>把Linux台式机设置为Synergy Server，Windows XP笔记本设置为Synergy Client(因为我大多数时间在Linux下工作)。设置好后，笔记本好像变成台式机的扩展屏幕了，鼠标移出台式机的窗口右边界后，就会移入笔记本的屏幕中，而此时台式机的键盘输入就直接输入到笔记本中了。同时，两台计算机间可以共享剪切板中的数据了。在Windows上拷贝一块数据到剪切板中，鼠标移回Linux，一按中键，就粘贴在vim中了，反之亦然，非常方便。
+  </para>
+  <para>
+    Synergy的安装配置都很简单，首先到<link xlink:href='http://sourceforge.net/project/showfiles.php?group_id=59275&amp;release_id=406637' xlink:show='new'/>下载synergy，根据你操作系统的类型下载Linux或Windows的版本，下载后直接安装。
+  </para>
+  <para>
+    安装后需要在每台主机上运行synergy，并做相应的配置。Window上的synergy提供了图形化配置界面，Easwy配置成"Use another computer's shared keyboard and mouse(client)"，并填入共享键盘/鼠标计算机的主机名。
+  </para>
+  <para>
+    Linux下需要写一个简单的配置文件，<link xlink:href='&myblog;'>Easwy</link>的配置文件如下：
+  </para>
+  <programlisting>
+section: screens
+    szx-w-easwyy.easwy.com:
+    szx-n-easwyy:
+end
+section: links
+    szx-w-easwyy.easwy.com:
+        right = szx-n-easwyy
+    szx-n-easwyy:
+        left = szx-w-easwyy.easwy.com
+end </programlisting>
+  <para>
+    把这个文件存为<emphasis>/etc/synergy.conf</emphasis>，然后在命令行下执行：
+  </para>
+  <programlisting>
+synergys -f --config /etc/synergy.conf </programlisting>
+  <para>
+    这样就在前台启动了synergy服务器，之所以在前台启动是为了方便查看调试输出信息。接下来就可以测试一下效果。如果都没问题，按<command>CTRL-C</command>终止前台的synergy，然后把上面命令中的<emphasis>-f</emphasis>参数去掉，在后台启动synergy。你可以把启动synergy加到你的启动脚本里，例如<emphasis>/etc/rc.local</emphasis>。
+  </para>
+  <para>
+    简单介绍一下上面的配置文件：
+  </para>
+  <itemizedlist>
+    <listitem>
+    <emphasis>screens</emphasis>一节列出你打算共享同一个键盘/鼠标的主机名，需要注意的是这里的主机名必须和你计算机上<command>hostname</command>命令的输出一致，不然synergy就会提示找不到对应的主机。
+    </listitem>
+    <listitem>
+      <emphasis>links</emphasis>一节则列出各主机间的位置关系，上面的配置指明了Linux台式机的右边是笔记本，而笔记本的左边是台式机。这样，鼠标移出台式机屏幕的右边界就会移入笔记本屏幕，而移出笔记本屏幕的左边界后就会移回台式机屏幕了。
+    </listitem>
+  </itemizedlist>
+  <para>
+    如果你需要特殊的配置，或者遇到了什么问题，请参见Synergy的主页。
+  </para>
+  <para>
+    <emphasis role='bold'>2010/01/19更新</emphasis>
+  </para>
+  <para>
+    网友Stephenjy留言说，Synergy从2006年以来就没有更新过了，有人在Google Code上建立了新的<link xlink:href='http://code.google.com/p/synergy-plus/' xlink:show='new'>Synergy+</link>项目来继续维护。所以，如果你想试用，请直接下载Synergy+，网址是<link xlink:href='http://code.google.com/p/synergy-plus/' xlink:show='new'/>。Easwy看了一下Synergy+的说明，基本是对Synergy的Bug修正，配置方法和Synergy完全一致。使用Easwy上面给出的配置，可以正常运行Synergy+。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>Easwy的博客</link>上的其它文章。
+  </para>
+  <para><emphasis role='bold'>[ 参考文档 ]</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://synergy2.sourceforge.net/' xlink:show='new'>Synergy</link>
+    </listitem>
+  </itemizedlist>
+</article>
+

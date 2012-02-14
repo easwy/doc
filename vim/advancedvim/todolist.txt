@@ -1,0 +1,12 @@
+- copy & paste - register
+- autocmd
+- command line window: q/ q: & vimgdb
+- macro: q
+- vimdiff
+- map & abbrev
+- pyclewn
+Vimball
+Get lastest script
+Matrix
+Cal
+

@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>Linux使用笔记: 使用代理服务器访问git版本库</title>
+  <para>
+    今天想用git下载<link xlink:href='http://eclim.org/' xlink:show='new'>eclim</link>的源代码，因为公司的网络使用了代理服务器，无法直接访问git协议所监听端口。幸好github支持http协议的访问。于是，使用下面的命令设置了http proxy:
+  </para>
+  <programlisting>
+export http_proxy=http://my_proxy_server:port </programlisting>
+  <para>
+    这样设置后，使用git可以访问版本服务器了，但在下载的时候却出现这样的错误：
+  </para>
+  <programlisting>
+$ git clone http://github.com/ervandew/eclim.git
+
+Initialized empty Git repository in /home/easwy/90download/eclim/git/eclim/.git/
+
+got 559057ba6b5133554e9603d400398c0700752c49
+walk 559057ba6b5133554e9603d400398c0700752c49
+got c177f69b4c5a18c7ee5aab65cdb88fcd410169df
+got 1bd4276c2aa8832c8950f3be030e6eddde5a8b56
+walk 1bd4276c2aa8832c8950f3be030e6eddde5a8b56
+Getting alternates list for http://github.com/ervandew/eclim.git
+Getting pack list for http://github.com/ervandew/eclim.git
+Getting index for pack 523055f70fe6414d844af3180da0ade0adc95f87
+Getting index for pack d338b3e2c4e213d4da51ddc86d898a11242ab9ec
+Getting pack 523055f70fe6414d844af3180da0ade0adc95f87
+ which contains aaae75262ebffdfa97c584f6b69967b0f5cc8cc8
+ error: Unable to get pack file http://github.com/ervandew/eclim.git/objects/pack/pack-523055f70fe6414d844af3180da0ade0adc95f87.pack
+ transfer closed with 30775470 bytes remaining to read
+ error: Unable to find aaae75262ebffdfa97c584f6b69967b0f5cc8cc8 under http://github.com/ervandew/eclim.git
+ Cannot obtain needed blob aaae75262ebffdfa97c584f6b69967b0f5cc8cc8
+ while processing commit 1bd4276c2aa8832c8950f3be030e6eddde5a8b56. 
+
+$ /usr/bin/git version
+ git version 1.5.2.1 </programlisting>
+
+  <para>
+    在网上搜了一下，也有其它人遇到这个问题，好像是git的bug，目前还不知道解决办法。即使换用git版本1.6.6还是存在此问题。难怪网上有人建议尽量不要使用http协议访问git版本库，除非你位于防火墙后面，可我恰好就是这种情况，郁闷ing!
+  </para>
+  <para><emphasis role='bold'>2010/1/13更新</emphasis></para>
+  <para>
+    网友ufly提到可以使用corkscrew来访问git版本库，<link xlink:href='&myblog;'>Easwy</link>按照文章<link xlink:href="https://gforge.ti.com/gf/project/omapandroid/wiki/?pagename=Git+Firewall" xlink:show='new'>Git Firewall</link>里讲的试了一下，还是不成功。
+  </para>
+  <para>
+    这可能是公司所用的代理服务器的限制，比如，当我尝试通过corkscrew进行ssh访问时，代理服务器会返回下面的信息：
+  </para>
+  <programlisting>
+$ ssh easwy@remote-server
+Proxy could not open connnection to remote-server:  ( The specified Secure Sockets Layer (SSL) port is not allowed. ISA Server is not configured to allow SSL requests from this port. Most Web browsers use port 443 for SSL requests.  )
+ssh_exchange_identification: Connection closed by remote host </programlisting>
+  <para>
+    也就是说，公司的http proxy限制了通过SSL访问的端口只能是443端口，如果不是443端口则拒绝连接。
+  </para>
+  <para>
+    幸好github.com也开通了443端口的访问，文章<link xlink:href='http://blog.codeslower.com/2008/8/Using-PuTTY-and-SSL-to-securely-access-GitHub-repositories-via-SSH' xlink:show='new'> Access GitHub repositories from work (take that, firewall!).</link>及其后的评论介绍了如何在windows及Linux下穿越防火墙访问github.com。等有时间试一下。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>Easwy的博客</link>上的其它文章。
+  </para>
+</article>

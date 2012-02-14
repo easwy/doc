@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>vim使用进阶系列文章PDF版本下载</title>
+  <para>
+    前几天把<link xlink:href='http://easwy.com/blog/archives/render_docbook_xml_to_pdf_by_apache_fop/'>Apache FOP</link>的环境搭建好后，就尝试着把vim使用进阶的docbook文档转换成PDF格式，但是转换没有成功，出现了一些错误。
+  </para>
+  <para>
+    昨晚调试了一个晚上，终于成功的把docbook转换成PDF了，大致浏览了一下，转换出来应该说效果还是很不错的，只是插图变得很不清晰，大概和我转换时采用的配置有关。不过现在没时间调整了，大家将就着看吧。
+  </para>
+  <para>
+    我已经把转换后的PDF文档上传，在文章<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-catalog/'>vim使用进阶: 目录</link>中可以找到下载链接。
+  </para>
+  <para>
+    另外，我把下一步的写作提纲也列在<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-catalog/'>vim使用进阶: 目录</link>中了，如果你有什么感兴趣的主题，请留言提出来，对于具有普遍性的主题，我也会列入我的写作提纲。
+  </para>
+  <para>
+    Enjoy it!
+  </para>
+</article>

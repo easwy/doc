@@ -1,0 +1,197 @@
+<chapter xml:id='basic_movement'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>指随意动，移动如飞 (一)</title>
+  &tocatalog;
+  <para>
+    本节所用命令的帮助入口：
+  </para>
+  <programlisting>
+:help usr_03.txt
+:help motion.txt
+:help usr_29.txt
+:help scroll.txt </programlisting>
+  <para>
+    vim提供的移动方式多如牛毛，但我们并不需要掌握全部这些命令，只需要掌握最适合自己的那些命令。因为我们最终的目的，并不是成为一个vim高手，而是更高效的编辑文本。
+  </para>
+  <para>
+    我们下面介绍的命令，如果没有特别说明，都是在Normal模式下使用的命令。
+  </para>
+  <para>
+    这些命令的帮助入口，就是"<command>:help 命令名</command>"。例如，对于"<command>j</command>"命令，查看它的帮助，使用"<command>:help j</command>"。
+  </para>
+  <para>
+    <emphasis role='bold'>[上下左右]</emphasis>
+  </para>
+  <para>
+    让我们从最简单的、也是使用频率最高的h, j, k, l开始。
+  </para>
+  <para>
+    h, j, k, l的移动方式，已经成为vim的标志之一，并且也为更多的软件所接受。如果你仍在用上下左右光标来移动的话，说明你内心并没有真正接受vim的哲学，如果真的打算把vim做为你的编辑工具，就从使用h, j, k, l开始吧！
+  </para>
+  <para>
+    h, j, k, l分别代表向左、下、上、右移动。如同许多vim命令一样，可以在这些键前加一个数字，表示移动的倍数。例如，"<command>10j</command>"表示向下移动10行；"<command>10l</command>"表示向右移动10列。
+  </para>
+  <para>
+    缺省情况下，h和l命令不会把光标移出当前行。如果已经到了行首，无论按多少次h键，光标始终停留在行首，l命令也类似。如果希望h和l命令可以移出当前行，更改<emphasis>'whichwrap'</emphasis>选项的设置(<command>:help 'whichwrap'</command>)。
+  </para>
+  <para>
+    vim的作者在安排按键功能时别具匠心，在其它的键绑定中，也能看到h, j, k, l所代表的含义。
+  </para>
+  <para>
+    例如，使光标在多个窗口间上下左右移动的命令，就是CTRL-W h/j/k/l (<command>:help CTRL-W_h</command>, ...)；
+  </para>
+  <para>
+    再如，上下左右移动窗口位置的命令，是CTRL-W H/J/K/L (<command>:help CTRL-W_H</command>, ...)。注意，这里的H, J, K, L是大写的。
+  </para>
+  <para>
+    <emphasis role='bold'>[ 翻页 ]</emphasis>
+  </para>
+  <para>
+    在vim中翻页，同样可以使用PageUp和PageDown，不过，像使用上下左右光标一样，你的手指会移出主键盘区。因此，我们通常使用<command>CTRL-B</command>和<command>CTRL-F</command>来进行翻页，它们的功能等同于PageUp和PageDown。<command>CTRL-B</command>和<command>CTRL-F</command>前也可以加上数字，来表示向上或向下翻多少页。
+  </para>
+  <para>
+    vim中还可以向上或向下翻半页，翻指定的行数，参见scroll.txt帮助手册页。
+  </para>
+  <para>
+    <emphasis role='bold'>[ 在文件中移动 ]</emphasis>
+  </para>
+  <para>
+    vim提供了一些命令，可以方便的在文件中移动。
+  </para>
+  <para>
+    命令"<command>gg</command>"移动到文件的第一行，而命令"<command>G</command>"则移动到文件的最后一行。
+  </para>
+  <para>
+    命令"<command>G</command>"前可以加上数字，在这里，数字的含义并不是倍数，而是你打算跳转的行号。例如，你想跳转到文件的第1234行，只需输入"<command>1234G</command>"。
+  </para>
+  <para>
+    你还可以按百分比来跳转，例如，你想跳到文件的正中间，输入"<command>50%</command>"；如果想跳到75%处，输入"<command>75%</command>"。注意，你必须先输入一个数字，然后输入"<command>%</command>"。如果直接输入"<command>%</command>"，那含义就完全不同了。"<command>:help N%</command>"阅读更多细节。
+  </para>
+  <para>
+    在文件中移动，你可能会迷失自己的位置，这时使用"<command>CTRL-G</command>"命令，查看一下自己位置。这个命令会显示出光标的位置及其它信息。为了避免迷失，你可以打开行号显示；使用"<command>:set number</command>"命令后，会在每一行前显示出行号，可以更方便的定位的跳转（<command>:help 'number'</command>）。
+  </para>
+  <para>
+    <emphasis role='bold'>[ 移动到指定字符 ]</emphasis>
+  </para>
+  <para>
+    上面的命令都是行间移动(除h, l外)，也就是从当前行移动到另外一行。如果我们想在当前行内快速移动，可以使用f, t, F, T命令。
+  </para>
+  <para>
+    "<command>f</command>"命令移动到光标右边的指定字符上，例如，"<command>fx</command>"，会把移动到光标右边的第一个'x'字符上。"<command>F</command>"命令则反方向查找，也就是移动到光标左边的指定字符上。
+  </para>
+  <para>
+    "<command>t</command>"命令和"<command>f</command>"命令的区别在于，它移动到光标右边的指定字符之前。例如，"<command>tx</command>"会移动到光标右边第一个'x'字符的前面。"<command>T</command>"命令是"<command>t</command>"命令的反向版本，它移动到光标右边的指定字符之后。
+  </para>
+  <para>
+    这四个命令只在当前行中移动光标，光标不会跨越回车换行符。
+  </para>
+  <para>
+    可以在命令前面使用数字，表示倍数。例如，"<command>3fx</command>"表示移动到光标右边的第3个'x'字符上。
+  </para>
+  <para>
+    "<command>;</command>"命令重复前一次输入的f, t, F, T命令，而"<command>,</command>"命令会反方向重复前一次输入的f, t, F, T命令。这两个命令前也可以使用数字来表示倍数。
+  </para>
+  <para>
+    <emphasis role='bold'>[ 行首/行尾 ]</emphasis>
+  </para>
+  <para>
+    在vim中，移动到行首的命令非常简单，就是"<command>0</command>"，这个是数字0，而不是大写字母O。移动到行尾的命令是"<command>$</command>"。
+  </para>
+  <para>
+    另外还有一个命令"<command>^</command>"，用它可以移动到行首的第一个非空白字符。
+  </para>
+  <para>
+    在正则表达式中我们会看到，"<command>^</command>"字符代表行首，而"<command>$</command>"字符代表行尾。可见，vi/vim的按键的安排，的确是别具匠心的。
+  </para>
+  <para>
+    <emphasis role='bold'>[ 按单词移动 ]</emphasis>
+  </para>
+  <para>
+    我们知道，英文文档的主体是单词，通常用空白字符(包括空格、制表符和回车换行符)来分隔单词。vim中提供了许多命令来按单词移动。
+  </para>
+  <para>
+    要根据单词来移动，首先要把文本分隔为一个个独立的单词。vim在对单词进行分隔时，会把'<emphasis>iskeyword</emphasis>'选项中的字符做为单词的组成字符。也就是说，一个单词(word)由'<emphasis>iskeyword</emphasis>'选项中定义的字符构成，它前面、后面的字符不在'<emphasis>iskeyword</emphasis>'选项定义的字符中。例如，如果我们把'<emphasis>iskeyword</emphasis>'选项设置为"<emphasis>a-z,A-Z,48-57,_</emphasis>"，那么"<emphasis>FooBar_123</emphasis>"被做为一个单词，而"<emphasis>FooBar-123</emphasis>"被做为三个单词："<emphasis>FooBar</emphasis>", "<emphasis>-</emphasis>"和"<emphasis>123</emphasis>"。"<emphasis>a-z,A-Z,48-57,_</emphasis>"中的48-57表示ASCII码表中的数字0-9。
+  </para>
+  <para>
+    vim中，移动光标到下一个单词的词首，使用命令"<command>w</command>"，移动光标到上一个单词的词首，使用命令"<command>b</command>"；移动光标到下一个单词的结尾，用命令"<command>e</command>"，移动光标到上一个单词的结尾，使用命令"<command>ge</command>"。
+  </para>
+  <para>
+    上面这些命令都使用'<emphasis>iskeyword</emphasis>'选项中的字符来确定单词的分界，还有几个命令，只把空白字符当做"<emphasis>单词</emphasis>"的分界。当然，这里说的"<emphasis>单词</emphasis>"已经不是传统意义上的单词了，而是由非空白字符构成一串字串。命令"<command>W</command>"移动光标到下个字串的开始，命令"<command>B</command>"移动到上个字串的开始；命令"<command>E</command>"移动到下个字串的结尾，命令"<command>gE</command>"移动到上个字串的结尾。和上面的命令比较一下，发现什么规律没有？
+  </para>
+  <para>
+    <emphasis role='bold'>[ H/M/L ]</emphasis>
+  </para>
+  <para>
+    <emphasis role='bold'>注意：</emphasis>这几个命令是大写的。
+  </para>
+  <para>
+    使用H/M/L这三个键，可以让光标跳到当前窗口的顶部、中间、和底部，停留在第一个非空字符上。H命令和L命令前也可以加一个数字，但数字的含义不再是倍数，而是指距窗口顶部、底部的行数。例如，"<command>3H</command>"表示光标移动到距窗口顶部第3行的位置；"<command>5L</command>"表示光标移动到距窗口底部5行的位置。
+  </para>
+  <para>
+    <emphasis role='bold'>[ 相对于光标滚屏 ]</emphasis>
+  </para>
+  <para>
+    在阅读代码时，有时我们需要根据光标所在的位置滚屏，把光标所在行移动窗口的顶端、中间或底部，这时就可以用到"<command>zt</command>"、"<command>zz</command>"和"<command>zb</command>"。这种滚屏方式相对于翻页来讲，它的好处在于，你能够始终以当前光标位置做为参照，不会出现翻几次页后，发现自己迷失了方向。 ^_^
+  </para>
+  <para>
+    <emphasis role='bold'>[ 查找 ]</emphasis>
+  </para>
+  <para>
+    查找，也可以做为一种快速移动的方式。
+  </para>
+  <para>
+    在vim中查找非常容易，直接在Normal模式下输入"<command>/</command>"，然后输入你想查询的字符串，回车，就跳转到第一个匹配的地方了。"<command>/</command>"是向下查找，而"<command>?</command>"进行反方向查找。命令"<command>n</command>"重复上一次的查找命令，而命令"<command>N</command>"也重复上一次的查找命令，只不过它按相反方向查找。
+  </para>
+  <para>
+    vim保存了查找的历史记录，你可以在输入"<command>/</command>"或"<command>?</command>"后，用上、下光标键(或CTRL-P/CTRL-N)翻看历史记录，然后再次执行这个查找。
+  </para>
+  <para>
+    另外你还可以使用"<command>q/</command>"和"<command>q?</command>"命令，在vim窗口最下面打开一个新的窗口，这个窗口会列出你的查找历史记录，你可以使用任何vim编辑命令对此窗口的内容进行编辑，然后再按回车，就会对光标所在的行的内容进行查找。
+  </para>
+  <informalfigure>
+    <mediaobject>
+      <alt>查找命令行窗口</alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/03/command-line-300x216.jpg' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/03/command-line.jpg' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  <para>
+    在上图中，我使用"<command>q/</command>"命令打开了command-line窗口，这个窗口列出了我之前所查找的字符串。我现在想查找包含"<emphasis>check_swap</emphasis>"，于是先跳到第399行，把"<emphasis>check_tty</emphasis>"改为"<emphasis>check_swap</emphasis>"，然后按回车。此时vim就去查找包含"<emphasis>check_swap</emphasis>"位置了。这个例子比较简单，你可能觉得command-line窗口没什么必要，但如果你要查找的内容是一个很长的正则表达式，你就会发现它非常有用了。
+  </para>
+  <para>
+    vim中有许多与查找相关的选项设置，其中最常用的是'<emphasis>incsearch</emphasis>', '<emphasis>hlsearch</emphasis>', '<emphasis>ignorecase</emphasis>'。
+  </para>
+  <itemizedlist>
+    <listitem>
+      '<emphasis>incsearch</emphasis>'表示在你输入查找内容的同时，vim就开始对你输入的内容进行匹配，并显示匹配的位置。打开这个选项，你可以即时看到查找的结果。
+    </listitem>
+    <listitem>
+      '<emphasis>hlsearch</emphasis>'选项表示对匹配的所有项目进行高亮显示。
+    </listitem>
+    <listitem>
+      '<emphasis>ignorecase</emphasis>'选项表示在查找时忽略大小写。
+    </listitem>
+  </itemizedlist>
+  <para>
+    通常我会打开'<emphasis>incsearch</emphasis>'和'<emphasis>hlsearch</emphasis>'选项，关闭'<emphasis>ignorecase</emphasis>'选项。
+  </para>
+  <para>
+    下一篇文章介绍了在<link xlink:href='&uri_move2;' xlink:show='new'>vim中移动的另外一些方法</link>，这些移动命令的需要的技巧更高一些。
+  </para>
+  <para>
+    <emphasis role='bold'>[参考文档]</emphasis>
+  </para>
+  <itemizedlist>
+    <listitem>
+      vim手册
+    </listitem>
+    <listitem>
+      <link xlink:href='http://vimcdoc.sourceforge.net/' xlink:show='new'>vim中文手册</link>
+    </listitem>
+  </itemizedlist>
+  &tocatalog;
+  &copyright;
+  <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='&uri_move1;'/></para>
+</chapter>

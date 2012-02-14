@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>vim技巧: 宏的使用技巧</title>
+  <para>
+    本文所用命令的帮助入口：
+  </para>
+  <programlisting>
+:help q
+:help @
+:help :let-@ </programlisting>
+  <para>
+    <link xlink:href='http://easwy.com/blog/archives/where-is-vimrc/#comment-1885'>网友Karl问</link>：
+  </para>
+  <blockquote>
+再请教一下：我想在.vimrc中设置一个宏，请vi启动的时候就有这个宏，应该怎么办？
+  </blockquote>
+  <para>
+    其实在vim中所谓的宏就是把一串命令放到了指定的寄存器里。所以要实现Karl的需求，可以这样做：先录制好宏后，然后在vimrc里把这个宏中的命令放到指定寄存器里，这样vim启动后就可以直接使用这个宏了。
+  </para>
+  <para>
+    具体的做法如下：
+  </para>
+  <para>
+    <emphasis role='bold'>第一步：</emphasis>首先录制宏，<link xlink:href='&myblog;'>Easwy</link>以插入三行文字做为一个简单的例子。这三行文字是：
+  </para>
+  <programlisting>
+================================
+I love vim. Happy vimming!
+================================ </programlisting>
+  <para>
+    按<command>qu</command>开始录制，录制完成后再按一个<command>q</command>命令结束，这样就把宏录制到寄存器<emphasis>u</emphasis>中了。
+  </para>
+  <para>
+    现在我们可以查看一下<emphasis>u</emphasis>寄存器的内容，用命令<command>"up</command>，把u寄存器的内容粘贴出来：
+  </para>
+  <programlisting>
+32i=^[oI love vim. Happy vimming!^M^[32i=^[ </programlisting>
+  <para>
+    注意，上面的<emphasis role='bold'>^[</emphasis>实际上是<emphasis role='bold'>&lt;ESC&gt;</emphasis>键的键码，同样，<emphasis role='bold'>^M</emphasis>是换行键<emphasis role='bold'>&lt;CR&gt;</emphasis>的键码，在vim中它们以特殊的颜色被显示出来，如果你把光标在它们上面移过，你会发现它们虽被显示成两个字符，但实际上只是一个。
+  </para>
+  <para>
+    <emphasis role='bold'>第二步：</emphasis>现在我们用下面的命令在<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-introduce-vimrc/'>.vimrc</link>中输入一行：
+  </para>
+  <programlisting>
+&lt;ESC&gt;olet @m = "&lt;ESC&gt;"upa"&lt;ESC&gt; </programlisting>
+  <para>
+    这行命令实际上在.vimrc加入了这行话：
+  </para>
+  <blockquote>
+let @m = "32i=^[oI love vim. Happy vimming!^M^[32i=^["
+  </blockquote>
+  <para>
+    <emphasis role='bold'>第三步：</emphasis>现在你重启vi，然后直接输出下面的命令：
+  </para>
+  <programlisting>
+@m </programlisting>
+  <para>
+    怎么样，宏是不是生效了？！
+  </para>
+<para>
+  要想了解更多细节，请阅读文章开始处给出的帮助手册。
+</para>
+<para>
+  更多关于vi/vim的内容，请阅读<link xlink:href='&myblog;'>易水博客</link>上的其它文章。
+</para>
+</article>
+

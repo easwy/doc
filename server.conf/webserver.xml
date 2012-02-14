@@ -1,0 +1,678 @@
+<chapter xml:id='webserver' xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>Web服务器安装</title>
+  <para>
+    对web服务器来讲，为保证安全，只安装必要的软件，不要安装多余的软件，以尽可能减少可以被黑客利用的漏洞。另外，还需要及时安装安全补丁。
+  </para>
+  <sect1>
+    <title>基本系统安装</title>
+    <para>
+      操作系统采用Debian的最新稳定版本Lenny。首先下载Lenny的netinst CD，使用此CD启动计算机，开始安装。
+    </para>
+    <para>
+      利用netinst CD安装Lenny时，需要从网络上下载package，因此需要保证计算机可以访问网络。在安装过程中，会通过DHCP获取IP地址，也可以手动配置IP地址。
+    </para>
+    <para>
+      在磁盘分区这一步，根据服务器的需要进行磁盘分区。 TODO: 推荐分区，可参考sunbala目前的分区。
+    </para>
+    <para>
+      在配置package manager这一步，选择比较快的源，我通常使用http://ftp.tw.debian.org/这个源，在深圳的速度还不错。
+    </para>
+    <para>
+      我们在这一步，暂时不安装其它软件包，只选择安装standard system，其它软件包在后面有选择的安装。最后，将grub安装在磁盘MBR上。基本系统安装完毕。
+    </para>
+    <sect2>
+      <title>更新基本系统</title>
+      <para>
+        安装光盘中的软件包可能已经过时，因此在安装完后，使用下面的命令更新一下基本系统：
+      </para>
+      <programlisting>
+aptitude update
+aptitude upgrade
+      </programlisting>
+    </sect2>
+    <sect2>
+      <title>SELinux</title>
+      <para>
+        是否能用其增强服务器安全？需要研究一下。
+      </para>
+    </sect2>
+    <sect2>
+      <title>配置网络</title>
+      <para>
+        在安装时debian使用DHCP获取IP地址，对服务器来讲，一般使用固定IP，因此需要修改IP地址配置。
+      </para>
+      <para>
+        使用vi编辑文件/etc/network/interface，文件内容示例如下：
+      </para>
+      <programlisting>
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+#allow-hotplug eth0
+#iface eth0 inet dhcp
+auto eth0
+iface eth0 inet static
+address 192.168.0.100
+netmask 255.255.255.0
+network 192.168.0.0
+broadcast 192.168.0.255
+gateway 192.168.0.1 
+      </programlisting>
+      <para>
+        修改完后，使用下面命令重启网络：
+      </para>
+      <programlisting>
+/etc/init.d/networking restart
+      </programlisting>
+      <para>
+        编辑/etc/hosts文件，内容示例如下：
+      </para>
+      <programlisting>
+127.0.0.1       localhost.localdomain   localhost
+192.168.0.100   server1.example.com     server1
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+      </programlisting>
+      <para>
+        文件中的server1.example.com是该服务器的完整主机名，把它改成服务器的真实主机名/域名。
+      </para>
+      <para>
+        接下来设置主机名，用下面的命令：
+      </para>
+      <programlisting>
+echo server1.example.com > /etc/hostname
+/etc/init.d/hostname.sh start
+      </programlisting>
+      <para>
+        同样把上面示例中的名称改成真实的主机名。
+      </para>
+      <para>
+        使用下面的命令对主机名进行验证：
+      </para>
+      <programlisting>
+hostname
+hostname -f 
+      </programlisting>
+    </sect2>
+    <sect2>
+      <title>安装SSH</title>
+      <para>
+        SSH允许我们安全的远程登录到服务器，对服务器进行维护管理。SSH对会话内容进行了加密，可以保证会话的安全性。
+      </para>
+      <para>
+        使用如下命令安装SSH server：
+      </para>
+      <programlisting>
+aptitude install ssh openssh-server
+      </programlisting>
+      <para>
+        安装完成后，我们就可以通过SSH登录到服务器了。下面的命令以root身份远程登录到服务器：
+      </para>
+      <programlisting>
+ssh root@192.168.0.100
+      </programlisting>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>安装MySQL</title>
+    <para>
+      接下来安装MySQL，使用下面的命令：
+    </para>
+    <programlisting>
+aptitude install mysql-server mysql-client
+    </programlisting>
+    <para>
+      在安装的过程中，会提示你设置root密码，这个密码对用户root@localhost和root@server1.example.com都有效。
+    </para>
+    <para>
+      目前我们的Web服务器和数据库都位于同一台计算机上，因此使用MySQL安装时默认配置就可以了。如果将来希望允许其它计算机访问此计算机上的MySQL服务器，则需要修改文件<emphasis>/etc/mysql/my.cnf</emphasis>，在此文件中注释掉<emphasis>bind-address = 127.0.0.1</emphasis>这一行。
+    </para>
+    <para>
+      启动、停止、重启MySQL的命令如下：
+    </para>
+    <programlisting>
+/etc/init.d/mysql start
+/etc/init.d/mysql stop
+/etc/init.d/mysql restart
+    </programlisting>
+    <para>
+      MySQL的配置文件在目录<emphasis>/etc/mysql/</emphasis>中，主配置文件为<emphasis>/etc/mysql/my.cnf</emphasis>。
+    </para>
+  </sect1>
+  <sect1>
+    <title>安装Apache web服务器</title>
+    <para>接下来安装Apache服务器，使用下面的命令：</para>
+    <programlisting>
+aptitude install apache2 apache2-doc apache2-mpm-prefork apache2-utils\
+apache2-suexec libexpat1 ssl-cert
+    </programlisting>
+    <para>
+      修改文件<emphasis>/etc/apache2/mods-available/dir.conf</emphasis>，修改<emphasis>DirectoryIndex</emphasis>行：
+    </para>
+    <programlisting>
+&lt;IfModule mod_dir.c&gt;
+  #DirectoryIndex index.html index.cgi index.pl index.php index.xhtml index.htm
+  DirectoryIndex index.html index.htm index.shtml index.cgi index.php\
+                 index.php3 index.pl index.xhtml
+&lt;/IfModule&gt;
+    </programlisting>
+    <para>
+      使能一些apache模块(SSL, rewrite, suexec, and include):
+    </para>
+    <programlisting>
+a2enmod ssl
+a2enmod rewrite
+a2enmod suexec
+a2enmod include
+    </programlisting>
+    <para>
+      最后，重新启动apache服务器：
+    </para>
+    <programlisting>
+/etc/init.d/apache2 restart
+    </programlisting>
+    <para>
+      启动、停止、重启apache服务器的命令如下：
+    </para>
+    <programlisting>
+/etc/init.d/apache2 start
+/etc/init.d/apache2 stop
+/etc/init.d/apache2 restart
+    </programlisting>
+    <para>使能一个apache模块的命令是<command>a2enmod</command>，相应的，停用apache模块的命令是<command>a2dismod</command>。这些命令其实只是一个脚本，它们相应的在<emphasis>/etc/apache2/mods-enabled/</emphasis>创建或删除指向<emphasis>/etc/apache2/mods-available/</emphasis>目录中文件符号链接文件</para>。还有相应的<command>a2ensite</command>和<command>a2dissite</command>命令，用来启用或禁用一个虚拟主机。用上述命令更改了模块配置或主机配置后，要重新启动apache服务器。
+    <para>
+      apache服务器的配置文件在目录<emphasis>/etc/apache2</emphasis>中，主配置文件是<emphasis>/etc/apache2/apache2.conf</emphasis>。所有使能的apache模块及其配置在目录<emphasis>/etc/apache2/mods-enabled/</emphasis>中；虚拟主机的配置在目录<emphasis>/etc/apache2/sites-enabled/</emphasis>中，安装完apache后lenny只配置一个缺省的虚拟主机，其DocumentRoot在<emphasis>/var/www/</emphasis>目录。
+    </para>
+    <para>
+      apache服务器的配置还有很多，需要仔细检查lenny缺省的配置，根据需要进行修改。(TODO: 写一个关于apache配置的文档)
+    </para>
+  </sect1>
+  <sect1>
+    <title>安装Tomcat服务器</title>
+    <para>
+      Debian Lenny中的tomcat安装包是tomcat 5.5，它支持Servlet 2.4和JSP Spec 2.0。最新的Tomcat版本是tomcat 6.0，它支持Servlet 2.5和JSP Spec 2.1。我们根据需要选择要装的Tomcat版本。
+    </para>
+    <sect2>
+      <title>安装JDK</title>
+      <para>
+        首先需要安装JDK，打开文件<emphasis>/etc/apt/sources.list</emphasis>，在文件中加入：
+      </para>
+      <programlisting>
+# for sun-java packages in unstable
+deb http://ftp.debian.org/debian/ unstable non-free
+deb-src http://ftp.debian.org/debian/ unstable non-free 
+      </programlisting>
+      <para>
+        然后运行用下面的命令更新源并下载sun的java jdk：
+      </para>
+      <programlisting>
+aptitude update
+aptitude install sun-java6-jdk
+      </programlisting>
+      <para>
+        安装完后，修改<emphasis>/etc/profile</emphasis>文件，在文件中加入下面的内容：
+      </para>
+      <programlisting>
+JAVA_HOME= /usr/lib/jvm/java-6-sun/
+export JAVA_HOME
+      </programlisting>
+      <para>
+        重新启动计算机。
+      </para>
+    </sect2>
+    <sect2>
+      <title>安装tomcat 5.5</title>
+      <para>
+        安装tomcat 5.5非常简单，只需要执行下面的命令：
+      </para>
+      <programlisting>
+        aptitude install tomcat5.5 tomcat5.5-admin tomcat5.5-webapps </programlisting>
+      <para>
+        安装完后，在浏览器中输入<emphasis role='bold'>http://localhost:8180/</emphasis>，如果你能看到Apache Tomcat/5.5的页面，说明你的tomcat已经安装好了。Tomcat的缺省网页根目录是<emphasis>/var/lib/tomcat5.5/webapps</emphasis>，在上列网址中看到的网页则在<emphasis>/usr/share/tomcat5.5-webapps/ROOT/</emphasis>目录中。
+      </para>
+      <para>
+        接下来，需要配置一个用户，使之具有admin和manager权限，在本例中把admin和manager权限赋予用户tomcat。
+      </para>
+      <para>
+        首先停用tomcat服务：
+      </para>
+      <programlisting>
+        /etc/init.d/tomcat5.5 stop </programlisting>
+      <para>
+        接下来编辑文件<emphasis> /var/lib/tomcat5.5/conf/tomcat-users.xml </emphasis>，修改文件内容如下：
+      </para>
+      <programlisting>
+        <![CDATA[
+        <?xml version='1.0' encoding='utf-8'?>
+        <tomcat-users>
+          <role rolename="admin"/>
+          <role rolename="manager"/>
+          <role rolename="tomcat"/>
+          <user username="tomcat" password="tomcatpassword"
+            roles="tomcat,admin,manager"/>
+        </tomcat-users>
+        ]]> </programlisting>
+      <para>
+        保存退出后，重新启动tomcat服务：
+      </para>
+      <programlisting>
+        /etc/init.d/tomcat5.5 start </programlisting>
+      <para>
+        现在，就可以访问<emphasis role='bold'>http://localhost:8180/manager/html</emphasis>来管理tomcat了，用户名为tomcat，密码为tomcatpassword。
+      </para>
+    </sect2>
+    <sect2>
+      <title>安装配置mod-jk</title>
+      <para>
+        接下来，需要把Apache和Tomcat整合起来，将Apache做为Tomcat的前端，我们选择使用Apache的mod_jk模块，它使用AJP 1.3协议将指定用户请求转发到Tomcat。用下面的命令安装：
+      </para>
+      <programlisting>
+        aptitude install libapache2-mod-jk
+      </programlisting>
+      <para>
+        下面，我们建立一个符号链接<emphasis>/usr/share/tomcat</emphasis>，使之指向Tomcat5.5所在的目录：
+      </para>
+      <programlisting>
+        ln -s /usr/share/tomcat5.5/ /usr/share/tomcat
+      </programlisting>
+      <para>
+        我们需要修改<emphasis>/etc/libapache2-mod-jk/workers.properties</emphasis>文件，首先，定义tomcat所在的目录，把它定义为我们所建立的符号链接：
+      </para>
+      <programlisting>
+#workers.tomcat_home=/usr/share/tomcat5
+workers.tomcat_home=/usr/share/tomcat
+      </programlisting>
+      <para>
+        在lenny中，tomcat的安装目录是<emphasis>/usr/share/tomcat5.5/</emphasis>，不过我们在这里把它改成<emphasis>/usr/share/tomcat</emphasis>。因为我们有可能使用tomcat5.5或tomcat6，所以此处不指明Tomcat的版本，而是使用我们所建立的符号链接<emphasis>/usr/share/tomcat</emphasis>。
+      </para>
+      <para>
+        接下来，在该文件中设置java jdk所在的目录，使用我们刚才安装的sun java jdk：
+      </para>
+      <programlisting>
+#workers.java_home=/usr/lib/jvm/java-gcj
+workers.java_home= /usr/lib/jvm/java-6-sun
+      </programlisting>
+      <para>
+        这个文件中的其余配置保留缺省值即可。
+      </para>
+    </sect2>
+    <sect2>
+      <title>配置Apache</title>
+      <para>
+        创建文件<emphasis>/etc/apache2/conf.d/mod-jk</emphasis>，文件内容如下：
+      </para>
+      <programlisting>
+# Where to find workers.properties
+JkWorkersFile /etc/libapache2-mod-jk/workers.properties
+
+# Where to put jk logs
+JkLogFile /var/log/apache2/mod_jk.log
+
+# Set the jk log level [debug/error/info]
+JkLogLevel info
+
+# Select the log format
+JkLogStampFormat "[%a %b %d %H:%M:%S %Y] "
+
+# JkOptions indicate to send SSL KEY SIZE,
+JkOptions +ForwardKeySize +ForwardURICompat -ForwardDirectories
+
+# JkRequestLogFormat set the request format
+JkRequestLogFormat "%w %V %T"
+      </programlisting>
+      <para>
+        配置虚拟主机文件<emphasis>/etc/apache2/sites-available/default</emphasis>，在文件末尾的&lt;/VirtualHost&gt;之前加入下面两句话：
+      </para>
+      <programlisting>
+# Send servlet for context / jsp-examples to worker named ajp13_worker
+JkMount /jsp-examples ajp13_worker
+# Send JSPs for context /jsp-examples/* to worker named ajp13_worker
+JkMount /jsp-examples/* ajp13_worker
+      </programlisting>
+      <para>
+        上面两句话的意思是，把所有访问/jsp-examples目录下内容的请求，都转向到ajp13_worker上去，ajp13_worker是我们在<emphasis>workers.properties</emphasis>文件中定义的。
+      </para>
+      <para>
+        接下来，重新启动apache服务器：
+      </para>
+      <programlisting>
+/etc/init.d/apache2 restart 
+      </programlisting>
+      <para>
+        然后在浏览器的地址栏里输入：http://localhost/jsp-examples/，此时你会看到JSP Samples网页。
+      </para>
+      <para>
+        在上面的链接中，我们并没有输入Tomcat所监听的8180端口，我们所访问的是apache所监听的80端口，但apache把我们访问jsp-examples的请求，重定向到了Tomcat服务器(jsp-examples网页在/usr/share/tomcat5.5-webapps/jsp-examples/目录中)。
+      </para>
+      <para>
+        以后部署自己的Tomcat程序中，把程序部署到<emphasis>/var/lib/tomcat5.5/webapps/</emphasis>目录中，并修改虚拟主机文件<emphasis>/etc/apache2/sites-available/default</emphasis>，让apache把访问我们程序的请求重定向到Tomcat。
+      </para>
+    </sect2>
+    <sect2>
+      <title>安装Tomcat 6.0</title>
+      <para>
+        如果要安装tomcat 6，按照如下步骤操作。
+      </para>
+      <para>
+        到下面的链接下载最新版本的Tomcat 6.0.x：<link xlink:href='http://tomcat.apache.org/download-60.cgi'/>。写此文档时，最新的Tomcat版本是6.0.20，可以用如下命令获取：
+      </para>
+      <programlisting>
+wget http://labs.xiaonei.com/apache-mirror/tomcat/tomcat-6/v6.0.20/bin/apache-tomcat-6.0.20.tar.gz
+      </programlisting>
+      <para>
+        接下来解压此文件，并把解压后的目录改名/移动到<emphasis>/usr/share</emphasis>目录下，然后建立符号链接<emphasis>/usr/share/tomcat/</emphasis>指向此目录：
+      </para>
+      <programlisting>
+tar zvxf apache-tomcat-6.0.20.tar.gz
+mv apache-tomcat-6.0.20 /usr/share
+chown -R tomcat /usr/share/apache-tomcat-6.0.20
+ln -s /usr/share/apache-tomcat-6.0.20 /usr/share/tomcat
+      </programlisting>
+      <para>
+        出于安全考虑，新增加一个用户tomcat来运行Tomcat：
+      </para>
+      <programlisting>
+useradd -d /usr/share/tomcat -s /bin/false -g nogroup tomcat
+      </programlisting>
+      <para>
+        接下来，我们重新布置一下Tomcat的目录，把运行中会动态更新的目录都移到/var目录下：
+      </para>
+      <programlisting>
+mkdir -p /var/lib/tomcat
+cd /usr/share/tomcat/
+mv webapps temp /var/lib/tomcat
+ln -s /var/lib/tomcat/webapps webapps
+ln -s /var/lib/tomcat/temp temp
+chown -R tomcat /var/lib/tomcat
+rm -rf logs
+mkdir -p /var/logs/tomcat
+chown -R tomcat.adm /var/logs/tomcat
+chmod o-rwx /var/logs/tomcat
+ln -s /var/logs/tomcat logs
+chmod g+rw conf/*
+chown root.root conf/catalina.policy
+      </programlisting>
+      <para>
+        以后，我们自己的Web应用，都可以部署在<emphasis>/var/lib/tomcat/webapps/</emphasis>目录下。
+      </para>
+      <para>
+        接下来，设置Tomcat开机自启动。如果希望Tomcat做为服务启动，则需要使用jsvc工具。编译jsvc需要安装gcc、autoconf、JDK。如果没有安装JDK，参考上面章节安装(确保你定义了JAVA_HOME环境变量，使用<command>echo $JAVA_HOME</command>命令查看)。如果没有安装gcc、autoconf，使用下面的命令安装：
+      </para>
+      <programlisting>
+aptitude install gcc autoconf
+      </programlisting>
+      <para>
+        接下来，编译jsvc：
+      </para>
+      <programlisting>
+cd /usr/share/tomcat/bin
+tar xvfz jsvc.tar.gz
+cd jsvc-src
+autoconf
+./configure
+make
+cp jsvc /usr/bin/jsvc
+      </programlisting>
+      <para>
+        把附件中的<emphasis>tomcat</emphasis>脚本拷贝到<emphasis>/etc/init.d</emphasis>目录中，然后执行下列命令：
+      </para>
+      <programlisting>
+chown a+x /etc/init.d/tomcat
+update-rc.d tomcat defaults 90
+      </programlisting>
+      <para>
+        以后，你可以用<command>/etc/init.d/tomcat start</command>来启动Tomcat，在开机后，Tomcat也能够自动启动。
+      </para>
+      <para>
+        另外，可以修改<emphasis>/usr/share/tomcat/conf/tomcat-users.xml</emphasis>文件，增加管理Tomcat的用户。配置方式见上一章的说明。
+      </para>
+      <para>
+        如果想用mod_jk把Apache和Tomcat 6整合起来，执行下面的操作。
+      </para>
+      <para>
+        我们在apache虚拟主机文件<emphasis>/etc/apache2/sites-available/default</emphasis>里，加上下面一句话：
+      </para>
+      <programlisting>
+JkMount  /examples ajp13_worker
+JkMount  /examples/* ajp13_worker
+      </programlisting>
+      <para>
+        现在，apache会把所有访问/examples URL的内容都转发给Tomcat 6.0.20，在浏览器的地址栏里输入：http://localhost/examples/试一下，应该会看到Apache Tomcat Examples页面。
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>安装PHP</title>
+    <programlisting>
+aptitude install libapache2-mod-php5 php5 php5-common php5-curl php5-dev\
+php5-gd php5-idn php-pear php5-imagick php5-imap php5-mcrypt php5-memcache\
+php5-mhash php5-ming php5-mysql php5-pspell php5-recode php5-snmp php5-sqlite\
+php5-suhosin php5-tidy php5-xcache php5-xmlrpc php5-xsl
+    </programlisting>
+  </sect1>
+  <sect1>
+    <title>安装DNS服务器</title>
+    <para>
+      用下面命令安装Bind9 DNS服务器：
+    </para>
+    <programlisting>
+aptitude install bind9
+    </programlisting>
+    <para>
+      出于安全的考虑，使用chroot的方式运行bind9，因此进行如下操作。
+    </para>
+    <para>
+      首先停止bind9服务：
+    </para>
+    <programlisting>
+/etc/init.d/bind9 stop
+    </programlisting>
+    <para>
+      修改文件<emphasis>/etc/default/bind9</emphasis>为如下内容：
+    </para>
+    <programlisting>
+# run resolvconf?
+RESOLVCONF=yes
+
+# startup options for the server
+OPTIONS="-u bind -t /var/lib/named"
+    </programlisting>
+    <para>
+      缺省使用bind用户运行bind9，以<emphasis>/var/lib/named</emphasis>做为bind9运行时的根目录。
+    </para>
+    <para>
+      创建相应的目录：
+    </para>
+    <programlisting>
+mkdir -p /var/lib/named/etc
+mkdir /var/lib/named/dev
+mkdir -p /var/lib/named/var/cache/bind
+mkdir -p /var/lib/named/var/run/bind/run
+    </programlisting>
+    <para>
+      移动配置文件到相应目录、创建null和random设备，并修改目录的权限：
+    </para>
+    <programlisting>
+mv /etc/bind /var/lib/named/etc
+ln -s /var/lib/named/etc/bind /etc/bind
+mknod /var/lib/named/dev/null c 1 3
+mknod /var/lib/named/dev/random c 1 8
+chmod 666 /var/lib/named/dev/null /var/lib/named/dev/random
+chown -R bind:bind /var/lib/named/var/*
+chown -R bind:bind /var/lib/named/etc/bind
+    </programlisting>
+    <para>
+      在文件<emphasis>/etc/rsyslog.d/bind-chroot.conf</emphasis>中增加：
+    </para>
+    <programlisting>
+$AddUnixListenSocket /var/lib/named/dev/log
+    </programlisting>
+    <para>
+      这样可以将某些重要消息记录到系统日志中。
+    </para>
+    <para>
+      重启log服务及bind9服务：
+    </para>
+    <programlisting>
+/etc/init.d/rsyslog restart
+/etc/init.d/bind9 start
+    </programlisting>
+  </sect1>
+  <sect1>
+    <title>安装邮件服务器</title>
+  </sect1>
+  <sect1>
+    <title>安装NTP</title>
+      <para>
+        为了保证服务器的时间准确，我们使用NTP协议来同步服务器的时间。使用NTP进行时间同步，在Lenny中可以选择ntp程序或ntpdate程序。ntp程序既可以用做ntp客户端，也可以做为NTP服务器；而ntpdate只能做为NTP客户端。ntp程序会启动一个服务定时运行，而ntpdate则需要手动运行或由定时任务cron来运行。
+      </para>
+      <para>
+        在两者之间，推荐使用ntp程序。如果将来使用多台服务器组成服务器群，我们在这些服务器中选择一台做为NTP服务器，其余计算机做为NTP client从这台服务器上同步时间。
+      </para>
+    <sect2>
+      <title>ntp</title> 
+      <programlisting>
+        aptitude install ntp
+      </programlisting>
+      <para>
+        NTP服务器的配置很简单，打开文件<emphasis>/etc/ntp.conf</emphasis>，修改文件内容如下：
+      </para>
+      <programlisting>
+# pool.ntp.org maps to about 1000 low-stratum NTP servers.  Your server will
+# pick a different set every time it starts up.  Please consider joining the
+# pool: &lt;http://www.pool.ntp.org/join.html&gt;
+#server 0.debian.pool.ntp.org iburst dynamic
+#server 1.debian.pool.ntp.org iburst dynamic
+#server 2.debian.pool.ntp.org iburst dynamic
+#server 3.debian.pool.ntp.org iburst dynamic
+server 1.cn.pool.ntp.org iburst dynamic
+server 3.asia.pool.ntp.org iburst dynamic
+server 2.asia.pool.ntp.org iburst dynamic
+        </programlisting>
+        <para>
+          在上面我们修改了server的配置，使用位于国内及亚洲的NTP服务器同步时间。
+        </para>
+        <para>
+          启动、停止、重启NTP服务器很简单，使用如下命令：
+        </para>
+        <programlisting>
+/etc/init.d/ntp start
+/etc/init.d/ntp stop
+/etc/init.d/ntp restart
+        </programlisting>
+        <para>
+          NTP服务器的配置文件是<emphasis>/etc/ntp.conf</emphasis>。
+        </para>
+        <para>
+          检查ntp是否运行正常，可以使用命令<command>ntpq -p</command>：
+        </para>
+        <programlisting>
+ntpq -p
+     remote           refid      st t when poll reach   delay   offset  jitter
+==============================================================================
++61.129.66.79    209.81.9.7       2 u   20   64    7   31.342  -38.908  16.067
++203.185.69.60   .PPS.            1 u   37   64    3  270.255   -0.704   7.186
+*ns.cc.sinica.ed 140.109.7.5      2 u   23   64    7  294.821  -43.916  17.389
+        </programlisting>
+      </sect2>
+      <sect2>
+        <title>ntpdate</title> 
+        <para>
+          如果我们只是希望获取时间，则可以使用ntpdate做为NTP客户端由网络上获取时间。不过使用ntpdate所获得的时间精度不如使用ntp的精度高。
+        </para>
+        <programlisting>
+          aptitude install ntpdate
+        </programlisting>
+        <para>
+          使用定时任务定时运行ntpdate来更新时间。输入"<command>crontab -e</command>命令，增加一个定时任务如下：
+        </para>
+        <programlisting>
+          0 * * * * /usr/sbin/ntpdate 1.cn.pool.ntp.org
+        </programlisting>
+        <para>
+          上面这一行表示，每隔一个小时，就使用ntpdate到服务器1.cn.pool.ntp.org上同步一次时间。
+        </para>
+      </sect2>
+    </sect1>
+  <sect1>
+    <title>安装Webalizer</title>
+    <para>
+      Webalizer是一个站点统计工具，使用如下命令安装：
+    </para>
+    <programlisting>
+aptitude install webalizer
+    </programlisting>
+  </sect1>
+  <sect1>
+    <title>防火墙配置</title>
+    <para>
+      配置防火墙，允许以下报文类型通过，其它报文将被丢弃(对某些攻击行为报文，可以在丢弃前记录日志)。
+    </para>
+    <itemizedlist>
+      <listitem>ARP</listitem>
+      <listitem>ICMP</listitem>
+      <listitem>对TCP 80端口的访问，只允许SYN报文以及已建立连接的报文</listitem>
+      <listitem>DNS</listitem>
+      <listitem>NTP报文</listitem>
+      <listitem>SMTP --- ???</listitem>
+    </itemizedlist>
+    <para>
+      需要对广播报文进行限速。
+    </para>
+    <programlisting>
+aptitude install fwbuilder-linux
+    </programlisting>
+    <para>
+      防火墙配置命令：TODO。
+    </para>
+  </sect1>
+  <sect1>
+    <title> 安装Quota </title>
+    <para>
+      如果需要使用磁盘限额，要安装Quota。TODO
+    </para>
+  </sect1>
+  <sect1>
+    <title>参考文档</title>
+    <itemizedlist>
+      <listitem>
+        <link xlink:href='http://www.howtoforge.com/perfect-server-debian-lenny-ispconfig2' xlink:show='new'>The Perfect Server - Debian Lenny (Debian 5.0) [ISPConfig 2]</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://tomcat.apache.org/tomcat-5.5-doc/proxy-howto.html' xlink:show='new'>The Apache Tomcat 5.5 Servlet/JSP Container Proxy Support HOW-TO</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://www.klawitter.de/tomcat80.html' xlink:show='new'>How to run Tomcat on Port 80</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://support.ntp.org/bin/view/Support/ConfiguringNTP' xlink:show='new'>Configuring NTP</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://tomcat.apache.org/connectors-doc/generic_howto/workers.html' xlink:show='new'>The Apache Tomcat Connector - Generic HowTo</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://tomcat.apache.org/connectors-doc/reference/workers.html' xlink:show='new'>The Apache Tomcat Connector - Reference Guide</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://www.howtoforge.com/apache2_tomcat5_mod_jk_integration' xlink:show='new'>Simple Apache 2 Tomcat 5 mod_jk integration</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://www.debian.org/doc/manuals/securing-debian-howto/index.en.html' xlink:show='new'>Securing Debian Manual </link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://man.ddvip.com/os/debiansecuring-howto/index.zh-cn.html' xlink:show='new'>Debian 安全手册 </link>
+      </listitem>
+    </itemizedlist>
+  </sect1>
+</chapter>

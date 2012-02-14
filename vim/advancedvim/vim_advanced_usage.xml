@@ -1,0 +1,282 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE book [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY uri_blog 'http://easwy.com/blog/'>
+<!ENTITY uri_catalog 'http://easwy.com/blog/archives/advanced-vim-skills-catalog/'>
+<!ENTITY uri_prologue 'http://easwy.com/blog/archives/advanced-vim-skills-prologue/'>
+<!ENTITY uri_session 'http://easwy.com/blog/archives/advanced-vim-skills-session-file-and-viminfo/'>
+<!ENTITY uri_vimrc 'http://easwy.com/blog/archives/advanced-vim-skills-introduce-vimrc/'>
+<!ENTITY uri_project 'http://easwy.com/blog/archives/advanced-vim-skills-save-project-configuration/'>
+<!ENTITY uri_tag_file 'http://easwy.com/blog/archives/advanced-vim-skills-use-ctags-tag-file/'>
+<!ENTITY uri_taglist 'http://easwy.com/blog/archives/advanced-vim-skills-taglist-plugin/'>
+<!ENTITY uri_winmanager 'http://easwy.com/blog/archives/advanced-vim-skills-netrw-bufexplorer-winmanager-plugin/'>
+<!ENTITY uri_lookupfile 'http://easwy.com/blog/archives/advanced-vim-skills-lookupfile-plugin/'>
+<!ENTITY uri_filetype 'http://easwy.com/blog/archives/advanced-vim-skills-filetype-on/'>
+<!ENTITY uri_colorscheme 'http://easwy.com/blog/archives/advanced-vim-skills-syntax-on-colorscheme/'>
+<!ENTITY uri_cscope 'http://easwy.com/blog/archives/advanced-vim-skills-cscope/'>
+<!ENTITY uri_quickfix 'http://easwy.com/blog/archives/advanced-vim-skills-quickfix-mode/'>
+<!ENTITY uri_omni_complete 'http://easwy.com/blog/archives/advanced-vim-skills-omin-complete/'>
+<!ENTITY uri_auto_complete 'http://easwy.com/blog/archives/advanced-vim-skills-auto-complete/'>
+<!ENTITY uri_move1 'http://easwy.com/blog/archives/advanced-vim-skills-basic-move-method/'>
+<!ENTITY uri_move2 'http://easwy.com/blog/archives/advanced-vim-skills-advanced-move-method/'>
+<!ENTITY uri_vimgdb 'http://easwy.com/blog/archives/advanced-vim-skills-vim-gdb-vimgdb/'>
+<!ENTITY uri_compile 'http://easwy.com/blog/archives/advanced-vim-skills-solve-compile-problem/'>
+<!ENTITY uri_pyclewn 'http://easwy.com/blog/archives/advanced-vim-skills-vim-gdb-pyclewn/'>
+<!ENTITY uri_vimgdb_faq 'http://easwy.com/blog/archives/advanced-vim-skills-vim-gdb-vimgdb-faq/'>
+
+<!ENTITY tocatalog SYSTEM 'tocatalog.xml'>
+<!ENTITY copyright SYSTEM 'copyright.xml'>
+<!ENTITY prologue SYSTEM "prologue.xml">
+<!ENTITY session SYSTEM "session_viminfo.xml">
+<!ENTITY vimrc_intro SYSTEM "vimrc_tutorial.xml">
+<!ENTITY use_sessionx SYSTEM "use_sessionx.xml">
+<!ENTITY use_tag_file SYSTEM "use_tag_file.xml">
+<!ENTITY use_taglist_plugin SYSTEM "use_taglist_plugin.xml">
+<!ENTITY file_buf_explorer SYSTEM "file_buf_explorer.xml">
+<!ENTITY use_lookupfile SYSTEM "use_lookupfile_plugin.xml">
+<!ENTITY filetype_on SYSTEM "filetype_on.xml">
+<!ENTITY syntax_on SYSTEM "syntax_on.xml">
+<!ENTITY cscope SYSTEM "cscope.xml">
+<!ENTITY quickfix SYSTEM "quickfix.xml">
+<!ENTITY omnicomplete SYSTEM "omnicomplete.xml">
+<!ENTITY autocomplete SYSTEM "auto_complete.xml">
+<!ENTITY basicmovement SYSTEM "basicmovement.xml">
+<!ENTITY advancedmovement SYSTEM "advanced_movement.xml">
+<!ENTITY vimgdb SYSTEM "vimgdb.xml">
+<!ENTITY solve_compile_problem SYSTEM "solve_compile_problem.xml">
+<!ENTITY pyclewn SYSTEM "pyclewn.xml">
+<!ENTITY vimgdb_faq SYSTEM "vimgdb_faq.xml">
+]>
+
+<book xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <bookinfo>
+    <title>vim使用进阶</title>
+    <subtitle>使用vim提高你的文本编辑效率</subtitle>
+    <copyright>
+      <year>2007</year>
+      <year>2008</year>
+      <year>2009</year>
+    </copyright>
+    <author>
+      <firstname>Easwy</firstname>
+      <surname>Yang</surname>
+      <affiliation>
+      <address> <otheraddr> <link xlink:href='&uri_blog;'/> </otheraddr> </address>
+      </affiliation>
+    </author>
+    <legalnotice>
+      <para>本文采用<link xlink:href='http://creativecommons.org/licenses/by-nc-sa/2.5/cn/' xlink:show='new'>署名-非商业性使用-相同方式共享</link>的创作共用许可协议发布，转载本文必须也遵循署名-非商业性使用-相同方式共享。 </para>
+      <para>转载请注明：<emphasis role='bold'>转载自<link xlink:href="http://easwy.com/blog/" xlink:show='new'>Easwy的博客</link> [  <link xlink:href="http://easwy.com/blog/" xlink:show="new"/> ] </emphasis></para>
+    </legalnotice>
+  </bookinfo> 
+
+  <chapter xml:id='catalog'>
+    <title>目录</title>
+    <para>
+      本系列文章，是原来我在CSDN的<link xlink:href='http://blog.csdn.net/easwy' xlink:show='new'>Easwy专栏</link>撰写的"使用VIM开发软件项目"系列。<link xlink:href="http://easwy.com/blog/">Easwy的博客</link>搬家以后，就把CSDN上的文章全部移到此处。
+    </para>
+    <para>
+      写本系列文章的最初想法，是介绍如何用vim开发软件。但纵观整个系列，讲述的其实和软件开发关系并不大，基本都在讲vim的使用技巧、vim的配置及vimrc、vim的命令和vim的插件。因此，把文章移到新站后，我把本系列的名字改为"vim使用进阶"，希望大家一如既往的支持该系列。
+    </para>
+    <para>
+      本文是这一系列文章的总目录，可由此访问本系列所有文章。
+    </para>
+    <para>
+      我使用docbook重新整理了一下这些文章，你可以在这里下载<link xlink:href='http://easwy.com/blog/uploads/vim/advanced_vim_skills_html.zip' xlink:show='new'>html版本的vim使用进阶</link>，现在也提供<link xlink:href='http://easwy.com/blog/uploads/vim/advanced_vim_skills_pdf.zip' xlink:show='new'>PDF版本</link>下载。
+    </para>
+    <para></para>
+    <para><emphasis role='bold'>[目录]</emphasis></para>
+    <itemizedlist>
+      <listitem>
+        <link xlink:href='&uri_prologue;' xlink:show='new'>vim使用进阶: 序言</link>
+        <para>
+          本文是本系列的序言，讲述我使用vim的经历和心得，以及对vim初学者的一些建议。文中的抓图展示了我的vim使用环境。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_session;' xlink:show='new'>vim使用进阶: 使用会话和viminfo</link>
+        <para>
+          本文介绍如何使用vim的会话 (session) 和viminfo来恢复vim的使用环境。如果你需要经常恢复到相同工作环境，此功能非常有用，你不必一次次重新打开文件、设置你的工作环境。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_vimrc;' xlink:show='new'>vim使用进阶: vimrc初步</link>
+        <para>
+          本文简要介绍了vimrc的知识以及如何使用vimrc保存vim的配置。文中还提供了一些键映射(map)，使用这些映射可以快速编辑和加载vimrc。关于vimrc的更多应用，参见本系列其它文章。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_project;' xlink:show='new'>vim使用进阶: 保存项目相关配置</link>
+        <para>
+          本篇主要以path选项为例，讲述如何保存和恢复项目相关的配置。在使用vim的过程中，你可能同时打开几个project，每个project的配置可能都不相同，文中介绍了两种方法来保存每个project自身的独有配置。一种是使用一个固定的vim配置脚本保存project相关的path设置、按键映射等；另外一种是利用前面文章所介绍的会话(session)机制。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_tag_file;' xlink:show='new'>vim使用进阶: 使用标签(tag)文件</link>
+        <para>
+          本文介绍了如何使用Exuberant ctags生成tag文件以及在vim中如何使用tag文件进行跳转、查找等操作。还简要介绍了tag文件的格式，在后面介绍的Lookupfile插件中，会利用tag文件便捷的查找、打开文件。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_taglist;' xlink:show='new'>vim使用进阶: 使用taglist插件</link>
+        <para>
+          本文介绍如何使用taglist插件(plugin)来查看程序中的标签(tag)，并介绍了taglist插件的配置和用法。taglist插件利用Exuberant ctags程序生成标签文件，并提供像Source Insight那样的标签窗口，可以方便的跳转到函数、变量等标签所在的位置。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_winmanager;' xlink:show='new'>vim使用进阶: 文件浏览和缓冲区浏览</link>
+        <para>
+          本节介绍了如何在vim中浏览文件，以及如何查看当前打开的缓冲区。利用netrw插件，可以方便的在vim中浏览各个目录、打开指定文件，而不用切换到文件浏览器或shell；当然，netrw插件的作用并不仅仅局限于此。利用bufexplorer插件，则可以方便的查看打开的缓冲区(buffer)，在缓冲区间进行切换。本文的最后介绍了winmanager插件，使用这个插件，可以把netrw插件、bufexplorer插件和taglist插件整合起来，使vim看起来更像一个集成开发环境(IDE)。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_lookupfile;' xlink:show='new'>vim使用进阶: lookupfile插件</link>
+        <para>
+          如果你在开发一个大的项目，当你想在一大堆文件中查找或者编辑指定文件时，Lookupfile插件是必不可少的。使用它，可以快速查找项目文件、可以在缓冲区查找指定文件、可以浏览指定目录等。在查找时甚至可以使用正则表达式(regex)，在你只记得部分文件名或目录名时，这可是救命的手段。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_filetype;' xlink:show='new'>vim使用进阶: 开启文件类型检测</link>
+        <para>
+          vim最吸引人的一点是，它支持无穷多的文件类型，而且能够随意扩展。在本文主要介绍如何打开文件类型检测的功能，以及如何使用基于文件类型的插件(filetype plugin)。正因为有了文件类型检测的功能，我们才可能针对不同的类型的文件，定义不同的键映射(map)、设置不同的选项，进行语法高亮的染色(后续文章中介绍)...你可以实现任意你想实现的功能。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_colorscheme;' xlink:show='new'>vim使用进阶: 乱花渐欲迷人眼 - 语法高亮</link>
+        <para>
+          VIM并不是只有黑色两色。正相反，它提供了非常灵活的机制允许用户自定义色彩。运行在终端中的VIM，由于终端本身的限制，只能使用若干种固定的颜色；但对于GVIM来讲，你可以根据你的喜好调出任意的颜色。本文介绍的，正是vim的语法高亮功能。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_cscope;' xlink:show='new'>vim使用进阶: 程序员的利器 - cscope</link>
+        <para>
+          在前面的文章中介绍了利用ctags生成的tag文件，跳转到标签定义的地方。但如果想查找函数在哪里被调用，或者标签在哪些地方出现过，ctags就无能为力了，这时需要使用更为强大的cscope。本文就介绍如何使用cscope，有了它，你可以把source insight抛到一边去了。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_quickfix;' xlink:show='new'>vim使用进阶: 剑不离手 - quickfix</link>
+        <para>
+          vim由一个程序员开发，并且为更多的程序员所使用，所以vim对开发人员的强大支持，也就可以理解了。quickfix模式的引入就是一个例子。quickfix模式，是一种加速你开发的工作方式，使你不必离开vim，就可以快速的完成"编辑-编译-修正"你的程序。它不仅仅对开发人员有用，只要你的工作有类似"编辑-编译-修正"的过程，它就可以极大的简化你的工作。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_omni_complete;' xlink:show='new'>vim使用进阶: 智能补全</link>
+        <para>
+          使用过Source Insight的人一定对它的自动补全功能印象深刻，在很多的集成开发环境中，也都支持自动补全。vim做为一个出色的编辑器，这样的功能当然少不了。本文主要介绍vim的OMNI补全。将在下一篇中介绍其它的补全方式。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_auto_complete;' xlink:show='new'>vim使用进阶: 自动补全</link>
+        <para>
+          本文继续介绍vim的补全功能。作为一个通用的编辑器，vim实现的补全功能并不仅仅限于对程序的补全，它可以对文件名补全、根据字典进行补全、根据本缓冲区或其它缓冲区类似的内容进行补全、根据文件语法补全等等，它甚至允许用户自己编写函数来实现定制的补全。本文简要介绍了这些补全的方法。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_move1;' xlink:show='new'>vim使用进阶: 指随意动，移动如飞 (一)</link>
+        <para>
+          VIM提供的移动方式多如牛毛，但我们并不需要掌握全部这些命令，只需要掌握最适合自己的那些命令。本文介绍了最常用的一些移动命令，在下篇文章中将介绍更高级的移动方法。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_move2;' xlink:show='new'>vim使用进阶: 指随意动，移动如飞 (二)</link>
+        <para>
+          本文介绍如何在vim中移动，主要涉及如何使用跳转表(jump-motions)、使用标记(mark)、使用折行(fold)，以及如何在程序中移动。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_vimgdb;' xlink:show='new'>vim使用进阶: 在VIM中使用GDB调试 - vimgdb</link>
+        <para>
+          本文介绍了如何使用vimgdb补丁在vim中用gdb调试程序，同时还介绍了vim的编译方法。然而，vim只是一个编辑器，而不是一个集成开发环境(IDE)，所以它对调试的支持很有限。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_vimgdb_faq;' xlink:show='new'>vim使用进阶: vimgdb调试时的常见问题及解决</link>
+        <para>
+          在上篇文章中我介绍了如何使用vimgdb补丁在vim/gvim中调试程序。后来陆续有一些读者反馈了他们在使用中遇到的问题。在本文中总结一下常见的问题及解决办法。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_pyclewn;' xlink:show='new'>vim使用进阶: 在VIM中使用GDB调试 - pyclewn</link>
+        <para>
+          本文介绍了如何使用pyclewn在gvim中用gdb调试程序。pyclewn是vimgdb作者的另外一个作品，使用它可以使gvim在UNIX/LINUX以及windows上与gdb集成调试。
+        </para>
+      </listitem>
+      <listitem>
+        <link xlink:href='&uri_compile;' xlink:show='new'>vim使用进阶: vim编译中遇到的问题及解决方法</link>
+        <para>
+          本文主要介绍vim编译中遇到的问题及解决办法。文中介绍了如何通过看config.log，来了解配置失败的原因。有些网友编译图形化的gvim失败，可以参照本文的方法解决。
+        </para>
+      </listitem>
+      <listitem>
+        vim使用进阶: 在vim中使用拷贝/粘贴
+        <para>
+          未完待续
+        </para>
+      </listitem>
+      <listitem>
+        vim使用进阶: 映射自己的vim按键
+        <para>
+          未完待续
+        </para>
+      </listitem>
+      <listitem>
+        vim使用进阶: 巧用vim的缩写功能
+        <para>
+          未完待续
+        </para>
+      </listitem>
+      <listitem>
+        vim使用进阶: 强大的自动命令(autocmd)
+        <para>
+          未完待续
+        </para>
+      </listitem>
+      <listitem>
+        vim使用进阶: 在vim中使用gdb调试 (二)
+        <para>
+          未完待续，介绍clewn
+        </para>
+      </listitem>
+      <listitem>
+        其它你感兴趣的话题
+        <para>
+          未完待续
+        </para>
+      </listitem>
+      <!--
+      <listitem>
+        <link xlink:href='' xlink:show='new'>vim使用进阶: </link>
+        <para>
+        </para>
+      </listitem>
+      -->
+    </itemizedlist>
+
+    &copyright;
+    <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='&uri_catalog;'/></para>
+  </chapter>
+
+  <!-- Prologue -->
+  &prologue;
+  &session;
+  &vimrc_intro;
+  &use_sessionx;
+  &use_tag_file;
+  &use_taglist_plugin;
+  &file_buf_explorer;
+  &use_lookupfile;
+  &filetype_on;
+  &syntax_on;
+  &cscope;
+  &quickfix;
+  &omnicomplete;
+  &autocomplete;
+  &basicmovement;
+  &advancedmovement;
+  &vimgdb;
+  &solve_compile_problem;
+  &pyclewn;
+  &vimgdb_faq;
+</book>

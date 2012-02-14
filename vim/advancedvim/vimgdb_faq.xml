@@ -1,0 +1,88 @@
+<chapter xml:id='vimgdb_faq'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>vimgdb调试时的常见问题及解决</title>
+  &tocatalog;
+  <para>
+    在文章<link xlink:href='&uri_vimgdb;'>在vim中使用gdb调试 - vimgdb</link>中我介绍了如何使用vimgdb补丁在vim/gvim中调试程序。后来陆续有一些读者反馈了他们在使用中遇到的问题。在本文中总结一下。
+  </para>
+  <para><emphasis role='bold'>[ 问题一: 运行GDB命令时提示"unable to read from GDB pseudo tty"? ]</emphasis></para>
+  <para>
+    有读者在试图执行GDB命令时，出现上面的提示。
+  </para>
+  <para>
+    出现这个问题是由于没有正确设置gdbprg变量。使用下面的命令设置一下GDB程序的位置即可解决此问题：
+  </para>
+  <programlisting>
+:set gdbprg=/path/to/gdb </programlisting>
+  <para>
+    请把上面的<emphasis>/path/to/gdb</emphasis>替换成你计算机中GDB程序所在的路径。你可以把这句话加到你的<link xlink:href='&uri_vimrc;'>vimrc</link>中，这样每次启动vi时会自动设置此变量。
+  </para>
+  <para><emphasis role='bold'>[ 问题二： 提示"GDB busy: command discarded, please try again"? ]</emphasis></para>
+  <para>
+    当你的程序需要用<emphasis>scanf()</emphasis>或者<emphasis>getchar()</emphasis>这类函数读取用户输入时，你可能会看到过这样的提示：
+  </para>
+  <blockquote>
+GDB busy: command discarded, please try again
+  </blockquote>
+  <para>
+    出现这个提示，说明你的GDB正在等待用户输入，所以无法响应你所输入的其它GDB命令。
+  </para>
+  <para>
+    在使用vimgdb时，如果你的程序需要读取用户输入，你必须通过GDB的<command>tty</command>命令或<command>run</command>来重定向程序的标准输入。
+  </para>
+  <para>
+    首先，你打开一个终端(可以是xterm/rxvt/urxvt/putty/...)，在此终端内输入命令<command>tty</command>：
+  </para>
+  <programlisting>
+$ tty
+/dev/pts/17 </programlisting>
+  <para>
+    这条命令用来显示此终端所使用的设备文件名。获得了这个设备文件名后，你就可以重定向程序的标准输入输出到这个终端，在GDB中输入下面的命令：
+  </para>
+  <programlisting>
+tty /dev/pts/17 </programlisting>
+  <para>
+    执行完这条命令后，程序的标准输入/输出就被重定向到<emphasis>/dev/pts/17</emphasis>了，这样，当执行到<emphasis>scanf()</emphasis>或<emphasis>getchar()</emphasis>函数时，切换到那个终端输入指定参数，然后回车，程序就会继续向下执行。
+  </para>
+  <para><emphasis role='bold'>[ 问题三： vimgdb可以在windows下使用吗? ]</emphasis></para>
+  <para>
+    vimgdb不能在windows下使用。不过你可以用作者提供的Clewn或Pyclewn。这两个程序可以在Windows的Vim/Gvim中使用。
+  </para>
+  <para>
+    这里有我写的一篇关于pyclewn的教程:<link xlink:href='&uri_pyclewn;'>在VIM中使用GDB调试 - pyclewn</link>，clewn的用法与之类似。
+  </para>
+  <para><emphasis role='bold'>[ 问题四： 按空格后vimgdb的命令窗口没有弹出来? ]</emphasis></para>
+  <para>
+    首先确保vimgdb的按键定义文件存在。执行下面的命令：
+  </para>
+  <programlisting>
+:set runtimepath?  </programlisting>
+  <para>
+    检查这条命令所列出的所有目录，如果任一目录中包含<emphasis>macros/gdb_mappings.vim</emphasis>文件，说明你的按键映射文件已经存在。如果你没有找到该文件，到vimgdb目录中找到这个命令，拷贝到上述任意一个目录中。
+  </para>
+  <para>
+    接下来用下面的命令加载vimgdb的键绑定：
+  </para>
+  <programlisting>
+:run macros/gdb_mappings.vim </programlisting>
+  <para>
+    现在，你应该可以使用vimgdb所定义的快捷键了。
+  </para>
+  <para>
+    <emphasis role='bold'>[参考文档]</emphasis>
+  </para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-vim-gdb-vimgdb/'>在vim中使用gdb调试</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://gemma.apple.com/mac/library/documentation/DeveloperTools/gdb/gdb/gdb_5.html#SEC24' xlink:show='new'>Your program's input and output</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://clewn.sourceforge.net/index.html' xlink:show='new'/>
+    </listitem>
+  </itemizedlist>
+  &tocatalog;
+  &copyright;
+  <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='&uri_vimgdb_faq;'/></para>
+</chapter>

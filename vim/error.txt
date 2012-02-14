@@ -1,0 +1,56 @@
+xsltproc -o substitute_skills_1.fo ../docbook_fo.xsl substitute_skills_1.xml
+Note: namesp. cut : stripped namespace before processing           
+WARNING: cannot add @xml:base to node set root element.  Relative paths may not work.
+Note: namesp. cut : processing stripped document                   
+Making portrait pages on USletter paper (8.5inx11in)
+fop.bat -c ../fop.xconf substitute_skills_1.fo substitute_skills_1.pdf
+2009-4-10 16:17:04 org.apache.fop.apps.FopFactoryConfigurator configure
+信息: Default page-height set to: 11in
+2009-4-10 16:17:04 org.apache.fop.apps.FopFactoryConfigurator configure
+信息: Default page-width set to: 8.26in
+2009-4-10 16:17:26 org.apache.fop.apps.FOURIResolver resolve
+严重: Error with opening URL 'http://docbook.sourceforge.net/release/images/draft.png': Connection timed out: connect
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fo.properties.CommonBorderPaddingBackground <init>
+严重: Background image not available: http://docbook.sourceforge.net/release/images/draft.png
+2009-4-10 16:17:26 org.apache.fop.fonts.FontInfo notifyFontReplacement
+警告: Font 'Symbol,normal,700' not found. Substituting with 'Symbol,normal,400'.
+2009-4-10 16:17:26 org.apache.fop.fonts.FontInfo notifyFontReplacement
+警告: Font 'ZapfDingbats,normal,700' not found. Substituting with 'ZapfDingbats,normal,400'.
+2009-4-10 16:17:26 org.apache.fop.hyphenation.Hyphenator getHyphenationTree
+严重: Couldn't find hyphenation pattern zh

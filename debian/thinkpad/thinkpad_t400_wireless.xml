@@ -1,0 +1,176 @@
+  <chapter xml:id='wireless'
+    xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在debian lenny上安装thinkpad t400无线驱动</title>
+  <para>
+    安装完debian lenny后，常用的设备驱动都已经安装好，做一些日常应用已经没什么问题。接下来，我就开始配置无线网卡的驱动。
+  </para>
+  <para>
+    首先说一下我所用的无线路由器的配置。我的无线路由器是Linksys的WRT54G V4.0，无线网络名设置为easwy，使用WPA2 Person加密认证，出于安全的考虑，不广播SSID，并且只允许特定的MAC地址无线接入。
+  </para>
+  <para>
+    登录lenny后，使用<command>/sbin/ifconfig</command>看到已经存在一个名为wlan0的无线网卡，心中一阵暗喜，暗道Linux进步果然神速，对硬件的支持已经做的这么好。没想到正是这一时的大意，让我费了诸多周折。
+  </para>
+  <para>
+    既然无线网卡已经发现，驱动也已经装好，那么只需要配置一下应该就可以用了。于是打开文件<emphasis>/etc/network/interface</emphasis>，在这个文件里增加了无线网卡的配置：
+  </para>
+  <programlisting>
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+# The wireless interface
+auto wlan0
+iface wlan0 inet dhcp
+	wpa-ssid "easwy"
+	wpa-psk "xxxxxxxx"
+	wpa-ap-scan 1
+	wpa-scan-ssid 1 </programlisting>
+  <para>
+    简单解释一下wlan0的配置：
+  </para>
+  <itemizedlist>
+    <listitem>
+      <command>auto wlan0</command>的意思是wlan0接口在系统启动时自动启动。
+    </listitem>
+    <listitem>
+      <command>iface wlan0 inet dhcp</command>的意思是这个接口使用DHCP来获取IP地址
+    </listitem>
+    <listitem>
+      <command>wpa-ssid</command>用来配置无线网络的SSID
+    </listitem>
+    <listitem>
+      <command>wpa-psk</command>配置连接easwy无线网络的密码
+    </listitem>
+    <listitem>
+      <command>wpa-ap-scan 1</command>和<command>wpa-scan-ssid 1</command>主要用来扫描不广播SSID的无线接入点。因为我的无线路由器不广播SSID，所以加了这两条配置。
+    </listitem>
+  </itemizedlist>
+  <para>
+    这样配置好后，使用<command>/sbin/ifdown wlan0</command>关闭wlan0网卡，然后再重新启用<command>/sbin/ifup wlan0</command>，发现无法获得IP地址，输出如下：
+  </para>
+  <screen>
+    run-parts: /etc/network/if-pre-up.d/wpasupplicant exited with return code 1
+    Internet Systems Consortium DHCP Client V3.1.1
+    Copyright 2004-2008 Internet Systems Consortium.
+    All rights reserved.
+    For info, please visit http://www.isc.org/sw/dhcp/
+    
+    wmaster0: unknown hardware address type 801
+    wmaster0: unknown hardware address type 801
+    Listening on LPF/wlan0/00:22:69:68:8b:86
+    Sending on   LPF/wlan0/00:22:69:68:8b:86
+    Sending on   Socket/fallback
+    DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 8
+    DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 13
+    DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 9
+    DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 14
+    DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 17
+    No DHCPOFFERS received.
+    No working leases in persistent database - sleeping.
+    --- in /var/wpa_supplicant.wlan0.log
+    1235814861.502506: Cancelling authentication timeout
+    1235814861.502518: WEXT: Operstate: linkmode=0, operstate=6
+  </screen>
+  <para>
+    这时我还没怀疑到驱动的问题，还以为是自己配置的问题，于是开始进行各种检查。
+  </para>
+  <para>
+    首先查看一下T400 AA1所用的无线网卡芯片：
+  </para>
+  <screen>
+    # lspci -nn | grep Ethernet    
+    00:19.0 Ethernet controller [0200]: Intel Corporation 82567LM Gigabit Network Connection [8086:10f5] (rev 03)
+    03:00.0 Ethernet controller [0200]: Atheros Communications Inc. AR242x 802.11abg Wireless PCI Express Adapter [168c:001c] (rev 01)
+  </screen>
+  <para>
+    从这里可以看出，我的无线网卡使用的是Atheros的AR242x系列芯片(具体型号是AR2425)。使用<command>lsmod</command>命令查看了一下网卡所使用的驱动是ath5k。在网上搜索了一下，似乎ath5k驱动可以驱动这个芯片，接下来又用<command>/sbin/iwconfig</command>查看了无线网卡的配置，似乎也没什么问题。
+  </para>
+  <para>
+    这样折腾了很久之后，开始怀疑是不是网卡驱动有问题？在debian wiki上搜索了一下，发现MadWifi是用的比较多的Atheros芯片驱动，抱着试试看的态度，尝试安装MadWifi驱动。
+  </para>
+  <para>
+    按照文章<link xlink:href='http://wiki.debian.org/WiFi/ath_pci' xlink:show='new'>Atheros AR5xxx devices (MadWifi)</link>的步骤，首先将下面的源加入到<emphasis>/etc/apt/sources.list</emphasis>文件中：
+  </para>
+  <programlisting>
+# Debian Lenny/5.0
+deb http://ftp.us.debian.org/debian lenny main contrib non-free </programlisting>
+  <para>
+    接下来更新源中的安装包列表，并且下载module-assistant和wireless-tools安装包：
+  </para>
+  <programlisting>
+aptitude update
+aptitude install module-assistant wireless-tools </programlisting>
+  <para>
+    编译安装madwifi-modules-*包：
+  </para>
+  <programlisting>
+m-a prepare
+m-a a-i madwifi </programlisting>
+  <para>
+    卸载athtk内核模块，然后加载atp_pci内核模块：
+  </para>
+  <programlisting>
+modprobe -r ath5k
+modprobe ath_pci </programlisting>
+  <para>
+    这样配置之后，再用<command>/sbin/iwconfig</command>命令查看一下无线网卡的状态，正常。
+  </para>
+  <para>
+    修改<emphasis>/etc/network/interface</emphasis>文件，把上面文件中的wlan0改为ath0，因为MadWifi驱动使用的网卡名称是ath0。这样修改后，使用<command>/sbin/ifup ath0</command>，哈哈，无线网卡可以正常工作了！
+  </para>
+  <para>
+    奉上<command>/sbin/iwconfig</command>命令和<command>/sbin/ifup ath0</command>命令的输出，以供参考：
+  </para>
+  <screen>
+    # /sbin/iwconfig ath0
+    ath0      IEEE 802.11g  ESSID:"easwy"  Nickname:""
+              Mode:Managed  Frequency:2.437 GHz  Access Point: Not-Associated   
+              Bit Rate:1 Mb/s   Tx-Power:16 dBm   Sensitivity=1/1  
+              Retry:off   RTS thr:off   Fragment thr:off
+              Power Management:off
+              Link Quality=0/70  Signal level=-96 dBm  Noise level=-96 dBm
+              Rx invalid nwid:171945  Rx invalid crypt:0  Rx invalid frag:0
+              Tx excessive retries:0  Invalid misc:0   Missed beacon:0
+    # /sbin/ifup ath0
+    Internet Systems Consortium DHCP Client V3.1.1
+    Copyright 2004-2008 Internet Systems Consortium.
+    All rights reserved.
+    For info, please visit http://www.isc.org/sw/dhcp/
+    
+    wifi0: unknown hardware address type 801
+    wifi0: unknown hardware address type 801
+    Listening on LPF/ath0/00:22:69:68:8b:86
+    Sending on   LPF/ath0/00:22:69:68:8b:86
+    Sending on   Socket/fallback
+    DHCPDISCOVER on ath0 to 255.255.255.255 port 67 interval 4
+    DHCPOFFER from 192.168.1.1
+    DHCPREQUEST on ath0 to 255.255.255.255 port 67
+    DHCPACK from 192.168.1.1
+    bound to 192.168.1.100 -- renewal in 37824 seconds. 
+  </screen>
+  <section>参考文档</section>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://wiki.debian.org/WiFi/ath_pci' xlink:show='new'>Atheros AR5xxx devices (MadWifi)</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://wiki.debian.org/WiFi/HowToUse' xlink:show='new'>How to use a WiFi interface</link>
+    </listitem>
+    <listitem>
+      /usr/share/doc/wpasupplicant/README.gz
+    </listitem>
+    <listitem>
+      /usr/share/doc/wpasupplicant/README.modes.gz
+    </listitem>
+    <listitem>
+      /usr/share/doc/wpasupplicant/README.wpa_supplicant.conf.gz
+    </listitem>
+  </itemizedlist>
+</chapter>

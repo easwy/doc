@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <para>
+    昨天配置cygwin下的X server，在网上搜集资料时看到有人使用rxvt做为cygwin的终端，于是也试了一下。最终配置如下：
+  </para>
+  <para>
+    首先编辑文件~/.Xdefaults，内容如下：
+  </para>
+  <programlisting>
+! ~/.Xdefaults - X default resource settings
+Rxvt*geometry: 120x40
+Rxvt*background: #000020
+Rxvt*foreground: #ffffbf
+!Rxvt*borderColor: Blue
+!Rxvt*scrollColor: Blue
+!Rxvt*troughColor: Gray
+Rxvt*scrollBar: True
+Rxvt*scrollBar_right: True
+Rxvt*font: Fixedsys
+Rxvt*mfont: Terminal
+Rxvt*SaveLines: 2000
+Rxvt*loginShell: True
+! VIM-like colors
+Rxvt*color0: #000000
+Rxvt*color1: #FFFFFF
+Rxvt*color2: #00A800
+Rxvt*color3: #FFFF00
+Rxvt*color4: #0000A8
+Rxvt*color5: #A800A8
+Rxvt*color6: #00A8A8
+Rxvt*color7: #D8D8D8
+Rxvt*color8: #000000
+Rxvt*color9: #FFFFFF
+Rxvt*color10: #00A800
+Rxvt*color11: #FFFF00
+Rxvt*color12: #0000A8
+Rxvt*color13: #A800A8
+Rxvt*color14: #00A8A8
+Rxvt*color15: #D8D8D8
+! eof </programlisting>
+  <para>
+    然后修改你的c:\cygwin\cygwin.bat文件，使用rxvt来替代cmd.exe：
+  </para>
+  <programlisting>
+@echo off
+C:
+chdir C:\cygwin\bin
+set EDITOR=vi
+set VISUAL=vi
+set CYGWIN=codepage:oem tty binmode title
+rxvt -e bash --login -i </programlisting>
+  <para>
+    我在Xdefault中已经设置了中文字体，不过要想正常的显示和输入中文，还需要更改几个文件。在文件~/.bashrc中增加如下内容：
+  </para>
+  <programlisting>
+# Chinese locale
+export LANG=zh_CN.GBK
+export OUTPUT_CHARSET="GBK"
+
+# Display Chinese
+alias ls='ls --show-control-chars --color'
+alias dir='ls --show-control-chars'
+alias less='less --raw-control-chars' </programlisting>
+  <para>
+    如果~/.bash_profile还未存在，那么创建它，并添加如下内容：
+  </para>
+  <programlisting>
+# Exec .bashrc
+if [ -f ~/.bashrc ]; then
+. ~/.bashrc
+fi</programlisting>
+  <para>
+    另外再创建一个~/.inputrc文件，内容如下：
+  </para>
+  <programlisting>
+# Chinese input/output in bash
+set meta-flag on
+set input-meta on
+set output-meta on
+set convert-meta off
+set completion-ignore-case on</programlisting>
+  <para>
+    好了，现在可以使用rxvt做为cygwin的终端了。
+  </para>
+  <para>
+    <emphasis role='bold'>[ 参考文档 ]</emphasis>
+  </para>
+  <para><link xlink:href='http://www.freemode.net/archives/000121.html' xlink:show='new'>Cygwin + Rxvt</link></para>
+  <para><emphasis role='bold'>原创文章，转载请注明：</emphasis>转载自<link xlink:href="http://easwy.com/blog/" xlink:show='new'>Easwy的博客</link> [  <link xlink:href="http://easwy.com/blog/" xlink:show="new">http://easwy.com/blog/</link> ]</para>
+  <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href=''/></para>
+</article>

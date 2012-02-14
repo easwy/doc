@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<article xmlns='http://docbook.org/ns/docbook'>
+  <titile>在CentOS 5.3上安装XEN</titile>
+  <para>
+    XEN介绍。
+  </para>
+  <section>
+    <title>安装Xen</title>
+  </section>
+  <section>
+    <title>创建一个虚拟机</title>
+  </section>
+  <section>
+    <title>常用命令</title>
+  </section>
+  <section>
+    <title>参考文档</title>
+  </section>
+</article>

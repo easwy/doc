@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='utf8'?>
+
+<!DOCTYPE book [
+<!ENTITY uri_blog 'http://easwy.com/blog/'>
+<!ENTITY uri_pyclewn 'http://easwy.com/blog/archives/advanced-vim-skills-vim-gdb-pyclewn/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在vim中进行GDB远程调试</title>
+  <para>
+    在以前的文章中，Easwy介绍了如何<link xlink:href='&uri_pyclewn;'>使用pyclewn在gvim中调试</link>。网友yorker留言询问如何在vim中远程调试服务器上的程序而不需要登录服务器。这就涉及到远程调试的话题了。
+  </para>
+  <para>
+    所谓远程调试，顾名思义，就是在本地调试运行在远端设备上的程序。远程调试在嵌入式系统的开发上应用的比较多。嵌入式设备上内存、磁盘空间都比较有限，可能无法容纳整个gdb的调试环境和符号表；即便可以容纳，也需要对gdb进行交叉编译，比较麻烦，所以更常用远程调试的办法。像网友yorker这样在本地调试远端服务器上的程序，也是一种应用。
+  </para>
+  <para>
+    远程调试最简单的办法是使用gdbserver。gdbserver是一个非常小的程序，大小不到100K，因此可以方便的拷贝到嵌入式设备上，交叉编译也很简单。使用gdbserver，就可以使你的程序与远端的GDB调试器通讯，接收并执行调试命令。
+  </para>
+  <para>
+    gdbserver在大多数Linux系统中已经包含，不需要特别安装。如果你需要交叉编译，到<link xlink:href='http://www.gnu.org/software/gdb/download/' xlink:show='new'>GNU GDB网站</link>上下载gdb的源代码，在里面你可以找到gdbserver。
+  </para>
+  <para>
+    本文将主要介绍如何在vim使用pyclewn进行远程调试(关于pyclewn的介绍，参见Easwy的的另外一篇文章：<link xlink:href='&uri_pyclewn;'>vim使用进阶: 在vim中进行GDB调试 - 使用pyclewn</link>)。实际上，本文中所涉及的命令都是常用的远程调试命令，你可以直接使用gdb或ddd来执行这些命令，进行远程调试。
+  </para>
+  <para>
+    我们还使用在<link xlink:href='&uri_pyclewn;'>pyclewn</link>一文中的程序做为调试示例，对那个程序做了一点修改，原来该程序需要由标准输入读取一个数字，现在则改为由命令行参数中传入。修改后的程序在<link xlink:href='http://easwy.com/blog/uploads/2009/11/pyclewn-ex.zip'>这里</link>下载。
+  </para>
+  <para>
+    现在我们准备开始调试。我们把编译好的二进制程序拷贝到一个名为Easwy_remote的计算机，然后在Easwy_remote上执行：
+  </para>
+  <programlisting>
+gdbserver Easwy_local:333 ./factorial 4 </programlisting>
+  <para>
+    上面的命令执行完后，屏幕输出如下(你的输出可能稍有不同)：
+  </para>
+  <programlisting>
+Process ./factorial created; pid = 7532
+Listening on port 333 </programlisting>
+  <para>
+    上面的gdbserver命令的含义是：使用gdbserver启动<emphasis>./factorial</emphasis>程序，并传入参数<emphasis>4</emphasis>，而gdbserver监听在333端口上，等待远程GDB程序中的连接。命令中的Easwy_local表明允许来自主机Easwy_local的连接，不过目前的gdbserver版本实际上是不检测所连接的主机的。
+  </para>
+  <para>
+    现在，我们在Easwy_local主机上启动pyclewn，并在所打开的gvim窗口中执行下面的命令：
+  </para>
+  <programlisting>
+:e main.c
+:Cmapkeys
+:Cfile factorial
+:Cbreak 15
+:Ctarget remote Easwy_remote:333
+:Ccontinue</programlisting>
+  <para>
+    上面的命令，首先打开main.c文件，然后执行pyclewn提供的mapkeys命令，加载pyclewn的按键映射。然后使用file命令加载所要调试的程序，并在main.c的第15行设置一个断点。
+  </para>
+  <para>
+    需要注意的是<command>target remote</command>命令。这条命令告诉GDB连接到主机Easwy_remote的333端口，进行调试。执行完这条命令，我们就连接到了远端运行的程序。接下来就可以像调试本地程序那样进行调试了，在上面Easwy使用的<command>continue</command>命令，使程序执行到断点处，然后继续调试。
+  </para>
+  <para>
+    下面是远程调试的屏幕抓图：
+  </para>
+  <informalfigure>
+    <mediaobject>
+      <alt>
+        gvim+pyclewn+gdbserver远程调试窗口
+      </alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/11/gdbserver-300x240.png' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/11/gdbserver-1024x819.png' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  <para>
+    gdbserver不仅可以像本文中这样启动一个调试进程，它还可以连接到一个已经运行的进程上对其进行调试，例如，用<command>gdbserver Easwy_local:333 --attach 1235</command>命令就可以使gdbserver连接到进程ID为1235的进程。
+  </para>
+  <para>
+    更多关于vi的内容，请参见<link xlink:href='&uri_blog;'>Easwy的博客</link>上的其它文章。
+  </para>
+  <itemizedlist>
+    <listitem>
+      vim帮助文件
+    </listitem>
+    <listitem>
+      <link xlink:href='http://vimcdoc.sourceforge.net/' xlink:show='new'>vim中文手册</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://pyclewn.sourceforge.net/' xlink:show='new'>Pyclewn</link>
+    </listitem>
+  </itemizedlist>
+  <para>
+    <emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='&uri_pyclewn;'/>
+  </para>
+</article>

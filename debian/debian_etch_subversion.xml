@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在debian etch中配置subversion版本管理</title>
+  <para>
+    以下操作如无特殊注明，均为root执行的操作。
+  </para>
+  <section>
+    <title>安装软件包</title>
+    <para>
+      首先，需要下载安装下列软件包：
+    </para>
+    <itemizedlist>
+      <listitem>apache2</listitem>
+      <listitem>apache2-common</listitem>
+      <listitem>apache2-utils</listitem>
+      <listitem>libapache2-svn</listitem>
+      <listitem>openssl</listitem>
+      <listitem>ssl-cert</listitem>
+      <listitem>subversion</listitem>
+      <listitem>subversion-tools</listitem>
+    </itemizedlist>
+    <para>
+      使用apt-get install命令安装上列软件包。
+    </para>
+  </section>
+  <section>
+    <title>生成SSL自认证证书</title>
+    <para>
+      我们需要加密对版本服务器的访问，因此启用SSL。你可以到商业证书颁发机构去申请一个合法的证书，也可以采用自认证的方式。我们用下面的命令生成SSL自认证证书，并把它放在/etc/apache2/ssl/目录中。
+    </para>
+    <programlisting>
+mkdir /etc/apache2/ssl
+/usr/sbin/make-ssl-cert /usr/share/ssl-cert/ssleay.cnf /etc/apache2/ssl/apache.pem </programlisting>
+    <para>
+      根据提示回答相应的信息，最后就会生成所需的证书了。
+    </para>
+  </section>
+  <section>
+    <title>配置apache2</title>
+    <para>
+      在apache2中启用ssl模块，使用下面的命令：
+    </para>
+    <programlisting>
+a2enmod ssl </programlisting>
+    <para>
+      接下来，配置虚拟主机来使能ssl，我的apache2服务器只提供版本库的加密访问，不提供基本的http web服务，所以关闭了80端口，只开启443端口。
+    </para>
+    <para>
+      修改/etc/apache2/sites-available/default文件，将前两行改为：
+    </para>
+    <programlisting>
+NameVirtualHost *:443
+&lt;VirtualHost *:443&gt; </programlisting>
+    <para>
+      然后在文件中加入下面的内容：
+    </para>
+    <programlisting>
+      SSLEngine On
+      SSLCertificateFile /etc/apache2/ssl/apache.pem </programlisting>
+    <para>
+      上面的语句打开了SSL引擎，使用我们刚刚生成的证书文件进行认证。
+    </para>
+    <para>
+      default虚拟主机应该缺省已经使能了，也就是在/etc/apache2/sites-enabled/目录中已经存在一个符号链接，指向/etc/apache2/sites-available/default。如果没有的话，可以使用下面的命令使能这个虚拟主机：
+    </para>
+    <programlisting>
+a2ensite default </programlisting>
+    <para>
+      现在修改文件/etc/apache2/ports.conf，把文件的内容改为：
+    </para>
+    <programlisting>
+Listen 443 </programlisting>
+    <para>
+      也就是我们的apache2只监听443端口。
+    </para>
+    <para>
+      好了，现在启动apache2：
+    </para>
+    <programlisting>
+/etc/init.d/apache2 start </programlisting>
+    <para>
+      如果你没有使用ServerName配置主机名的话，会提示下面的错误，忽略即可：
+    </para>
+    <programlisting>
+Starting web server (apache2)...apache2: Could not reliably determine the server's fully qualified domain name, using 127.0.1.1 for ServerName </programlisting>
+    <para>
+      在浏览器中输入如下URL，看是否能够访问：
+    </para>
+    <programlisting>
+https://127.0.0.1/
+    </programlisting>
+    <para>
+      如果正常的话，你会看到一个缺省的页面，上面显示"<emphasis>It works!</emphasis>"。如果没有出现此页面，可能你的apache2配置有问题，查看一下错误日志和访问日志，以定位问题。这两个日志的缺省位置在 /var/log/apache2/。
+    </para>
+  </section>
+  <section>
+    <title> 配置subversion </title>
+    <para>
+      首先新建一个用户svnadmin来管理版本库，使用下面的命令：
+    </para>
+    <programlisting>
+addgroup svn
+adduser svnadmin –ingroup svn
+adduser www-data svn </programlisting>
+    <para>
+      上面的命令首先创建一个svn用户组，然后创建用户svnadmin，并把这个用户放在svn组中。第三个命令则是把www-data用户也加入到svn组，因为web server是以www-data用户在运行的，要从web server读写版本库，www-data用户必须有版本库的读写权限。
+    </para>
+    <para>
+      现在用<command>su – svnadmin</command>命令切换到svnadmin用户，我们要保证svn用户组的所有用户都具备版本库的读写权限，所以修改svnadmin的umask，修改svnadmin用户的~/.bashrc，在文件中加入下面这行：
+    </para>
+    <programlisting>
+umask 002 </programlisting>
+    <para>
+      退出再重新登录。这样，由svnadmin创建的版本库，就可以被所有属于svn组的用户读写了。
+    </para>
+    <para>
+      现在创建版本库(由用户svnadmin执行下面的命令)：
+    </para>
+    <programlisting>
+svnadmin create ~/repos/svntest </programlisting>
+    <para>
+      我们创建了一个名为svntest的版本库。如果你已经有cvs的版本库，想把它转到subversion上，可以安装<emphasis>cvs2svn</emphasis>软件包，用里面的工具进行转换。
+    </para>
+  </section>
+  <section>
+    <title>配置apache2/SVN</title>
+    <para>
+      首先，使能apache2的dav_svn模块：
+    </para>
+    <programlisting>
+a2enmod dav_svn </programlisting>
+    <para>
+      我们使用基本的http认证对访问版本库的所有用户进行认证，只有认证用户才有版本库的访问权。
+    </para>
+    <para>
+      首先为版本库的用户生成密码文件：
+    </para>
+    <programlisting>
+htpasswd -cm /etc/svnusers xxxxx
+htpasswd -m /etc/svnusers yyyyy </programlisting>
+    <para>
+      上面的命令创建了密码文件/etc/svnusers，并增加两个用户xxxxx和yyyyy。
+    </para>
+    <para>
+      然后在/etc/apache2/sites-available/default文件中加入如下语句：
+    </para>
+    <programlisting>
+&lt;Location /svn&gt;
+DAV svn
+SVNParentPath /home/svnadmin/repos
+AuthType Basic
+AuthName "Subversion Auth"
+AuthUserFile /etc/svnusers
+require valid-user
+&lt;/Location&gt; </programlisting>
+    <para>
+      这段话，对URL中指向/svn目录的访问请求，使用DAV进行访问。我们把/home/svnadmin/repos做为所有版本库的父目录，在该目录下可以增加多个版本库。另外，使用/etc/svnusers密码文件对用户进行认证。
+    </para>
+    <para>
+      现在，重启apache2服务：
+    </para>
+    <programlisting>
+/etc/init.d/apache2 restart </programlisting>
+    <para>
+      在浏览器中输入：
+    </para>
+    <programlisting>
+https://127.0.0.1/svn/svntest </programlisting>
+    <para>
+      这时，会询问你是否接受服务器的证书，选择接受，然后输入你的用户名和密码，验证通过后，在浏览器中就可以看到版本库了。
+    </para>
+    <para>
+      测试通过后，你就可以使用其它的subversion客户端对版本库进行访问了。
+    </para>
+  </section>
+  <emphasis role='bold'> [参考文档] </emphasis>
+  <orderedlist>
+    <listitem>
+      <link xlink:href='http://www.subversion.org.cn/' xlink:show='new'/>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://fanqiang.chinaunix.net/app/web/2005-05-18/3257.shtml' xlink:show='new'>Apache2/SSL+Subversion+PAM认证服务器配置</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://blog.csdn.net/httpnet/archive/2007/04/22/1574192.aspx' xlink:show='new'/>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://lamp.linux.gov.cn/Apache/ApacheMenu/ssl/ssl_intro.html' xlink:show='new'/>
+    </listitem>
+  </orderedlist>
+  <para xmlns:xlink='http://www.w3.org/1999/xlink'><emphasis role='bold'>原创文章，转载请注明：</emphasis>转载自<link xlink:href="http://easwy.com/blog/" xlink:show='new'>Easwy的博客</link> [  <link xlink:href="http://easwy.com/blog/" xlink:show="new">http://easwy.com/blog/</link> ]</para>
+  <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='http://easwy.com/blog/20090216/181.html'/></para>
+</article>

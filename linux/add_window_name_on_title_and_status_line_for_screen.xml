@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在标题和状态栏中显示Linux Screen的窗口名称</title>
+  <para>
+    在<link xlink:href='http://easwy.com/blog/archives/disable-vbell-of-screen/'>Windows上使用putty+screen</link>时，screen会把当前窗口的名称显示在putty的标题栏上，这样当前处于哪个窗口就一目了然了。
+  </para>
+  <para>
+    但在Easwy的Linux系统中，使用urxvt+screen时，发现当前窗口的名称不会显示在标题栏里。在网上搜索了很久才找到答案。
+  </para>
+  <para>
+    要想允许Screen改变rxvt/rxvt-unicode(即urxvt)的标题栏，需要在<emphasis>.screenrc</emphasis>中加入一句<command>termcapinfo</command>信息：
+  </para>
+  <programlisting>
+termcapinfo rxvt 'hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007' </programlisting>
+  <para>
+    如果你用的是xterm，也需要在<emphasis>.screenrc</emphasis>中加入一句类似的话，具体内容见参考文档一。
+  </para>
+  <para>
+    可是，在标题栏里只显示当前的窗口名字，不能把把窗口的列表显示出来，在使用时还不是很方便。幸好我们可以设置Screen的状态栏，使之显示我们想要的内容。
+  </para>
+  <para>
+    在<link xlink:href='&myblog;'>Easwy</link>的<emphasis>.screenrc</emphasis>中加入了下面的内容：
+  </para>
+  <programlisting>
+caption always "%{= kw}%-w%{= kG}%{+b}[%n %t]%{-b}%{= kw}%+w %=%d %M %0c %{g}%H%{-}" </programlisting>
+  <para>
+    上面这段话会在Screen窗口的最下面一行显示出所有窗口的列表，以及主机名等信息。它的效果图如下：
+  </para>
+  <informalfigure>
+    <mediaobject>
+      <alt>Screen在标题栏和状态栏中显示窗口名称</alt>
+      <imageobject>
+        <imagedata fileref='http://easwy.com/blog/uploads/2009/12/screen-300x198.jpg' align='center'/>
+      </imageobject>
+    </mediaobject>
+    <caption align='center'><link xlink:href='http://easwy.com/blog/uploads/2009/12/screen.jpg' xlink:show='new'>点击查看大图</link></caption>
+  </informalfigure>
+  <para>
+    现在的Screen用起来就方便多了。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>Easwy的博客</link>上的其它文章。
+  </para>
+  <para><emphasis role='bold'>[ 参考文档 ]</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://tldp.org/HOWTO/Bash-Prompt-HOWTO/x395.html' xlink:show='new'>Xterm Title Bars and Screen</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://bbs.archlinux.org/viewtopic.php?id=67955' xlink:show='new'>screen refuses to change urxvt's title bar</link>
+    </listitem>
+  </itemizedlist>
+</article>
+

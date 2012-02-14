@@ -1,0 +1,138 @@
+<chapter xml:id='solve_compile_problem'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>vim编译中遇到的问题及解决方法</title>
+  &tocatalog;
+  <para>
+    在文章<link xlink:href='&uri_vimgdb;' xlink:show='new'>在vim中使用gdb调试</link>中，我介绍了如何编译vim。
+  </para>
+  <para>
+    不过有网友在编译vim时遇到问题，问如何解决vim编译中出现的问题，我把解决方法总结在这里。
+  </para>
+  <para>
+    一个比较常见的问题就是在编译gvim不成功。vim编译完了，却发现图形化的gvim没有被编译出来。
+  </para>
+  <para>
+    vim在编译时，缺省会尝试编译gvim，但如果需要的图形库或其它库文件没有找到，就会略过gvim的编译。
+  </para>
+  <para>
+    出现这个问题，首先检查你的图形库是否存在。通常我们所用的图形库都是gtk2，如果你的计算机上安装上gnome，那么肯定已经安装了gtk的图形库。如果确是因gtk库没有安装，可以先安装gtk库，网上关于gtk安装的文章很多，在此不再赘述了。
+  </para>
+  <para>
+    如果你的计算机已经安装了gtk2，但gvim还是编译失败，就需要查看一下<command>configure</command>的输出，看看为什么不能编译gvim。configure的输出为vim72/src/auto/config.log。
+  </para>
+  <para>
+    例如，在我的<link xlink:href='http://easwy.com/blog/archives/tag/debian/' xlink:show='new'>debian</link>计算机上，编译gvim失败，在config.log中，可以看到：
+  </para>
+  <blockquote>
+    <para>
+      1. configure:7601: checking if X11 header files can be found
+    </para>
+    <para>
+      2. configure:7627: gcc -c -O2 -fno-strength-reduce -Wall    conftest.c &gt;&amp;5
+    </para>
+    <para>
+      3. conftest.c:16:27: error: X11/Intrinsic.h: No such file or directory
+    </para>
+    <para>
+      4. configure:7634: $? = 1
+    </para>
+    <para>
+      5. configure: failed program was:
+    </para>
+    <para>
+      6. | /* confdefs.h.  */
+    </para>
+    <para>
+      7. | #define PACKAGE_NAME “”
+    </para>
+    <para>
+      8. | #define PACKAGE_TARNAME “”
+    </para>
+    <para>
+      9. | #define PACKAGE_VERSION “”
+    </para>
+    <para>
+      10. | #define PACKAGE_STRING “”
+    </para>
+    <para>
+      11. | #define PACKAGE_BUGREPORT “”
+    </para>
+    <para>
+      12. | #define UNIX 1
+    </para>
+    <para>
+      13. | #define STDC_HEADERS 1
+    </para>
+    <para>
+      14. | #define HAVE_SYS_WAIT_H 1
+    </para>
+    <para>
+      15. | #define FEAT_NORMAL 1
+    </para>
+    <para>
+      16. | #define USE_XSMP_INTERACT 1
+    </para>
+    <para>
+      17. | #define HAVE_LIBNSL 1
+    </para>
+    <para>
+      18. | #define FEAT_NETBEANS_INTG 1
+    </para>
+    <para>
+      19. | /* end confdefs.h.  */
+    </para>
+    <para>
+      20. | #include &lt;X11/Xlib.h&gt;
+    </para>
+    <para>
+      21. | #include &lt;X11/Intrinsic.h&gt;
+    </para>
+    <para>
+      22. | int
+    </para>
+    <para>
+      23. | main ()
+    </para>
+    <para>
+      24. | {
+    </para>
+    <para>
+      25. | 
+    </para>
+    <para>
+      26. |   ;
+    </para>
+    <para>
+      27. |   return 0;
+    </para>
+    <para>
+      28. | }
+    </para>
+    <para>
+      29. configure:7645: result: no
+    </para>
+    <para>
+      30. configure:7978: checking –enable-gui argument
+    </para>
+    <para>
+      31. configure:8038: result: no GUI support
+    </para>
+  </blockquote>
+  <para>
+    我们可以看到在第30行和31行显示没有GUI支持，而原因则在第3行："<emphasis>conftest.c:16:27: error: X11/Intrinsic.h: No such file or directory</emphasis>"，也就是说找不到文件 X11/Intrinsic.h。
+  </para>
+  <para>
+    在网上搜索后得知，这个库在debian的<emphasis>libdevel/libxt-dev</emphasis>包中，安装此包后，gvim就编译成功了。
+  </para>
+  <para>
+    另外还有一个朋友问，如何使vim支持<emphasis role='bold'>+signs</emphasis>功能，signs功能是在big版本中才被包含进来的功能，如果想在normal版本的vim中包含此功能，就需要修改vim72/src/feature.h文件，在此文件中把：
+  </para>
+  <programlisting>
+# define FEAT_SIGNS </programlisting>
+  <para>
+    打开，然后再编译就可以了。
+  </para>
+  &tocatalog;
+  &copyright;
+  <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='&uri_compile;'/></para>
+</chapter>

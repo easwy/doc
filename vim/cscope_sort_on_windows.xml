@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>Windows下cscope -q选项出错的解决</title>
+  <para>
+    以前曾有网友留言，在windows下使用cscope时，使用-q选项出现如下提示： 
+  </para>
+  <programlisting>
+D:\Temp&gt; cscope -Rbkq
+Input file specified two times.
+
+cscope: cannot create inverted index; ignoring -q option
+cscope: removed files ncscope.in.out and ncscope.po.out </programlisting>
+  <para>
+    当时<link xlink:href='&myblog;'>Easwy</link>以为是windows版本的cscope不支持-q选项。
+  </para>
+  <para>
+    不过网友Liang Feng昨天<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-cscope/#comment-2116'>留言</link>说：
+  </para>
+  <programlisting>
+Windows版本的cscope是支持-q选项的，出现以上错误是因为没找到合适的sort命令。所以只要cscope进程的工作目录下有GNU版本的sort就可以了。注意是进程的工作目录，不是可执行程序的目录。具体原因看一下cscope的代码片段。
+
+build.c
+
+#ifdef WIN32
+snprintf(sortcommand, sizeof(sortcommand), “set LC_ALL=C &amp;&amp; sort -T %s %s”, tmpdir, temp1);
+#else
+snprintf(sortcommand, sizeof(sortcommand), “env LC_ALL=C sort -T %s %s”, tmpdir, temp1);
+#endif </programlisting>
+  <para>
+    于是重新做了一下试验。在安装了Cygwin后，在cygwin的shell界面中使用cscope，没有出现上面的错误提示。但如果打开windows的命令行窗口cmd.exe，在里面执行cscope，则会出现上面的错误。
+  </para>
+  <para>
+    在仔细比较了cygwin和cmd.exe的环境后发现，原来是Windows自带的sort.exe搞的鬼。
+  </para>
+  <para>
+    在cygwin的shell窗口中，PATH环境变量的设置会使其先找到GNU版的sort.exe，所以上述cscope命令执行可以成功。但在cmd.exe窗口中，PATH环境变量会使其先找到windows自带的sort.exe而不是GNU sort.exe，所以会出现上面的错误提示。
+  </para>
+  <para>
+    知道了问题的原因，解决方法就很简单了，我们可以写一个批处理程序，在此程序中重设PATH环境变量，使cscope使用GNU版的sort.exe。示例程序如下：
+  </para>
+  <programlisting>
+D:\Temp&gt; type cs.bat
+@echo off
+set path=c:\cygwin\bin;
+cscope -Rbkq </programlisting>
+  <para>
+    在这个批处理里，首先把path环境变量指向<emphasis>c:\cygwin\bin;</emphasis>，我的cscope.exe和GNU版的sort.exe都在此目录中。接下来现执行cscope命令，现在它使用的就是GNU版的sort.exe了。
+  </para>
+  <para>
+    在此感谢网友Liang Feng，谢谢他的提醒。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>易水博客</link>上的其它文章。
+  </para>
+</article>
+

@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>使用vim的命令行补全功能</title>
+  <para>
+    网友Karl问:
+  </para>
+  <blockquote>
+   有时，我在VIM中想把一个单词替换成另一个单词，用yw,然后到要被替换的单词那里：dw 然后"0P，很多个步骤。yw,dw,"0P,这样子感觉按键多而且不顺手，请问你是怎么替换的？(:s/a/b这种要敲两个单词速度也不快) 
+  </blockquote>
+  <para>
+    我的回答见这个链接：<link xlink:href='http://easwy.com/blog/archives/an-article-about-how-to-write-vim-script/#comment-947'/>。
+  </para>
+  <para>
+    Karl说用替换的方式，要敲两个单词，速度不会很快。其实，如果掌握了命令行补全功能，用替换命令的速度也不会慢。
+  </para>
+  <para>
+    例如，我们可以这样操作，首先移到到第一个单词处，使用<command>"ayw</command>把这个单词拷贝到a寄存区，然后把光标移动到第二个单词下，接着输入下面的命令：
+  </para>
+  <programlisting>
+    :%s/&lt;C-R&gt;a/&lt;C-R&gt;&lt;C-W&gt;/g </programlisting>
+  <para>
+    上面的命令使用了两个命令行补全功能，其中<command>&lt;C-R&gt;a</command>需要按住&lt;CTRL&gt;-R键，这时光标处会显示一个"，接下来再按a键，这个按键序列的功能是插入a寄存区所保存的内容，在我们的例子里，就是插入第一个单词；后面的<command>&lt;C-R&gt;&lt;C-W&gt;</command>则是在命令行插入编辑区中光标下的单词，在我们的例子里，编辑区光标下的单词就是第二个单词。
+  </para>
+  <para>
+    如果要替换的个数比较多，使用上面的办法就比较好，可以用较少的按键完成替换功能，而且还不用担心输错单词。
+  </para>
+  <para>
+    命令行补全的帮助手册为:<command>c_CTRL-R</command>和<command>c_CTRL-R_CTRL-W</command>，我们可以看到，使用&lt;C-R&gt;系列命令，不仅可以插入各个暂存区中的内容、光标下的内容，你甚至可以使用一个表达式，来完成更复杂的工具，事实上，很多脚本中就在这样使用。
+  </para>
+</article>

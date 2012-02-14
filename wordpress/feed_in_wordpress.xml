@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf8'?>
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>WordPress博客中feed的使用技巧</title>
+  <para>
+    前几天在设置<link xlink:href='http://easwy.com/blog/archives/categories_feed_for_easwy_com/'>Easwy博客的分类输出</link>时，在网上查阅了很多关于WordPress博客feed的文章，发现WordPress博客对feed的支持其实很强大，只不过不太为人所知。
+  </para>
+  <para>
+    Easwy博客的分类输出，是通过使用Enhanced Categories插件实现的，这个插件实际上也只是利用了WordPress自身提供的wp_list_cats函数来实现分类feed输出。在文尾的参考文档中查阅wp_list_cats函数的用法，网上也有文章介绍。
+  </para>
+  <para>
+    除了使用wp_list_cats函数来实现对分类的feed输出外，我们还可以输出某个标签(tag)中的全部文章的feed、或者输出某篇文章的feed，甚至可以把属于几个标签的文章都用同一个feed输出出来。
+  </para>
+  <para>
+    我们做一个这样的实验，我以Easwy博客上vim标签为例，这个标签的链接是<link xlink:href='http://easwy.com/blog/archives/tag/vim/'/>，我们在其后面加上<emphasis role='bold'>feed/</emphasis>后缀，试着点一下这个链接：<link xlink:href='http://easwy.com/blog/archives/tag/vim/feed/'/>，呵呵，你的浏览器会提示你订阅Easwy博客的vim分类。
+  </para>
+  <para>
+    是不是很神奇，在tag的链接后加上<emphasis>feed/</emphasis>后缀，你得到的就是这个tag的feed。
+  </para>
+  <para>
+    那么这个规则对分类也适用吗？让我们试一下Easwy博客上的<link xlink:href='http://easwy.com/blog/archives/category/website/'>建站手记</link>分类，在它的链接后加上<emphasis>feed/</emphasis>，点一下试试：<link xlink:href='http://easwy.com/blog/archives/category/website/feed/'/>。呵呵，同样适合。
+  </para>
+  <para>
+    好了，我想得到一篇文章的feed，我以"vim使用进阶: 目录"这篇文章为例，这篇文章的链接是<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-catalog/'/>，我们在这篇文章的链接后面加上<emphasis>feed/</emphasis>，看看会是什么结果，试着点一下<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-catalog/feed/'/>。哦，不，这不是你想要你，这里提示你订阅的，是这篇文章的评论。不过，你通常不会去订阅单个文章吧？
+  </para>
+  <para>
+    其实，在我的博客上我启用了永久链接，对于没有启用永久链接的博客，则可以用下面的方法。
+  </para>
+  <para>
+    还是以我博客的文章为例，同样是vim分类，你也可以用下面的链接来访问：<link xlink:href='http://easwy.com/blog/?tag=vim'/>。那么，你只要在此链接后加上<emphasis>&amp;feed=rss2</emphasis>，就可以得到分类的feed了，例如：<link xlink:href='http://easwy.com/blog/?tag=vim&amp;feed=rss2'/>。对于分类也是一样，例如，下面的链接让你订阅Easwy博客上的建站手记分类：<link xlink:href='http://easwy.com/blog/?cat=5&amp;feed=rss2'/>。这里你必须要知道分类的ID才可以。
+  </para>
+  <para>
+    下面我们看个更有趣的，点击下面的链接：<link xlink:href='http://easwy.com/blog/?tag=vim,linux'/>，你会看到所有打了Linux标签或vim标签的文章都被列出来了。如果在上面的链接后面再加上<emphasis>&amp;feed=rss2</emphasis>呢？你试试：<link xlink:href='http://easwy.com/blog/?tag=vim,linux&amp;feed=rss2'/>。虽然tag是vim或Linux的标签都被列出来了，不过页面标题显示的却只是标签vim，文尾的第三篇文章给出一个插件来修正这个问题。这个插件甚至允许你列出指定分类下特定tag的文章。
+  </para>
+  <para>
+    相信你看了这篇文章以后，不会再要求我输出tag的feed了吧，你完全可以自己选择你想订阅的tag。
+  </para>
+  <para>
+    上面介绍了WordPressfeed输出的一些技巧，现在，你应该能更轻松的定阅你想看的文章了吧，不会有太多你不喜欢的内容出现。如果想了解更多，看看文尾的参考文档吧，你可以定阅同时包含Debian标签和Linux标签的文章(<emphasis>tag1+tag2</emphasis>)，或者定阅符合你指定搜索结果的文章(<emphasis>?s=vim&amp;feed=rss2</emphasis>)...
+  </para>
+  <para>
+    如果你发现本文的例子并不能带给你文中说的那种效果，那可能是我启用了FeedBurner FeedSmith插件，去找个你熟悉的WordPress网站再试上面的例子吧。
+  </para>
+  <section>
+    <title>参考文档</title>
+    <itemizedlist>
+      <listitem>
+        <link xlink:href='http://boren.nu/archives/2007/10/01/taxonomy-intersections-and-unions/' xlink:show='new'>Taxonomy Intersections and Unions</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://thedeadone.net/blog/wordpress-tip-get-an-rss-feed-from-a-tag-and-from-a-search/' xlink:show='new'>Wordpress Tip: Get an RSS feed from a Tag and from a Search!</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://wordpress.org/extend/plugins/tdo-tag-fixes/' xlink:show='new'>TDO Tag Fixes</link>
+      </listitem>
+      <listitem>
+        <link xlink:href='http://codex.wordpress.org/Template_Tags/wp_list_cats' xlink:show='new'>Template Tags/wp list cats</link>
+      </listitem>
+    </itemizedlist>
+  </section>
+</article>

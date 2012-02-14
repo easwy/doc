@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xml:id='add_post_uri' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在文章末尾添加版本声明和文章的链接</title>
+  <para>
+    国内的版权意识还比较淡薄，无论是计算机软件、还是论文，都存在盗版。对于我博客上的文章，一般都是允许自由转载的，前提是保留文章的出处。但总有一些人，直接采用"拿来主义"。自己的劳动成果，这样子被别人掠夺了，实在是心里不舒服。
+  </para>
+  <para>
+    所以我在博客上每一篇文章的文尾加了如下的声明：
+  </para>
+  <programlisting>
+ <emphasis role='bold'>原创文章，转载请注明：</emphasis>转载自<link xlink:href='http://easwy.com/blog/'>Easwy的博客</link> [ <link xlink:href='http://easwy.com/blog/'/> ]
+    <emphasis role='bold'>本文链接地址: </emphasis><link xlink:href='http://easwy.com/blog/archives/add_post_copyright_url/'/> </programlisting>
+  <para>
+    刚开始比较笨，每次都手动加这段声明，发文章还要再去查文章的URL，不仅麻烦，而且容易出错。在wordpress的网站查了一下相关的插件，有几个插件可以插入footer，不过这些插件都不能插入文章的URL。
+  </para>
+  <para>
+    上周看了一下主题(theme)的代码，发现可以在主题模板中加入这段声明，这样每次文章在显示时，就可以自动显示这段声明了，可以省不少事。
+  </para>
+  <para>
+    修改主题的方法很简单，我使用的是<link xlink:href='http://www.neoease.com/' xlink:show='new'>mg12</link>的inove主题，打开single.php文章，找到the_content()所在的行，在这一行后加上：
+  </para>
+  <blockquote><emphasis>
+    <![CDATA[
+    <div class="posturl">
+      <p><span class="bold"><strong>原创文章，转载请注明：</strong></span>转载自<a class="link" href="http://easwy.com/blog/" target="_top">Easwy的博客</a> [  <a class="link" href="http://easwy.com/blog/" target="_top">http://easwy.com/blog/</a> ]</p>
+      <p><span class="bold"><strong>　　　　本文链接地址:</strong></span> <a class="link" href="<?php the_permalink(); ?>" target="_top"><?php the_permalink(); ?></a></p>
+    </div>
+    ]]> </emphasis></blockquote>
+  <para>
+    上面定义了一个新的层(div)，修改你的style.css，定义posturl层的样式，就可以定制出自己想要的显示效果。 在我的style.css中，我添加了下面的样式定义：
+  </para>
+  <programlisting>
+.posturl{
+#	background:#F4F5F7;
+	border-top:1px solid #CCC;
+#	border-bottom:1px solid #CCC;
+	font-style: italic;
+#	font-size: 11px;
+} </programlisting>
+  <para>
+    如果你的主题中没有single.php，应该修改index.php (我没试过)。如果修改index.php，最好加一个判断，只有显示在单个页面里的文章才加文章链接，对显示在首页里的文章则不加，修改如下：
+  </para>
+  <blockquote><emphasis>
+    <![CDATA[
+    <?php if (is_single()) { ?>
+    <div class="posturl">
+      <p><span class="bold"><strong>原创文章，转载请注明：</strong></span>转载自<a class="link" href="http://easwy.com/blog/" target="_top">Easwy的博客</a> [  <a class="link" href="http://easwy.com/blog/" target="_top">http://easwy.com/blog/</a> ]</p>
+      <p><span class="bold"><strong>　　　　本文链接地址:</strong></span> <a class="link" href="<?php the_permalink(); ?>" target="_top"><?php the_permalink(); ?></a></p>
+    </div>
+    <?php } ?>
+    ]]> </emphasis></blockquote>
+  <para>
+    这种方式，只是在博客显示的文章中加入了版权声明，输出的feed中并没有加，在wordpress.org上有几个feed相关的插件都可以完成这个功能。
+  </para>
+</article>

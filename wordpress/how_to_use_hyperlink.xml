@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xml:id='how_to_use_hyperlink' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>建内链、外链的学问</title>
+  <para>
+    没建自己的博客之前，对搜索引擎优化(SEO)知之甚少。那时候引用别人的文章，都是采用"参见这篇文章"、"文章的链接是http://xxx"这样的形式。这样的引用并不利于SEO。
+  </para>
+  <para>
+    当我们引用其它网站的内容时，也就是使用外链时，对搜索引擎来说，是我们对其它网站的页面投了一票。搜索引擎会从&lt;a href="http://xxx"&gt;这样的语句中知道这个页面的链接，但它如何知道这个页面是关于什么的？这就要靠你引用链接时所使用的描述性语言。
+  </para>
+  <para>
+    举个例子，当我们引用vim主页时，可以用：
+  </para>
+  <programlisting>
+    ...请参见vim主页：&lt;a href="http://www.vim.org/"&gt;http://www.vim.org/&lt;/a&gt; </programlisting>
+  <para>
+    也可以用：
+  </para>
+  <programlisting>
+    ...请参见&lt;a href="http://www.vim.org/"&gt;vim主页&lt;/a&gt; </programlisting>
+  <para>
+    这两种引用方法，都是对http://www.vim.org/投了一票，不过对搜索引擎来说第二种方式更为友好，因为它可以了解这个链接是指向<emphasis role='bold'>vim主页</emphasis>的链接。以后当其它人搜索<emphasis>vim主页</emphasis>时，它就可以把这个链接排在前面。
+  </para>
+  <para>
+    在文章中加入自己网站的链接，也就是建内链，也存在同样的问题。如果我在引用我的文章时，采用：
+  </para>
+  <blockquote>
+    ...请读我的&lt;a href="http://easwy.com/blog/archives/advanced-vim-skills-catalog/"vim使用进阶系列文章&lt;/a&gt; </blockquote>
+  <para>
+    那么，也就相当于告诉搜索引擎，链接<emphasis><link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-catalog/' xlink:show='new'/></emphasis>是和<emphasis>vim使用进阶</emphasis>相关的链接。这样在有用户搜索<emphasis>vim使用进阶</emphasis>时，它会把这个链接列在查询结果中。
+  </para>
+  <para>
+    还需要注意的一点是，无论使用内链、还是外链，都尽量使用规范的链接格式。使用不规范的链接格式，不仅导致搜索引擎上的重复页面，还会降低页面的Page Rank。
+  </para>
+  <para>
+    现在Google、Yahoo、MSN共同推出了一个新的标准，允许用户通过&lt;link rel="canonical" href="..."/&gt;来指定网页的规范URL。不过，既然我们能建链接时避免不规范的链接格式，为什么不这样做呢？一来这个标准并没有获得全部搜索引擎的支持(百度就不支持)，二来搜索引擎对这一标准的支持程度我们还不了解。
+  </para>
+</article>

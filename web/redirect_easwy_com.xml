@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<article xmlns='http://docbook.org/ns/docbook'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>重定向http://easwy.com/到http://easwy.com/blog/</title>
+  <para>
+    在博客初建时，把wordpress安装在web服务器的blog目录下，并有意将网站首页的URL(<link xlink:href='http://easwy.com/'/>)和博客首页的URL(<link xlink:href='http://easwy.com/blog/'/>区分开来。
+  </para>
+  <para>
+    这样做的考虑主要基于网站扩建的需要。如果把博客主页设为站点主页的话，将来再安装其它应用程序就不方便了。因此，虽然wordpress支持把程序放在子目录，但使用网站的主域名来访问博客，不过我还是没有这样做。
+  </para>
+  <para>
+    但是一直没时间编辑自己的网站首页，导致<link xlink:href='http://easwy.com/'/>一直空着。前段时间把blog的页面另存了一下，手动修改后上传上去。这种方式很不妥当，因为网站首页需要手动更新。因此想用个偷懒的办法，让用户在访问我的网站首页时，被重定向到博客首页上。
+  </para>
+  <para>
+    这几天在网上搜索了一下，做页面重定向的方法有很多，可以使用.htaccess来做，也可以使用php、html，或者javascript实现页面重定向。
+  </para>
+  <para>
+    我先试了一下htaccess的页面重定向，按照<link xlink:href='http://www.beishan.info/hostmonster/20080926/htaccess-how-to-make-subfolder-the-main-folder-for-your-main-domain.html' xlink:show='new'>这篇文章</link>设置之后，可以重定向，不过重定向后，浏览器地址里显示的还是网站首页的网址<link xlink:href='http://easwy.com/'/>，而不是我期望的博客首页网址<link xlink:href='http://easwy.com/blog/'/>，看来不满足我的要求。
+  </para>
+  <para>
+    于是想到了html重定向。在网上有文章建议使用<emphasis>&lt;meta http-equiv="Refresh" content="time; url=new_url"&gt;</emphasis>来实现重定向，但正如<link xlink:href='http://www.w3.org/QA/Tips/reback' xlink:show='new'>这篇文章</link>中所说，用这种方式实现重定向有一个问题，就是在用户点击"返回"按钮时，会再次被重定向回来。这种方式的用户体验不好。
+  </para>
+  <para>
+    看来，只能使用301永久重定向了。不愿意用301定向的原因是，将来我再启用<link xlink:href='http://easwy.com/'/>时，不知道搜索引擎会不会及时更新？！
+  </para>
+  <para>
+    实现301重定向的方式很多，我采用php方式来重定向，把下面的代码存为index.php，放在网站的根目录就行了：
+  </para>
+  <programlisting>
+&lt;?
+Header( "HTTP/1.1 301 Moved Permanently" );
+Header( "Location: <link xlink:href='http://easwy.com/blog/'/>" );
+?&gt; 
+  </programlisting>
+  <para>
+    <emphasis role='bold'>[参考阅读]</emphasis>
+  </para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://www.webconfs.com/how-to-redirect-a-webpage.php' xlink:show='new'/>
+    </listitem>
+  </itemizedlist>
+  <para><emphasis role='bold'>原创文章，转载请注明：</emphasis>转载自<link xlink:href="http://easwy.com/blog/" xlink:show='new'>Easwy的博客</link> [  <link xlink:href="http://easwy.com/blog/" xlink:show="new">http://easwy.com/blog/</link> ]</para>
+  <para><emphasis role='bold'>　　　　本文链接地址:</emphasis> <link xlink:href='http://easwy.com/blog/archives/redirect-easwy-com/'/></para>
+</article>
