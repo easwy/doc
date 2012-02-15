@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>在CentOS 5中安装Ubuntu KVM虚拟机</title>
+  <para>
+    Linux下免费的虚拟化技术主要有KVM和XEN两种。KVM已经合入了Linux标准内核，也获得了诸如RedHat RHEL、Ubuntu这样的Linux发行版的支持，可以预见在未来KVM应该会成为Linux虚拟化技术的主流。只是KVM需要硬件虚拟化技术的支持，如果你的CPU不支持硬件虚拟化技术，那么只能使用XEN。
+  </para>
+  <para>
+    本文记录了<link xlink:href='http://easwy.com/' xlink:show='new'>Easwy</link>在CentOS 5.7上安装Ubuntu KVM虚拟机的过程。
+  </para>
+  <orderedlist>
+    <listitem>
+      <emphasis role='bold'>环境检查</emphasis>
+      <para>
+        首先需要检查一下你的CPU是否支持硬件虚拟化技术(Hardware Vitualization)：
+      </para>
+      <programlisting>egrep '(vmx|svm)' --color=always /proc/cpuinfo </programlisting>
+      <para>
+        如果在你的计算机上没有任何输出，那么说明你的CPU不支持硬件虚拟化技术，也就无法使用KVM。
+      </para>
+      <para>
+        另外需要注意的是，在CentOS 5.4版本以后，只有64位的CentOS才支持KVM，具体原因不清楚，所以如果你是32位的CentOS，暂时也无法使用KVM。
+      </para>
+    </listitem>
+    <listitem>
+      <emphasis role='bold'>安装KVM</emphasis>
+      <para>
+        检查完环境后，我们开始安装并激活KVM。
+      </para>
+      <para>
+        首先，将SELinux的配置更改为<emphasis role='bold'>Permissive</emphasis>，因为<code>virt-install</code>不支持SELinux为<emphasis>disable</emphasis>：
+      </para>
+      <programlisting>[root@srv-easwy ~]# system-config-securitylevel </programlisting>
+      <para>
+        然后安装kvm及其它虚拟化相关的软件：
+      </para>
+      <programlisting>[root@srv-easwy ~]# yum install kvm kmod-kvm libvirt python-virtinst virt-manager</programlisting>
+      <para>
+        接下来需要重启系统，在启动完成后，你应该可以看到KVM内核模块已经被加载了：
+      </para>
+      <programlisting>
+[root@srv-easwy ~]# lsmod |grep kvm
+kvm_intel              85256  1
+kvm                   224800  2 ksm,kvm_intel </programlisting>
+      <para>
+        可以通过下面的命令看看KVM是不是真正运行了：
+      </para>
+      <programlisting>
+[root@srv-easwy ~]# virsh -c qemu:///system list
+Id Name                 State
+----------------------------------
+
+[root@srv-easwy ~]# </programlisting>
+    </listitem>
+    <listitem>
+      <emphasis role='bold'>配置网络</emphasis>
+      <para>
+        现在配置一个网桥，以便虚拟机可以访问网络。首先安装所需的工具：
+      </para>
+      <programlisting>[root@srv-easwy ~]# yum install bridge-utils </programlisting>
+      <para>
+        新创建一个文件<emphasis>/etc/sysconfig/network-scripts/ifcfg-br0</emphasis>，其内容为：
+      </para>
+      <programlisting>
+DEVICE=br0
+TYPE=Bridge
+BOOTPROTO=dhcp
+ONBOOT=yes </programlisting>
+      <para>
+        上面的文件配置此网桥以DHCP方式获取IP地址。接下来修改原来的网卡配置<emphasis>/etc/sysconfig/network-scripts/ifcfg-eth0</emphasis>，修改为：
+      </para>
+      <programlisting>
+DEVICE=eth0
+HWADDR=B8:AC:6F:89:10:76
+ONBOOT=yes
+BRIDGE=br0 </programlisting>
+      <para>
+        然后重启网络配置，查看一下：
+      </para>
+      <programlisting>
+[root@srv-easwy ~]# /etc/init.d/network restart
+[root@srv-easwy ~]# ifconfig
+br0       Link encap:Ethernet  HWaddr B8:AC:6F:89:10:76
+          inet addr:172.23.5.50  Bcast:172.23.5.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:3242738 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:702638 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:1057883287 (1008.8 MiB)  TX bytes:448735998 (427.9 MiB)
+
+eth0      Link encap:Ethernet  HWaddr B8:AC:6F:89:10:76
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:3445641 errors:0 dropped:0 overruns:0 frame:93
+          TX packets:670754 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:1201230368 (1.1 GiB)  TX bytes:239453000 (228.3 MiB)
+          Interrupt:177 Memory:f3de0000-f3df0000
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:63582 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:63582 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:154537675 (147.3 MiB)  TX bytes:154537675 (147.3 MiB)
+
+virbr0    Link encap:Ethernet  HWaddr 00:00:00:00:00:00
+          inet addr:192.168.122.1  Bcast:192.168.122.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:1797 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:0 (0.0 b)  TX bytes:470443 (459.4 KiB)
+      </programlisting>
+    </listitem>
+    <listitem>
+      <emphasis role='bold'>安装虚拟机</emphasis>
+      <para>
+        基于磁盘逻辑卷管理(LVM)的虚拟机会拥有较好的磁盘I/O性能，所以在此处<link xlink:href='http://easwy.com/' xlink:show='new'>Easwy</link>安装了基于LVM的虚拟机。如果你对LVM并不熟悉，可以参考我的<link xlink:href='http://easwy.com/blog/archives/linux-lvm-learning-notes/'>Linux逻辑卷管理器(LVM)学习笔记</link>。
+      </para>
+      <para>
+        Easwy在安装时已经在逻辑卷组中预留了部分未用空间，所以此处直接在卷组<emphasis>vg0</emphasis>中创建一个逻辑卷<emphasis>ubuntu</emphasis>，并分配了332G的空间：
+      </para>
+      <programlisting>[root@srv-easwy ~]# lvcreate -L32G -n ubuntu vg0 </programlisting>
+      <para>
+        接下来使用<code>virt-install</code>安装Ubuntu虚拟机，在此处直接使用Ubuntu的ISO文件做为源，将其安装到新创建的逻辑卷<emphasis>/dev/vg0/ubuntu</emphasis>中：
+      </para>
+      <programlisting>
+[root@srv-easwy ~]# virt-install --connect qemu:///system -n ubuntu -r 1024 --vcpus=2 -f /dev/vg0/ubuntu -c ~/Download/ubuntu/ubuntu-10.04.3-desktop-amd64.iso --vnc --os-type linux --os-variant generic26 --accelerate --network=bridge:br0 --hvm --noautoconsole
+      </programlisting>
+      <para>
+        执行完此命令后，KVM虚拟机会使用Ubuntu的ISO文件启动，我们需要启动<code>virt-manager</code>，连接到此虚拟机，继续完成安装过程。这和安装真正的Linux操作系统完全一样，不再赘述。
+      </para>
+    </listitem>
+  </orderedlist>
+  <para>
+    现在，基本KVM的Ubuntu虚拟机就完全运行起来了。如果你对此还有疑问，欢迎留言。另外，参考文档中的链接也许对你也很有帮助。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>易水博客</link>上的其它文章。
+  </para>
+  <para><emphasis role='bold'>[ 参考文档 ]</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://www.howtoforge.com/virtualization-with-kvm-on-a-centos-5.2-server'>Virtualization With KVM On A CentOS 5.2 Server</link>
+    </listitem>
+  </itemizedlist>
+</article>
