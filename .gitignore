@@ -3,3 +3,5 @@ pdf
 *.html
 *.fo
 *.pdf
+*.swp
+stylesheet
