@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE article [
+<!ENTITY fixme 'http://easwy.com/blog/'>
+<!ENTITY myblog 'http://easwy.com/blog/'>
+]>
+
+<article xmlns='http://docbook.org/ns/docbook' xml:lang='zh-CN'
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <title>使用Scala + sbt + sbt-android-plugin开发Android应用程序</title>
+  <para>
+    开发Android程序通常所使用的语言是Java，但Scala做为一种有希望替代Java的语言，也逐渐被越来越多的Android者所熟悉。本文简要的介绍如何使用<link xlink:href='http://www.scala-lang.org/'>Scala</link>的<link xlink:href='https://github.com/harrah/xsbt/wiki'>sbt工具</link>(Simple Build Tool)及<link xlink:href='https://github.com/jberkel/android-plugin'>sbt-android-plugin</link>创建，编译，安装运行一个简单的Android程序。
+  </para>
+  <orderedlist>
+    <listitem>
+      <emphasis role='bold'>环境准备</emphasis>
+      <para>
+        <link xlink:href='http://easwy.com/' xlink:show='new'>Easwy</link>的开发环境搭建在Ubuntu 10.04.3上，所以第一步是安装Ubuntu，具体过程略过。
+      </para>
+      <para>
+        然后需要下载Android SDK，这一步可以参考文档<link xlink:href='http://developer.android.com/sdk/index.html'>Download the Android SDK</link>完成。
+      </para>
+      <para>
+        接下来在Ubuntu里安装Sun Java JDK，如果你使用OpenJDK，可以跳过这一步。首先去掉<emphasis>/etc/apt/sources.list</emphasis>中这两行前的注释，使能Java 6源：
+      </para>
+      <programlisting>
+$ sudo vim /etc/apt/sources.list
+deb http://archive.canonical.com/ubuntu lucid partner
+deb-src http://archive.canonical.com/ubuntu lucid partner </programlisting>
+      <para>
+        然后安装Java 6 JDK：
+      </para>
+      <programlisting>
+$ sudo aptitude install sun-java6-jdk </programlisting>
+    </listitem>
+    <listitem>
+      <emphasis role='bold'>安装Scala、sbt和sbt-android-plugin</emphasis>
+      <para>
+        首先安装Scala。到<link xlink:href='http://www.scala-lang.org/downloads'>Scala Download Page</link>下载Scala，Easwy下载的是Scala 2.9.1的IzPack Installer，下载后执行：
+      </para>
+      <programlisting>$ java -jar scala-2.9.1.final-installer.jar </programlisting>
+      <para>
+        按提示安装即可。
+      </para>
+      <para>
+        然后安装sbt。到<link xlink:href='https://github.com/harrah/xsbt/wiki/Getting-Started-Setup'>sbt wiki</link>上下载sbt-launch.jar，然后创建一个脚本来调用它：
+      </para>
+      <programlisting>
+$ vim ~/bin/sbt
+java -Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=384M -jar `dirname $0`/sbt-launch.jar "$@"
+
+$ chmod u+x ~/bin/sbt </programlisting>
+    <para>
+      最后安装sbt-android-plugin。因为sbt-android-plugin还在开发中，在此Easwy直接checkout它的源代码，然后安装在本地：
+    </para>
+    <programlisting>
+$ git clone git://github.com/jberkel/android-plugin.git
+$ cd android-plugin
+$ sbt publish-local </programlisting>
+    <para>
+      sbt在第一次运行时会下载它所依赖的包，耗时会久一些，此过程只需进行一次。
+    </para>
+    </listitem>
+    <listitem>
+      <emphasis role='bold'>自动生成Android应用程序框架</emphasis>
+      <para>
+        设置好上面的环境后，可以使用sbt-android-plugin来自动生成一个简单的Android应用程序框架。插件的作者推荐使用一个名为<emphasis>giter8</emphasis>的模板工具来生成框架。首先需要下载<emphasis>giter8</emphasis>工具：
+      </para>
+      <programlisting>
+$ cd ~/bin
+$ curl https://raw.github.com/n8han/conscript/master/setup.sh | sh
+$ ~/bin/cs n8han/giter8 </programlisting>
+      <para>
+        这几条命令会下载一些它们所需的包，需要一些时间。接下来就可以用giter8工具，根据指定的模板自动生成一个Android应用程序：
+      </para>
+      <programlisting>
+$ ~/bin/g8 jberkel/android-app
+
+Template for Android apps in Scala
+
+package [my.android.project]: com.easwy.projects.helloworld
+name [My Android Project]: Hello World
+main_activity [MainActivity]:
+scala_version [2.9.1]:
+api_level [10]:
+useProguard [true]:
+
+Applied jberkel/android-app.g8 in hello-world </programlisting>
+      <para>
+        这条命令会提示你输入一些参数，然后根据你输入的参数生成一个Android应用程序的框架。
+      </para>
+      <para>
+        事实上，此命令直接找到保存在<link xlink:href='https://github.com/'>github.com</link>上的模板，然后根据模板生成Android应用程序的目录框架。在本例中所使用的模板是<link xlink:href='https://github.com/jberkel/android-app.g8/tree/master/src/main/g8'>jberkel/android-app</link>。你也可以自己创建一套模板，生成更适合自己的目录框架。
+      </para>
+    </listitem>
+    <listitem>
+      <emphasis role='bold'>编译、安装、运行Android程序</emphasis>
+      <para>
+        由上面的模板生成的Android应用程序，其实就是一个简单的<emphasis>"Hello World!"</emphasis>应用，你可以直接编译、安装、运行它。
+      </para>
+      <para>
+        首先进入sbt的交互模式：
+      </para>
+      <programlisting>
+$ cd hello-world
+$ export ANDROID_SDK_ROOT=~/bin/android-sdk-linux_86
+$ sbt</programlisting>
+      <para>
+        开始编译：
+      </para>
+      <programlisting>&gt; android:package-debug </programlisting>
+      <para>
+        然后用下面的命令启动你的Android模拟器(如果你还没有模拟器，参考<link xlink:href='http://developer.android.com/guide/developing/devices/index.html'>Managing Virtual Devices</link>创建一个)：
+      </para>
+      <programlisting>&gt; android:emulator-start api10</programlisting>
+      <para>
+        上面的命令启动了名为<emphasis>api10</emphasis>的模拟器，下面安装运行我们编译出来的Hello World程序：
+      </para>
+      <programlisting> &gt; android:start-emulator </programlisting>
+      <para>
+        现在可以看到Hello World程序已经在api10 emulator中运行了。
+      </para>
+    </listitem>
+  </orderedlist>
+  <para>
+    在后续的文章中，<link xlink:href='http://easwy.com/' xlink:show='new'>Easwy</link>会继续介绍使用Scala开发Android程序的心得。
+  </para>
+  <para>
+    更多内容，请阅读<link xlink:href='&myblog;'>易水博客</link>上的其它文章。
+  </para>
+  <para><emphasis role='bold'>[ 参考文档 ]</emphasis></para>
+  <itemizedlist>
+    <listitem>
+      <link xlink:href='http://www.scala-lang.org/'>Scala Programing Language</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='https://github.com/harrah/xsbt/wiki'>sbt - Simple Build Tool for Scala</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='https://github.com/jberkel/android-plugin'>sbt-android-plugin</link>
+    </listitem>
+    <listitem>
+      <link xlink:href='http://developer.android.com/sdk/installing.html'>Installing the Android SDK</link>
+    </listitem>
+  </itemizedlist>
+</article>
