@@ -1,6 +1,8 @@
 #
 # Makefile
 # Easwy Yang
-# 2009/03/22 
+# Sat Feb 18 00:47:36 CST 2012
+#
 
-include ../rules.mk
+export DOCDIR = $(firstword $(subst /doc, ,$(CURDIR)))/doc
+include $(DOCDIR)/rules.mk

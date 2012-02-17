@@ -64,6 +64,6 @@
       正因为Docbook有这么多的优点，所以我才将我的<link xlink:href='http://easwy.com/blog/archives/advanced-vim-skills-catalog/' xlink:show=''>vim使用进阶系列文章</link>使用Docbook重新整理了一遍(因为之前的Word文档因意外被损坏，无法打开)。今后我的文档也都会使用Docbook书写。就连博客上的文章，大部分也是先用Docbook书写，然后转换成HTML再发上来的。
     </para>
     <para>
-      如果你也对Docbook写文档有兴趣，可以在网上搜索一下相关的文章。我会陆续写一些Docbook的文章发表在<link xlink:href='&uri_blog;' xlink:show='new'>Easwy的博客</link>，欢迎交流。
+      如果你也对Docbook写文档有兴趣，可以在网上搜索一下相关的文章。我会陆续写一些Docbook的文章发表在<link xlink:href='http://easwy.com/blog/' xlink:show='new'>Easwy的博客</link>，欢迎交流。
     </para>
   </chapter>

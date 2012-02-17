@@ -4,8 +4,8 @@
 # 2009/04/13 
 
 # Tools
-FOP = /usr/bin/fop
-XSLTPROC= /usr/bin/xsltproc
+FOP=/usr/bin/fop
+XSLTPROC=/usr/bin/xsltproc
 
 # Config files
 export DOCDIR = $(firstword $(subst /doc, ,$(CURDIR)))/doc
@@ -25,7 +25,7 @@ PDF_FILE=$(patsubst %.xml,%.pdf,$(XML_FILE))
 PDF_OBJ=$(addprefix pdf/, $(PDF_FILE))
 
 # STYLESHEET
-STYLE = http://easwy.com/blog/uploads/css/style.css
+STYLE=http://easwy.com/blog/uploads/css/style.css
 
 .PHONY: default html pdf clean
 

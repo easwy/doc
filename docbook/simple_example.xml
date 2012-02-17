@@ -20,7 +20,7 @@
         首先下载<link xlink:href='http://sourceforge.net/project/showfiles.php?group_id=21935#files' xlink:show='new'>Docbook XSL</link>样式表。我们只需要下载docbook-xsl-ns即可，目前的最新版本是1.74.3。下载后，把它解压到一个目录中，我这里假设解压到C:\docbook目录，也就是说，Docbook XSL所在的目录是: <emphasis>C:\docbook\docbook-xsl-ns-1.74.3\</emphasis>。
       </para>
       <para>
-        在<link xlink:href='&uri_intro;' xlink:show='new'>Docbook介绍</link>一文中我讲过Docbook是"内容与格式分离"的，我们写Docbook文档时只关注文档的内容，而Docbook转换成其它文档类型时所显示的格式，则由Docbook XSL来定义。
+        在<link xlink:href='http://easwy.com/blog/archives/docbook_intro/' xlink:show='new'>Docbook介绍</link>一文中我讲过Docbook是"内容与格式分离"的，我们写Docbook文档时只关注文档的内容，而Docbook转换成其它文档类型时所显示的格式，则由Docbook XSL来定义。
       </para>
     </listitem>
     <listitem>
